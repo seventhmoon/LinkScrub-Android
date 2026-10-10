@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Premium rich purple-indigo gradient aligned with M3 Primary theme (#6750A4 / #21005D) -->
+    <path
+        android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:centerX="54"
+                android:centerY="42"
+                android:gradientRadius="76"
+                android:type="radial">
+                <item android:offset="0.0" android:color="#2E1C59" />
+                <item android:offset="0.65" android:color="#1A0D36" />
+                <item android:offset="1.0" android:color="#0F0622" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Subtle soft primary glow behind the cleaning icon in the safe zone -->
+    <path
+        android:pathData="M54,26A28,28 0 1,0 54,82A28,28 0 1,0 54,26Z"
+        android:fillColor="#1CD0BCFF" />
+
+</vector>
+

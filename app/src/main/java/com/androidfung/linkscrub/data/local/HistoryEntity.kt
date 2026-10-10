@@ -1,0 +1,19 @@
+package com.androidfung.linkscrub.data.local
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "history_entries")
+data class HistoryEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val originalUrl: String,
+    val unshortenedUrl: String? = null,
+    val cleanedUrl: String,
+    val removedParamsJson: String = "[]",
+    val title: String? = null,
+    val description: String? = null,
+    val imageUrl: String? = null,
+    val siteName: String? = null,
+    val timestamp: Long = System.currentTimeMillis()
+)
