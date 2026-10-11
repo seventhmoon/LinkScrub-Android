@@ -45,6 +45,7 @@ class UrlCleaner(
         )
 
         val URL_REGEX = Regex("""https?://[^\s<>"'{}|\\^`]+""", RegexOption.IGNORE_CASE)
+        private val AMAZON_REF_PATH_REGEX = Regex("""/ref=[^/?#]+""")
     }
 
     fun cleanUrl(rawUrl: String): CleaningResult {
@@ -117,7 +118,7 @@ class UrlCleaner(
     }
 
     private fun cleanAmazonPath(url: String): String {
-        return url.replace(Regex("""/ref=[^/?#]+"""), "")
+        return url.replace(AMAZON_REF_PATH_REGEX, "")
     }
 
     data class CleaningResult(

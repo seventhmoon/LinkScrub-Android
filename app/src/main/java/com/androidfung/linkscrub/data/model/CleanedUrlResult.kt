@@ -1,5 +1,8 @@
 package com.androidfung.linkscrub.data.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class CleanedUrlResult(
     val originalUrl: String,
     val unshortenedUrl: String?,

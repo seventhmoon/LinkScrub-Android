@@ -241,7 +241,7 @@ fun HistoryPanel(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(historyItems, key = { it.id }) { item ->
+                    items(items = historyItems, key = { it.id }) { item ->
                         HistoryCard(
                             item = item,
                             onClick = { onSelectItem(item) },

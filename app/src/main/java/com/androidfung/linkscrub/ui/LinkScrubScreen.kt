@@ -47,6 +47,7 @@ import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Link
+import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Route
 import androidx.compose.material.icons.rounded.Share
@@ -125,11 +126,11 @@ import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
 @Composable
 fun LinkScrubScreen(
     viewModel: LinkScrubViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val historyItems by viewModel.historyItems.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val haptic = LocalHapticFeedback.current
 
@@ -305,6 +306,23 @@ fun LinkScrubScreen(
                                         onTuneInspect = {
                                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                             viewModel.onTuneInspectClicked()
+                                        },
+                                        onScanQrCode = {
+                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            com.androidfung.linkscrub.util.QrCodeScanner.startScan(
+                                                context = context,
+                                                onSuccess = { scannedUrl ->
+                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                    viewModel.onQrCodeScanned(scannedUrl)
+                                                },
+                                                onFailure = { error ->
+                                                    // Record error and inform analytics
+                                                    com.androidfung.linkscrub.util.AnalyticsHelper.recordException(error)
+                                                },
+                                                onCanceled = {
+                                                    // User canceled or dismissed, no action needed
+                                                }
+                                            )
                                         }
                                     )
                                 }
@@ -382,11 +400,11 @@ fun LinkScrubScreen(
                 HistoryPanel(
                     historyItems = historyItems,
                     searchQuery = uiState.historySearchQuery,
-                    onSearchQueryChange = { viewModel.onHistorySearchQueryChanged(it) },
-                    onSelectItem = { item -> viewModel.selectHistoryItem(item) },
-                    onCopyItem = { item -> viewModel.copyHistoryItem(item) },
-                    onDeleteItem = { id -> viewModel.deleteHistoryItem(id) },
-                    onClearAll = { viewModel.clearAllHistory() },
+                    onSearchQueryChange = viewModel::onHistorySearchQueryChanged,
+                    onSelectItem = viewModel::selectHistoryItem,
+                    onCopyItem = viewModel::copyHistoryItem,
+                    onDeleteItem = viewModel::deleteHistoryItem,
+                    onClearAll = viewModel::clearAllHistory,
                     onClose = null,
                     modifier = Modifier.statusBarsPadding()
                 )
@@ -404,14 +422,14 @@ fun LinkScrubScreen(
             HistoryPanel(
                 historyItems = historyItems,
                 searchQuery = uiState.historySearchQuery,
-                onSearchQueryChange = { viewModel.onHistorySearchQueryChanged(it) },
+                onSearchQueryChange = viewModel::onHistorySearchQueryChanged,
                 onSelectItem = { item ->
                     viewModel.selectHistoryItem(item)
                     viewModel.setHistoryPaneVisible(false)
                 },
-                onCopyItem = { item -> viewModel.copyHistoryItem(item) },
-                onDeleteItem = { id -> viewModel.deleteHistoryItem(id) },
-                onClearAll = { viewModel.clearAllHistory() },
+                onCopyItem = viewModel::copyHistoryItem,
+                onDeleteItem = viewModel::deleteHistoryItem,
+                onClearAll = viewModel::clearAllHistory,
                 onClose = { viewModel.setHistoryPaneVisible(false) }
             )
         }
@@ -431,6 +449,7 @@ fun Step1InputView(
     onClearUrl: () -> Unit,
     onQuickClean: () -> Unit,
     onTuneInspect: () -> Unit,
+    onScanQrCode: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -493,7 +512,7 @@ fun Step1InputView(
             }
         }
 
-        // URL input text field
+        // URL input text field with Scan QR Code action
         OutlinedTextField(
             value = inputUrl,
             onValueChange = onUrlChange,
@@ -510,13 +529,25 @@ fun Step1InputView(
                 )
             },
             trailingIcon = {
-                if (inputUrl.isNotBlank()) {
-                    IconButton(onClick = onClearUrl) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(
+                        onClick = onScanQrCode,
+                        modifier = Modifier.testTag("scan_qr_button")
+                    ) {
                         Icon(
-                            imageVector = Icons.Rounded.Clear,
-                            contentDescription = "Clear input",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            imageVector = Icons.Rounded.QrCodeScanner,
+                            contentDescription = "Scan QR Code",
+                            tint = MaterialTheme.colorScheme.primary
                         )
+                    }
+                    if (inputUrl.isNotBlank()) {
+                        IconButton(onClick = onClearUrl) {
+                            Icon(
+                                imageVector = Icons.Rounded.Clear,
+                                contentDescription = "Clear input",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             },
@@ -1043,7 +1074,8 @@ fun Step1InputPreview() {
             onPasteClipboard = {},
             onClearUrl = {},
             onQuickClean = {},
-            onTuneInspect = {}
+            onTuneInspect = {},
+            onScanQrCode = {}
         )
     }
 }

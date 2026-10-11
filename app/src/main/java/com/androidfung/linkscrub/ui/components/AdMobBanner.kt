@@ -124,6 +124,11 @@ fun AdMobBanner(
                                         isAdLoaded = true
                                     }
 
+                                    override fun onAdImpression() {
+                                        super.onAdImpression()
+                                        com.androidfung.linkscrub.util.AnalyticsHelper.logAdImpression()
+                                    }
+
                                     override fun onAdFailedToLoad(error: LoadAdError) {
                                         super.onAdFailedToLoad(error)
                                         isAdLoaded = false

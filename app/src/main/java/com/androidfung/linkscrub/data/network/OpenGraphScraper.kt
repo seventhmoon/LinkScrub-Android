@@ -27,13 +27,15 @@ class JsoupOpenGraphScraper(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
 
         fun defaultClient(): OkHttpClient {
-            return OkHttpClient.Builder()
+            return NetworkClientProvider.sharedOkHttpClient.newBuilder()
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .connectTimeout(12, TimeUnit.SECONDS)
                 .readTimeout(12, TimeUnit.SECONDS)
                 .build()
         }
+
+        private val YOUTUBE_ID_REGEX = Regex("""^[a-zA-Z0-9_-]{8,16}$""")
 
         /**
          * Extracts a YouTube video ID from common YouTube URL formats:
@@ -79,8 +81,7 @@ class JsoupOpenGraphScraper(
         }
 
         private fun isValidYouTubeId(id: String): Boolean {
-            // YouTube IDs are typically 11 alphanumeric and -_ characters
-            return id.isNotBlank() && id.length in 8..16 && id.all { it.isLetterOrDigit() || it == '-' || it == '_' }
+            return id.isNotBlank() && YOUTUBE_ID_REGEX.matches(id)
         }
     }
 

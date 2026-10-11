@@ -1,9 +1,16 @@
 package com.androidfung.linkscrub.data.local
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "history_entries")
+@Entity(
+    tableName = "history_entries",
+    indices = [
+        Index("timestamp"),
+        Index("cleanedUrl")
+    ]
+)
 data class HistoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

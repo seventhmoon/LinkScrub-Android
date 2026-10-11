@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627051937091",
+    "project_id": "linkscrub-2026",
+    "storage_bucket": "linkscrub-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627051937091:android:358d23afab8c10734b83f6",
+        "android_client_info": {
+          "package_name": "com.androidfung.linkscrub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDykLgazQXqmuut2dNqLIRimMf99vJEBJo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

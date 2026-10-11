@@ -1,11 +1,13 @@
 package com.androidfung.linkscrub.ui
 
+import androidx.compose.runtime.Immutable
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 
 /**
  * Represents each parameter found in a URL, its default removal state,
  * and whether the user chooses to remove it or keep it.
  */
+@Immutable
 data class ParameterChipItem(
     val key: String,
     val value: String,
@@ -25,6 +27,7 @@ enum class WizardStep(val stepNumber: Int, val title: String) {
 /**
  * State holding all UI attributes for LinkScrub screen.
  */
+@Immutable
 data class LinkScrubUiState(
     val currentStep: WizardStep = WizardStep.INPUT,
     val inputUrl: String = "",

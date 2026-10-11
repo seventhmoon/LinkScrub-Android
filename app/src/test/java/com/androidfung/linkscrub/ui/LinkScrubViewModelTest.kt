@@ -266,6 +266,18 @@ class LinkScrubViewModelTest {
     }
 
     @Test
+    fun qrCodeScanned_updatesInputUrlAndSetsMessage() = runTest {
+        val qrUrl = "https://example.com/promo?utm_campaign=summer&qr=1"
+        viewModel.onQrCodeScanned(qrUrl)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(qrUrl, state.inputUrl)
+        // Since default is step-by-step mode, it should inspect parameters
+        assertEquals(WizardStep.INSPECT, state.currentStep)
+    }
+
+    @Test
     fun historyPaneToggle_updatesVisibility() = runTest {
         assertFalse(viewModel.uiState.value.isHistoryPaneVisible)
         viewModel.toggleHistoryPane()

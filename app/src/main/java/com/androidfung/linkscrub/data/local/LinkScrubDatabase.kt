@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [HistoryEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class LinkScrubDatabase : RoomDatabase() {
@@ -24,7 +24,8 @@ abstract class LinkScrubDatabase : RoomDatabase() {
                     context.applicationContext,
                     LinkScrubDatabase::class.java,
                     "linkscrub.db"
-                ).build()
+                ).fallbackToDestructiveMigration(dropAllTables = true)
+                    .build()
                 INSTANCE = instance
                 instance
             }

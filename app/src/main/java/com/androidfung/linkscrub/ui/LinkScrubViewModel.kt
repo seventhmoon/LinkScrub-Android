@@ -17,6 +17,7 @@ import com.androidfung.linkscrub.data.repository.HistoryRepository
 import com.androidfung.linkscrub.data.repository.RoomHistoryRepository
 import com.androidfung.linkscrub.domain.CleanUrlUseCase
 import com.androidfung.linkscrub.domain.UrlCleaner
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +45,10 @@ class LinkScrubViewModel(
     )
 ) : AndroidViewModel(application) {
 
+    private var cleanJob: Job? = null
+    private var inspectJob: Job? = null
+    private var metadataJob: Job? = null
+
     private val _uiState = MutableStateFlow(LinkScrubUiState())
     val uiState: StateFlow<LinkScrubUiState> = _uiState.asStateFlow()
 
@@ -65,6 +70,15 @@ class LinkScrubViewModel(
 
     init {
         checkClipboardForUrl()
+    }
+
+    private fun cancelInFlightJobs() {
+        cleanJob?.cancel()
+        cleanJob = null
+        inspectJob?.cancel()
+        inspectJob = null
+        metadataJob?.cancel()
+        metadataJob = null
     }
 
     /**
@@ -92,11 +106,13 @@ class LinkScrubViewModel(
     }
 
     fun onInputUrlChanged(url: String) {
+        cancelInFlightJobs()
         _uiState.update { it.copy(inputUrl = url, userMessage = null) }
     }
 
     fun useClipboardUrl() {
         val detected = _uiState.value.detectedClipboardUrl ?: return
+        cancelInFlightJobs()
         _uiState.update { it.copy(inputUrl = detected) }
         processInputUrl(detected)
     }
@@ -106,6 +122,7 @@ class LinkScrubViewModel(
     }
 
     fun clearInput() {
+        cancelInFlightJobs()
         _uiState.update {
             it.copy(
                 inputUrl = "",
@@ -138,6 +155,7 @@ class LinkScrubViewModel(
         if (parsed == null) {
             val withScheme = "https://$input"
             if (withScheme.toHttpUrlOrNull() != null) {
+                cancelInFlightJobs()
                 _uiState.update { it.copy(inputUrl = withScheme) }
                 processInputUrl(withScheme)
                 return
@@ -147,6 +165,7 @@ class LinkScrubViewModel(
             }
         }
 
+        cancelInFlightJobs()
         processInputUrl(input)
     }
 
@@ -167,6 +186,7 @@ class LinkScrubViewModel(
         } else {
             input
         }
+        cancelInFlightJobs()
         executeQuickClean(effectiveUrl)
     }
 
@@ -187,6 +207,7 @@ class LinkScrubViewModel(
         } else {
             input
         }
+        cancelInFlightJobs()
         prepareStep2Inspection(effectiveUrl)
     }
 
@@ -203,7 +224,8 @@ class LinkScrubViewModel(
      * copies clean URL to clipboard, and saves to history.
      */
     fun executeQuickClean(rawUrl: String) {
-        viewModelScope.launch {
+        cancelInFlightJobs()
+        cleanJob = viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     isProcessing = true,
@@ -217,6 +239,13 @@ class LinkScrubViewModel(
                     unshorten = true,
                     fetchMetadata = true,
                     saveToHistory = true
+                )
+
+                // Log privacy-safe analytics event
+                com.androidfung.linkscrub.util.AnalyticsHelper.logLinkScrubbed(
+                    paramCount = result.removedParams.size,
+                    unshortened = result.unshortenedUrl != null,
+                    isQuickClean = true
                 )
 
                 // Copy to system clipboard
@@ -239,6 +268,7 @@ class LinkScrubViewModel(
                     )
                 }
             } catch (e: Exception) {
+                com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
                 _uiState.update {
                     it.copy(
                         isProcessing = false,
@@ -253,7 +283,8 @@ class LinkScrubViewModel(
      * Step 2 Preparation: Parse URL parameters and check redirects.
      */
     private fun prepareStep2Inspection(rawUrl: String) {
-        viewModelScope.launch {
+        cancelInFlightJobs()
+        inspectJob = viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     isProcessing = true,
@@ -364,7 +395,8 @@ class LinkScrubViewModel(
      * Fetches Open Graph Metadata and saves to History.
      */
     fun onProceedToPreview() {
-        viewModelScope.launch {
+        cancelInFlightJobs()
+        metadataJob = viewModelScope.launch {
             val finalCleanUrl = _uiState.value.cleanedUrl.ifBlank {
                 _uiState.value.unshortenedUrl ?: _uiState.value.inputUrl
             }
@@ -379,13 +411,21 @@ class LinkScrubViewModel(
 
             val metadata = try {
                 openGraphScraper.scrape(finalCleanUrl)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
                 null
             }
 
             val removedParams = _uiState.value.detectedParameters
                 .filter { it.isMarkedForRemoval }
                 .map { it.key }
+
+            // Log privacy-safe analytics event
+            com.androidfung.linkscrub.util.AnalyticsHelper.logLinkScrubbed(
+                paramCount = removedParams.size,
+                unshortened = _uiState.value.unshortenedUrl != null,
+                isQuickClean = false
+            )
 
             // Save to history repository
             try {
@@ -396,8 +436,8 @@ class LinkScrubViewModel(
                     removedParams = removedParams,
                     metadata = metadata
                 )
-            } catch (_: Exception) {
-                // Non-blocking if db insert fails
+            } catch (e: Exception) {
+                com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
             }
 
             val originalUrl = _uiState.value.inputUrl
@@ -445,6 +485,7 @@ class LinkScrubViewModel(
      * Otherwise, places URL into input and starts inspection.
      */
     fun handleSharedUrl(sharedText: String) {
+        cancelInFlightJobs()
         val match = UrlCleaner.URL_REGEX.find(sharedText)
         val extractedUrl = match?.value ?: if (
             sharedText.startsWith("http://", ignoreCase = true) ||
@@ -467,9 +508,37 @@ class LinkScrubViewModel(
         }
     }
 
+    /**
+     * Handles URL extracted from scanned QR code.
+     * Updates inputUrl, extracts URLs if present, and provides user feedback.
+     */
+    fun onQrCodeScanned(scannedText: String) {
+        cancelInFlightJobs()
+        val trimmed = scannedText.trim()
+        val match = UrlCleaner.URL_REGEX.find(trimmed)
+        val extractedUrl = match?.value ?: if (
+            trimmed.startsWith("http://", ignoreCase = true) ||
+            trimmed.startsWith("https://", ignoreCase = true)
+        ) trimmed else null
+
+        val finalUrl = extractedUrl ?: trimmed
+        _uiState.update {
+            it.copy(
+                inputUrl = finalUrl,
+                userMessage = "Scanned QR code URL"
+            )
+        }
+        if (extractedUrl != null) {
+            processInputUrl(extractedUrl)
+        }
+    }
+
     // --- History & Supporting Pane Controls ---
 
     fun onHistorySearchQueryChanged(query: String) {
+        if (query.isNotBlank() && _historySearchQuery.value.isBlank()) {
+            com.androidfung.linkscrub.util.AnalyticsHelper.logHistorySearched()
+        }
         _historySearchQuery.value = query
         _uiState.update { it.copy(historySearchQuery = query) }
     }
@@ -539,12 +608,14 @@ class LinkScrubViewModel(
 
         var result = builder.build().toString()
         if (parsed.host.contains("amazon.", ignoreCase = true)) {
-            result = result.replace(Regex("""/ref=[^/?#]+"""), "")
+            result = result.replace(AMAZON_REF_PATH_REGEX, "")
         }
         return result
     }
 
     companion object {
+        private val AMAZON_REF_PATH_REGEX = Regex("""/ref=[^/?#]+""")
+
         fun provideFactory(application: Application): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
