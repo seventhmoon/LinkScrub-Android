@@ -54,5 +54,8 @@ data class LinkScrubUiState(
 
     // History & Supporting Pane state
     val isHistoryPaneVisible: Boolean = false,
-    val historySearchQuery: String = ""
+    val historySearchQuery: String = "",
+
+    // Help & FAQ sheet state
+    val isHelpSheetVisible: Boolean = false
 )

@@ -551,6 +551,14 @@ class LinkScrubViewModel(
         _uiState.update { it.copy(isHistoryPaneVisible = visible) }
     }
 
+    fun toggleHelpSheet() {
+        _uiState.update { it.copy(isHelpSheetVisible = !it.isHelpSheetVisible) }
+    }
+
+    fun setHelpSheetVisible(visible: Boolean) {
+        _uiState.update { it.copy(isHelpSheetVisible = visible) }
+    }
+
     fun selectHistoryItem(item: com.androidfung.linkscrub.data.model.HistoryItem) {
         _uiState.update {
             it.copy(

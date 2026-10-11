@@ -38,6 +38,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.HelpOutline
 import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material.icons.rounded.Check
@@ -116,6 +117,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
+import com.androidfung.linkscrub.ui.components.HelpFaqBottomSheet
 import com.androidfung.linkscrub.ui.components.HistoryPanel
 import com.androidfung.linkscrub.ui.components.OpenGraphPreviewCard
 import com.androidfung.linkscrub.ui.components.ParameterChipGroup
@@ -223,6 +225,18 @@ fun LinkScrubScreen(
                                 }
                             },
                             actions = {
+                                // Help & FAQ action button
+                                IconButton(onClick = { viewModel.toggleHelpSheet() }) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Rounded.HelpOutline,
+                                        contentDescription = "Help & FAQ",
+                                        tint = if (uiState.isHelpSheetVisible) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
+                                    )
+                                }
                                 // History action button
                                 IconButton(onClick = { viewModel.toggleHistoryPane() }) {
                                     Icon(
@@ -411,6 +425,13 @@ fun LinkScrubScreen(
             }
         }
     )
+
+    // Help & FAQ bottom sheet
+    if (uiState.isHelpSheetVisible) {
+        HelpFaqBottomSheet(
+            onDismissRequest = { viewModel.setHelpSheetVisible(false) }
+        )
+    }
 
     // Mobile / single-pane bottom sheet when history icon is tapped
     if (!isDualPane && uiState.isHistoryPaneVisible) {
