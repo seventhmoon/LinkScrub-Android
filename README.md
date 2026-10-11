@@ -15,7 +15,7 @@
   <a href="https://m3.material.io"><img src="https://img.shields.io/badge/Material%20Design-3%20Expressive-6750A4?logo=materialdesign&logoColor=white" alt="Material Design 3" /></a>
   <a href="https://developer.android.com/about/versions/15"><img src="https://img.shields.io/badge/Android-API%2028%2B%20(Target%2037)-3DDC84?logo=android&logoColor=white" alt="Android Version" /></a>
   <a href="https://play.google.com/store/apps/details?id=com.androidfung.linkscrub"><img src="https://img.shields.io/badge/Google_Play-LinkScrub-414141?logo=google-play&logoColor=white" alt="Get it on Google Play" /></a>
-  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License" /></a>
   <a href="https://developer.android.com/guide/topics/large-screens/adaptive-layouts"><img src="https://img.shields.io/badge/Adaptive-Dual--Pane%20(SupportingPaneScaffold)-00C853" alt="Adaptive Ready" /></a>
   <a href="#privacy-commitment"><img src="https://img.shields.io/badge/Privacy-100%25%20On--Device-success" alt="Privacy First" /></a>
 </p>
@@ -203,20 +203,21 @@ Please ensure all tests pass (`./gradlew testDebugUnitTest`) before submitting a
 
 ## 📄 License
 
-LinkScrub is distributed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for more information.
+LinkScrub is distributed under the **GNU General Public License v3.0 (GPLv3)**. See the [LICENSE.md](LICENSE.md) file for more information.
 
 ```text
-Copyright 2025 LinkScrub Contributors
+Copyright (C) 2026 Fung Lam
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+LinkScrub is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    http://www.apache.org/licenses/LICENSE-2.0
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
 ```
