@@ -14,9 +14,16 @@
   <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-BOM%202025.02.00-4285F4?logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" /></a>
   <a href="https://m3.material.io"><img src="https://img.shields.io/badge/Material%20Design-3%20Expressive-6750A4?logo=materialdesign&logoColor=white" alt="Material Design 3" /></a>
   <a href="https://developer.android.com/about/versions/15"><img src="https://img.shields.io/badge/Android-API%2028%2B%20(Target%2037)-3DDC84?logo=android&logoColor=white" alt="Android Version" /></a>
+  <a href="https://play.google.com/store/apps/details?id=com.androidfung.linkscrub"><img src="https://img.shields.io/badge/Google_Play-LinkScrub-414141?logo=google-play&logoColor=white" alt="Get it on Google Play" /></a>
   <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License" /></a>
   <a href="https://developer.android.com/guide/topics/large-screens/adaptive-layouts"><img src="https://img.shields.io/badge/Adaptive-Dual--Pane%20(SupportingPaneScaffold)-00C853" alt="Adaptive Ready" /></a>
   <a href="#privacy-commitment"><img src="https://img.shields.io/badge/Privacy-100%25%20On--Device-success" alt="Privacy First" /></a>
+</p>
+
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.androidfung.linkscrub">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" width="220" />
+  </a>
 </p>
 
 ---
