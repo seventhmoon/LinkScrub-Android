@@ -7,33 +7,55 @@
 
     <!--
         LinkScrub Adaptive Icon Monochrome:
-        Clean solid silhouette based on Icons.Rounded.CleaningServices for Android Themed Icons.
-        Placed within safe zone [18, 90].
+        Clean solid silhouette of soap bar 🧼 with bubbles and sparkles for Android 13+ Themed Icons.
+        All elements placed safely within the central circular safe zone (radius 36 from (54,54)).
     -->
 
-    <!-- CleaningServices Motif -->
-    <group
-        android:pivotX="12"
-        android:pivotY="12"
-        android:scaleX="2.25"
-        android:scaleY="2.25"
-        android:translateX="27"
-        android:translateY="27">
-
-        <path
-            android:fillColor="#FFFFFF"
-            android:pathData="M16,11h-1V4c0,-1.66 -1.34,-3 -3,-3h0c-1.66,0 -3,1.34 -3,3v7H8c-2.76,0 -5,2.24 -5,5v5c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2v-5C21,13.24 18.76,11 16,11z M19,21h-2v-3c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1v3h-2v-3c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1v3H9v-3c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1v3H5v-5c0,-1.65 1.35,-3 3,-3h8c1.65,0 3,1.35 3,3V21z" />
-
-    </group>
-
-    <!-- Clean Scrub Sparkles / Stars -->
+    <!-- Soap Bar Main Body -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M76,26 Q76,32 70,32 Q76,32 76,38 Q76,32 82,32 Q76,32 76,26 Z" />
+        android:pathData="M34,44 L74,44 C81.73,44 88,50.27 88,58 L88,62 C88,69.73 81.73,76 74,76 L34,76 C26.27,76 20,69.73 20,62 L20,58 C20,50.27 26.27,44 34,44 Z" />
 
+    <!-- Suds & Bubbles 🧼 -->
+    <!-- Large Bubble Top-Right (72, 36, r=8) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M32,34 Q32,38 28,38 Q32,38 32,42 Q32,38 36,38 Q32,38 32,34 Z" />
+        android:pathData="M72,28A8,8 0 1,0 72,44A8,8 0 1,0 72,28Z" />
+
+    <!-- Medium Bubble Center-Top (50, 27, r=6) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,21A6,6 0 1,0 50,33A6,6 0 1,0 50,21Z" />
+
+    <!-- Small Bubble Top-Left (35, 32, r=4.5) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,27.5A4.5,4.5 0 1,0 35,36.5A4.5,4.5 0 1,0 35,27.5Z" />
+
+    <!-- Tiny Sud Bubble Float (62, 22, r=2.5) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M62,19.5A2.5,2.5 0 1,0 62,24.5A2.5,2.5 0 1,0 62,19.5Z" />
+
+    <!-- Tiny Sud Bubble Bottom-Left (23, 44, r=3) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M23,41A3,3 0 1,0 23,47A3,3 0 1,0 23,41Z" />
+
+    <!-- Sparkles ✨ -->
+    <!-- Large Sparkle Top-Right (83, 24) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M83,18 Q83,24 77,24 Q83,24 83,30 Q83,24 89,24 Q83,24 83,18 Z" />
+
+    <!-- Medium Sparkle Left (23, 30) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M23,26 Q23,30 19,30 Q23,30 23,34 Q23,30 27,30 Q23,30 23,26 Z" />
+
+    <!-- Small Sparkle Bottom-Right (80, 68) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M80,65 Q80,68 77,68 Q80,68 80,71 Q80,68 83,68 Q80,68 80,65 Z" />
 
 </vector>
-
