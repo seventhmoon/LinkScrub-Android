@@ -109,6 +109,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.core.net.toUri
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.style.TextOverflow
@@ -1077,7 +1078,7 @@ fun openInBrowser(context: Context, url: String) {
         } else {
             url
         }
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(safeUrl))
+        val intent = Intent(Intent.ACTION_VIEW, safeUrl.toUri())
         context.startActivity(intent)
     } catch (_: Exception) {
     }
