@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.local.LinkScrubDatabase
 import com.androidfung.linkscrub.data.network.JsoupOpenGraphScraper
 import com.androidfung.linkscrub.data.network.OkHttpRedirectUnshortener
@@ -48,6 +49,30 @@ class LinkScrubViewModel(
     private var cleanJob: Job? = null
     private var inspectJob: Job? = null
     private var metadataJob: Job? = null
+
+    private fun getString(resId: Int, vararg formatArgs: Any): String {
+        return try {
+            getApplication<Application>().getString(resId, *formatArgs)
+        } catch (_: Exception) {
+            // Fallback for tests using mock/uninitialized Application
+            when (resId) {
+                R.string.msg_enter_valid_url -> "Please enter or paste a valid URL."
+                R.string.msg_enter_valid_http_url -> "Please enter a valid HTTP or HTTPS URL."
+                R.string.msg_cleaned_copied -> "Cleaned URL copied to clipboard!"
+                R.string.msg_cleaned_copied_with_savings -> "Cleaned URL copied to clipboard! (saved ${formatArgs.firstOrNull()} chars)"
+                R.string.msg_failed_to_clean_url -> "Failed to clean URL: ${formatArgs.firstOrNull()}"
+                R.string.msg_unknown_error -> "Unknown error"
+                R.string.msg_link_sanitized_params_removed -> "Link sanitized: ${formatArgs.getOrNull(0)} params removed (${formatArgs.getOrNull(1)} chars saved)"
+                R.string.msg_link_cleaned -> "Link cleaned"
+                R.string.msg_no_valid_url_in_shared_text -> "No valid URL found in shared text."
+                R.string.msg_scanned_qr_code_url -> "Scanned QR code URL"
+                R.string.msg_loaded_link_from_history -> "Loaded link from history"
+                R.string.msg_item_removed_from_history -> "Item removed from history"
+                R.string.msg_all_history_cleared -> "All history cleared"
+                else -> ""
+            }
+        }
+    }
 
     private val _uiState = MutableStateFlow(LinkScrubUiState())
     val uiState: StateFlow<LinkScrubUiState> = _uiState.asStateFlow()
@@ -147,7 +172,7 @@ class LinkScrubViewModel(
     fun onProceedFromInput() {
         val input = _uiState.value.inputUrl.trim()
         if (input.isBlank()) {
-            _uiState.update { it.copy(userMessage = "Please enter or paste a valid URL.") }
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_url)) }
             return
         }
 
@@ -160,7 +185,7 @@ class LinkScrubViewModel(
                 processInputUrl(withScheme)
                 return
             } else {
-                _uiState.update { it.copy(userMessage = "Please enter a valid HTTP or HTTPS URL.") }
+                _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_http_url)) }
                 return
             }
         }
@@ -176,7 +201,7 @@ class LinkScrubViewModel(
     fun onQuickCleanClicked() {
         val input = _uiState.value.inputUrl.trim()
         if (input.isBlank()) {
-            _uiState.update { it.copy(userMessage = "Please enter or paste a valid URL.") }
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_url)) }
             return
         }
         val effectiveUrl = if (input.toHttpUrlOrNull() == null && "https://$input".toHttpUrlOrNull() != null) {
@@ -197,7 +222,7 @@ class LinkScrubViewModel(
     fun onTuneInspectClicked() {
         val input = _uiState.value.inputUrl.trim()
         if (input.isBlank()) {
-            _uiState.update { it.copy(userMessage = "Please enter or paste a valid URL.") }
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_url)) }
             return
         }
         val effectiveUrl = if (input.toHttpUrlOrNull() == null && "https://$input".toHttpUrlOrNull() != null) {
@@ -252,7 +277,11 @@ class LinkScrubViewModel(
                 copyToClipboard(result.cleanedUrl)
 
                 val charsSaved = (rawUrl.length - result.cleanedUrl.length).coerceAtLeast(0)
-                val savingsFeedback = if (charsSaved > 0) " (saved $charsSaved chars)" else ""
+                val feedback = if (charsSaved > 0) {
+                    getString(R.string.msg_cleaned_copied_with_savings, charsSaved)
+                } else {
+                    getString(R.string.msg_cleaned_copied)
+                }
 
                 _uiState.update {
                     it.copy(
@@ -264,15 +293,16 @@ class LinkScrubViewModel(
                         metadata = result.metadata,
                         currentStep = WizardStep.PREVIEW,
                         isQuickCleanCopiedNotification = true,
-                        userMessage = "Cleaned URL copied to clipboard!$savingsFeedback"
+                        userMessage = feedback
                     )
                 }
             } catch (e: Exception) {
                 com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
+                val errorMsg = e.localizedMessage ?: getString(R.string.msg_unknown_error)
                 _uiState.update {
                     it.copy(
                         isProcessing = false,
-                        userMessage = "Failed to clean URL: ${e.localizedMessage ?: "Unknown error"}"
+                        userMessage = getString(R.string.msg_failed_to_clean_url, errorMsg)
                     )
                 }
             }
@@ -443,9 +473,9 @@ class LinkScrubViewModel(
             val originalUrl = _uiState.value.inputUrl
             val charsSaved = (originalUrl.length - finalCleanUrl.length).coerceAtLeast(0)
             val cleanFeedback = if (removedParams.isNotEmpty()) {
-                "Link sanitized: ${removedParams.size} params removed ($charsSaved chars saved)"
+                getString(R.string.msg_link_sanitized_params_removed, removedParams.size, charsSaved)
             } else {
-                "Link cleaned"
+                getString(R.string.msg_link_cleaned)
             }
 
             _uiState.update {
@@ -470,8 +500,12 @@ class LinkScrubViewModel(
             copyToClipboard(url)
             val originalUrl = _uiState.value.inputUrl
             val charsSaved = (originalUrl.length - url.length).coerceAtLeast(0)
-            val savingsFeedback = if (charsSaved > 0) " (saved $charsSaved chars)" else ""
-            _uiState.update { it.copy(userMessage = "Cleaned URL copied to clipboard!$savingsFeedback") }
+            val feedback = if (charsSaved > 0) {
+                getString(R.string.msg_cleaned_copied_with_savings, charsSaved)
+            } else {
+                getString(R.string.msg_cleaned_copied)
+            }
+            _uiState.update { it.copy(userMessage = feedback) }
         }
     }
 
@@ -503,7 +537,7 @@ class LinkScrubViewModel(
             processInputUrl(extractedUrl)
         } else {
             _uiState.update {
-                it.copy(userMessage = "No valid URL found in shared text.")
+                it.copy(userMessage = getString(R.string.msg_no_valid_url_in_shared_text))
             }
         }
     }
@@ -525,7 +559,7 @@ class LinkScrubViewModel(
         _uiState.update {
             it.copy(
                 inputUrl = finalUrl,
-                userMessage = "Scanned QR code URL"
+                userMessage = getString(R.string.msg_scanned_qr_code_url)
             )
         }
         if (extractedUrl != null) {
@@ -569,27 +603,27 @@ class LinkScrubViewModel(
                 removedParamsCount = item.removedParams.size,
                 metadata = item.metadata,
                 currentStep = WizardStep.PREVIEW,
-                userMessage = "Loaded link from history"
+                userMessage = getString(R.string.msg_loaded_link_from_history)
             )
         }
     }
 
     fun copyHistoryItem(item: com.androidfung.linkscrub.data.model.HistoryItem) {
         copyToClipboard(item.cleanedUrl)
-        _uiState.update { it.copy(userMessage = "Cleaned URL copied to clipboard!") }
+        _uiState.update { it.copy(userMessage = getString(R.string.msg_cleaned_copied)) }
     }
 
     fun deleteHistoryItem(id: Long) {
         viewModelScope.launch {
             historyRepository.delete(id)
-            _uiState.update { it.copy(userMessage = "Item removed from history") }
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_item_removed_from_history)) }
         }
     }
 
     fun clearAllHistory() {
         viewModelScope.launch {
             historyRepository.clearAll()
-            _uiState.update { it.copy(userMessage = "All history cleared") }
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_all_history_cleared)) }
         }
     }
 

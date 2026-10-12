@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">LinkScrub</string>
+    <string name="app_tagline">プライバシー重視のURLサニタイザー</string>
+
+    <!-- Wizard Steps -->
+    <string name="wizard_step_input">リンク入力</string>
+    <string name="wizard_step_inspect">確認とフィルター</string>
+    <string name="wizard_step_preview">プレビューと操作</string>
+    <string name="wizard_step_number">ステップ %1$d</string>
+    <string name="wizard_step_completed">%1$s 完了</string>
+
+    <!-- Actions & Common Buttons -->
+    <string name="action_restart">再起動</string>
+    <string name="action_start_over">最初からやり直す</string>
+    <string name="action_paste">貼り付け</string>
+    <string name="action_clear_input">入力をクリア</string>
+    <string name="action_scan_qr">QRコードをスキャン</string>
+    <string name="action_quick_clean_copy">クイッククリーン＆コピー</string>
+    <string name="action_scrubbing_link">リンクをサニタイズ中…</string>
+    <string name="action_tune_inspect">パラメータを調整・確認</string>
+    <string name="action_confirm_preview">確定してプレビュー</string>
+    <string name="action_back">戻る</string>
+    <string name="action_copy">コピー</string>
+    <string name="action_share">共有</string>
+    <string name="action_open_in_browser">ブラウザで開く</string>
+    <string name="action_adjust_parameters">パラメータを調整</string>
+    <string name="action_scrub_another">別のリンクをサニタイズ</string>
+    <string name="action_cancel">キャンセル</string>
+
+    <!-- Step 1: Input -->
+    <string name="input_link_detected_clipboard">クリップボード内のリンクを検出</string>
+    <string name="input_url_label">サニタイズするリンクを貼り付けまたは入力</string>
+    <string name="input_url_placeholder">https://example.com?utm_source=&#8230;</string>
+    <string name="cd_clipboard_found">クリップボード検出</string>
+    <string name="cd_quick_clean_icon">クイッククリーンアイコン</string>
+    <string name="cd_tune_inspect_icon">パラメータ調整・確認アイコン</string>
+
+    <!-- Step 2: Inspect -->
+    <string name="inspect_unshortening">リダイレクトを追跡し短縮URLを展開中…</string>
+    <string name="inspect_redirect_resolved">短縮リンク解決完了（%1$d 回ホップ）</string>
+    <string name="inspect_destination">リンク先：%1$s</string>
+    <string name="inspect_candidate_preview_title">クリーンURL リアルタイムプレビュー</string>
+    <string name="cd_redirect_traced">リダイレクト追跡完了</string>
+    <string name="cd_preview">プレビュー</string>
+
+    <!-- Parameter Chip Group -->
+    <string name="param_group_title">クエリパラメータ (%1$d)</string>
+    <string name="param_group_subtitle">%1$d 個を削除指定（うち追跡パラメータ %2$d 個）</string>
+    <string name="param_action_scrub_all">すべて削除</string>
+    <string name="param_action_keep_all">すべて保持</string>
+    <string name="param_empty_clean">このURLにはクエリパラメータがありません。綺麗な状態です！</string>
+    <string name="cd_param_marked_for_scrub">削除対象として選択済み</string>
+    <string name="cd_param_tracking">追跡パラメータ</string>
+    <string name="cd_param_safe">安全なパラメータ</string>
+
+    <!-- Step 3: Preview -->
+    <string name="preview_success_title">リンクのサニタイズが完了しました！</string>
+    <string name="preview_params_eliminated">%1$d 個の追跡パラメータを除去しました</string>
+    <string name="preview_clean_url_title">サニタイズ済みクリーンURL</string>
+    <string name="cd_success">成功</string>
+    <string name="cd_copy_clean_url">クリーンURLをコピー</string>
+    <string name="cd_share_clean_url">クリーンURLを共有</string>
+    <string name="share_chooser_title">サニタイズ済みURLの共有</string>
+
+    <!-- Open Graph Preview Card -->
+    <string name="og_fetching_metadata">リンクのメタデータとプレビューを取得中…</string>
+    <string name="og_default_thumbnail_cd">リンクのサムネイル</string>
+    <string name="og_image_failed_cd">画像を読み込めませんでした</string>
+    <string name="og_image_unavailable">プレビュー画像を利用できません</string>
+    <string name="og_no_metadata_found">クリーンURLの共有準備完了。サイトにOpen Graphタグがありません。</string>
+    <string name="og_tags_title">Open Graph &amp; Twitterタグ (%1$d)</string>
+    <string name="og_collapse_tags">タグを折りたたむ</string>
+    <string name="og_expand_tags">タグを展開</string>
+    <string name="og_copy_tag_cd">%1$s の値をコピー</string>
+    <string name="og_tag_copied_toast">%1$s をコピーしました</string>
+
+    <!-- History Panel -->
+    <string name="history_title">サニタイズ履歴</string>
+    <string name="history_empty_subtitle">履歴はまだありません</string>
+    <string name="history_count_subtitle">%1$d 件のリンクを記録</string>
+    <string name="history_clear_all_dialog_title">すべての履歴を消去</string>
+    <string name="history_clear_all_dialog_message">保存されているサニタイズ済みリンクをすべて削除してもよろしいですか？この操作は元に戻せません。</string>
+    <string name="history_clear_all_action">すべて消去</string>
+    <string name="history_search_placeholder">履歴を検索…</string>
+    <string name="history_empty_search">「%1$s」に一致する結果は見つかりませんでした</string>
+    <string name="history_empty_state_title">履歴はありません</string>
+    <string name="history_empty_state_subtitle">サニタイズ済みリンクはこの端末内に安全にローカル保存されます。</string>
+    <string name="history_default_item_title">サニタイズ済みリンク</string>
+    <string name="history_from_url">元URL：%1$s</string>
+    <string name="history_params_removed">-%1$d パラメータ</string>
+    <string name="cd_history">履歴</string>
+    <string name="cd_clear_all_history">すべての履歴を消去</string>
+    <string name="cd_close_history">履歴を閉じる</string>
+    <string name="cd_search">検索</string>
+    <string name="cd_clear_search">検索をクリア</string>
+    <string name="cd_delete">削除</string>
+
+    <!-- Help & FAQ Bottom Sheet -->
+    <string name="help_title">ヘルプと情報</string>
+    <string name="help_subtitle">ガイド、よくある質問、プライバシー方針</string>
+    <string name="help_tab_faq">よくある質問</string>
+    <string name="help_tab_how_it_works">仕組み</string>
+    <string name="help_tab_about">アプリについて</string>
+    <string name="cd_help_faq">ヘルプとよくある質問</string>
+    <string name="cd_expand">展開</string>
+    <string name="cd_collapse">折りたたむ</string>
+
+    <!-- FAQ Items -->
+    <string name="faq_q1">LinkScrubは何をするアプリですか？</string>
+    <string name="faq_a1">LinkScrubはWebアドレス（URL）から追跡パラメータ（utm_*、fbclid、gclid、セッション識別子など）を削除して綺麗にします。また、短縮URL（bit.ly、t.coなど）を展開し、共有やアクセスの前に実際のリンク先を確認できるようにします。</string>
+    <string name="faq_q2">LinkScrubはリンクを保存したりアップロードしたりしますか？</string>
+    <string name="faq_a2">いいえ。LinkScrubは100%端末内で動作し、プライバシー最優先です。リンク、パラメータ、閲覧履歴が外部サーバーに送信されることは一切ありません。すべての解析と履歴はスマートフォン内のみに保持されます。</string>
+    <string name="faq_q3">サニタイズによってYouTubeの再生時間などの重要機能は壊れませんか？</string>
+    <string name="faq_a3">壊れません。LinkScrubはドメイン認識機能を備えており、YouTubeの開始時間（t=…）やAmazonの主要商品パスなどの必要なパラメータを保持しつつ、追跡ゴミ（si=やリファラタグなど）のみを除去します。</string>
+    <string name="faq_q4">他のアプリからLinkScrubを利用するにはどうすればよいですか？</string>
+    <string name="faq_a4">Twitter、WhatsApp、Chrome、Redditなどでリンクを綺麗にしたいときは、「共有」をタップして「LinkScrub」を選択してください。自動的にリンクが読み込まれ、サニタイズされた綺麗なURLをすぐにコピーまたは再共有できます。</string>
+    <string name="faq_q5">クイッククリーンモードとは何ですか？</string>
+    <string name="faq_a5">クイッククリーンモードでは、リンクを貼り付けるとワンタップで即座にサニタイズされクリップボードにコピーされます。途中確認手順をスキップして素早く共有したい場合に便利です。</string>
+    <string name="faq_q6">短縮URLの展開はどのように機能しますか？</string>
+    <string name="faq_a6">短縮URL（bit.ly、t.coなど）は1つ以上のホップを経て最終目的地にリダイレクトされます。LinkScrubは端末内で循環リダイレクト保護を行いつつHTTPヘッダーを追跡し、安全に本来のリンク先を明らかにします。</string>
+
+    <!-- How It Works Items -->
+    <string name="how_it_works_step1_number">1</string>
+    <string name="how_it_works_step1_title">入力と検出</string>
+    <string name="how_it_works_step1_desc">URLの貼り付け、QRコードのスキャン、または他アプリからの共有で行えます。会話文の中にURLが含まれていても自動で抽出・検出します。</string>
+    <string name="how_it_works_step2_number">2</string>
+    <string name="how_it_works_step2_title">確認とパラメータ除去</string>
+    <string name="how_it_works_step2_desc">URLパラメータを解析し、既知の追跡マーカー（UTM、Facebook fbclid、Google Ads gclid、TikTokなど）と通常の安全なパラメータに分類します。各パラメータの削除・保持は自由に切り替え可能です。</string>
+    <string name="how_it_works_step3_number">3</string>
+    <string name="how_it_works_step3_title">短縮URL展開とOpen Graphプレビュー</string>
+    <string name="how_it_works_step3_desc">短縮リンクの場合はリダイレクトを安全に解決します。タイトルや画像、説明文などのメタデータを取得し、共有前に安全性を確認できます。</string>
+
+    <!-- About Section -->
+    <string name="about_app_name">🧼 LinkScrub</string>
+    <string name="about_version">バージョン 1.0.0</string>
+    <string name="about_description">Android向けのクリーンで安全、高知能なURLサニタイザー。GNU General Public License v3.0 (GPLv3) のもとで提供される完全無料のオープンソースソフトウェアです。</string>
+    <string name="about_play_store_title">Google Playで確認</string>
+    <string name="about_play_store_subtitle">Play ストアでLinkScrubを評価・レビュー</string>
+    <string name="about_github_title">GitHub ソースコード</string>
+    <string name="about_github_subtitle">開発への貢献、問題の報告、コードの確認</string>
+    <string name="about_privacy_title">プライバシーポリシー</string>
+    <string name="about_privacy_subtitle">完全端末内処理のプライバシー保証を読む</string>
+
+    <!-- In-App Update (MainActivity) -->
+    <string name="update_downloaded_message">アップデートがダウンロードされました。再起動してインストールしてください</string>
+    <string name="update_restart_action">再起動</string>
+
+    <!-- Feedback & User Messages -->
+    <string name="msg_enter_valid_url">有効なURLを入力または貼り付けてください。</string>
+    <string name="msg_enter_valid_http_url">有効なHTTPまたはHTTPSのURLを入力してください。</string>
+    <string name="msg_cleaned_copied">クリーンURLをクリップボードにコピーしました！</string>
+    <string name="msg_cleaned_copied_with_savings">クリーンURLをクリップボードにコピーしました！（%1$d 文字削減）</string>
+    <string name="msg_failed_to_clean_url">URLのサニタイズに失敗しました：%1$s</string>
+    <string name="msg_unknown_error">不明なエラー</string>
+    <string name="msg_link_sanitized_params_removed">リンクをサニタイズしました：%1$d 個のパラメータを削除（%2$d 文字削減）</string>
+    <string name="msg_link_cleaned">リンクをクリーンアップしました</string>
+    <string name="msg_no_valid_url_in_shared_text">共有されたテキストに有効なURLが見つかりませんでした。</string>
+    <string name="msg_scanned_qr_code_url">QRコードからURLを読み取りました</string>
+    <string name="msg_loaded_link_from_history">履歴からリンクを読み込みました</string>
+    <string name="msg_item_removed_from_history">履歴からアイテムを削除しました</string>
+    <string name="msg_all_history_cleared">すべての履歴を消去しました</string>
+</resources>

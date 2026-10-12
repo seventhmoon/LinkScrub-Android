@@ -58,10 +58,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import com.androidfung.linkscrub.ui.openInBrowser
@@ -122,12 +124,16 @@ fun HistoryPanel(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            text = "Clean Link History",
+                            text = stringResource(R.string.history_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = if (historyItems.isEmpty()) "No scrubbed links yet" else "${historyItems.size} links recorded",
+                            text = if (historyItems.isEmpty()) {
+                                stringResource(R.string.history_empty_subtitle)
+                            } else {
+                                stringResource(R.string.history_count_subtitle, historyItems.size)
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -141,7 +147,7 @@ fun HistoryPanel(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DeleteSweep,
-                                contentDescription = "Clear All History",
+                                contentDescription = stringResource(R.string.cd_clear_all_history),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         }
@@ -150,7 +156,7 @@ fun HistoryPanel(
                         IconButton(onClick = onClose) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = "Close History"
+                                contentDescription = stringResource(R.string.cd_close_history)
                             )
                         }
                     }
@@ -164,11 +170,11 @@ fun HistoryPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
-                placeholder = { Text("Search history...") },
+                placeholder = { Text(stringResource(R.string.history_search_placeholder)) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Search,
-                        contentDescription = "Search",
+                        contentDescription = stringResource(R.string.cd_search),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
@@ -177,7 +183,7 @@ fun HistoryPanel(
                         IconButton(onClick = { onSearchQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Rounded.Clear,
-                                contentDescription = "Clear Search"
+                                contentDescription = stringResource(R.string.cd_clear_search)
                             )
                         }
                     }
@@ -221,13 +227,17 @@ fun HistoryPanel(
                             )
                         }
                         Text(
-                            text = if (searchQuery.isNotBlank()) "No results found for \"$searchQuery\"" else "No clean link history",
+                            text = if (searchQuery.isNotBlank()) {
+                                stringResource(R.string.history_empty_search, searchQuery)
+                            } else {
+                                stringResource(R.string.history_empty_state_title)
+                            },
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Cleaned links are safely saved locally on this device.",
+                            text = stringResource(R.string.history_empty_state_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -269,8 +279,8 @@ fun HistoryPanel(
     if (showClearConfirmationDialog) {
         AlertDialog(
             onDismissRequest = { showClearConfirmationDialog = false },
-            title = { Text("Clear All History") },
-            text = { Text("Are you sure you want to delete all saved sanitized links? This action cannot be undone.") },
+            title = { Text(stringResource(R.string.history_clear_all_dialog_title)) },
+            text = { Text(stringResource(R.string.history_clear_all_dialog_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -279,7 +289,7 @@ fun HistoryPanel(
                     }
                 ) {
                     Text(
-                        text = "Clear All",
+                        text = stringResource(R.string.history_clear_all_action),
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -290,7 +300,7 @@ fun HistoryPanel(
             dismissButton = {
                 TextButton(onClick = { showClearConfirmationDialog = false }) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.action_cancel),
                         maxLines = 1,
                         softWrap = false
                     )
@@ -335,7 +345,7 @@ fun HistoryCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = item.metadata?.title ?: item.metadata?.siteName ?: "Sanitized Link",
+                    text = item.metadata?.title ?: item.metadata?.siteName ?: stringResource(R.string.history_default_item_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -383,7 +393,7 @@ fun HistoryCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "From: ${item.originalUrl}",
+                    text = stringResource(R.string.history_from_url, item.originalUrl),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -400,7 +410,7 @@ fun HistoryCard(
                             .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
                         Text(
-                            text = "-${item.removedParams.size} params",
+                            text = stringResource(R.string.history_params_removed, item.removedParams.size),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onErrorContainer,
                             fontWeight = FontWeight.Bold
@@ -424,7 +434,7 @@ fun HistoryCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.ContentCopy,
-                        contentDescription = "Copy Clean URL",
+                        contentDescription = stringResource(R.string.cd_copy_clean_url),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -440,7 +450,7 @@ fun HistoryCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Share,
-                        contentDescription = "Share Clean URL",
+                        contentDescription = stringResource(R.string.cd_share_clean_url),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -456,7 +466,7 @@ fun HistoryCard(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                        contentDescription = "Open in Browser",
+                        contentDescription = stringResource(R.string.action_open_in_browser),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -469,7 +479,7 @@ fun HistoryCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.cd_delete),
                         tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
                         modifier = Modifier.size(18.dp)
                     )

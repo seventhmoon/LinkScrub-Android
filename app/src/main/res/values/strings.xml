@@ -1,3 +1,162 @@
 <resources>
     <string name="app_name">LinkScrub</string>
+    <string name="app_tagline">Privacy URL Sanitizer</string>
+
+    <!-- Wizard Steps -->
+    <string name="wizard_step_input">Input Link</string>
+    <string name="wizard_step_inspect">Inspect &amp; Filter</string>
+    <string name="wizard_step_preview">Preview &amp; Action</string>
+    <string name="wizard_step_number">Step %1$d</string>
+    <string name="wizard_step_completed">%1$s Completed</string>
+
+    <!-- Actions & Common Buttons -->
+    <string name="action_restart">Restart</string>
+    <string name="action_start_over">Start over</string>
+    <string name="action_paste">Paste</string>
+    <string name="action_clear_input">Clear input</string>
+    <string name="action_scan_qr">Scan QR Code</string>
+    <string name="action_quick_clean_copy">Quick Clean &amp; Copy</string>
+    <string name="action_scrubbing_link">Scrubbing link…</string>
+    <string name="action_tune_inspect">Tune / Inspect Parameters</string>
+    <string name="action_confirm_preview">Confirm &amp; Preview</string>
+    <string name="action_back">Back</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_open_in_browser">Open in Browser</string>
+    <string name="action_adjust_parameters">Adjust Parameters</string>
+    <string name="action_scrub_another">Scrub Another</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Step 1: Input -->
+    <string name="input_link_detected_clipboard">Link detected on clipboard</string>
+    <string name="input_url_label">Paste or enter link to scrub</string>
+    <string name="input_url_placeholder">https://example.com?utm_source=&#8230;</string>
+    <string name="cd_clipboard_found">Clipboard found</string>
+    <string name="cd_quick_clean_icon">Quick Clean icon</string>
+    <string name="cd_tune_inspect_icon">Tune / Inspect icon</string>
+
+    <!-- Step 2: Inspect -->
+    <string name="inspect_unshortening">Tracing redirects and unshortening URL…</string>
+    <string name="inspect_redirect_resolved">Short link resolved (%1$d hops)</string>
+    <string name="inspect_destination">Destination: %1$s</string>
+    <string name="inspect_candidate_preview_title">Live Cleaned URL Preview</string>
+    <string name="cd_redirect_traced">Redirect traced</string>
+    <string name="cd_preview">Preview</string>
+
+    <!-- Parameter Chip Group -->
+    <string name="param_group_title">Query Parameters (%1$d)</string>
+    <string name="param_group_subtitle">%1$d marked for scrub (%2$d tracking)</string>
+    <string name="param_action_scrub_all">Scrub All</string>
+    <string name="param_action_keep_all">Keep All</string>
+    <string name="param_empty_clean">No query parameters found in this URL. The URL is clean!</string>
+    <string name="cd_param_marked_for_scrub">Marked for scrub</string>
+    <string name="cd_param_tracking">Tracking parameter</string>
+    <string name="cd_param_safe">Safe parameter</string>
+
+    <!-- Step 3: Preview -->
+    <string name="preview_success_title">Link Successfully Sanitized!</string>
+    <string name="preview_params_eliminated">%1$d tracking parameter(s) eliminated</string>
+    <string name="preview_clean_url_title">Scrubbed Clean URL</string>
+    <string name="cd_success">Success</string>
+    <string name="cd_copy_clean_url">Copy Clean URL</string>
+    <string name="cd_share_clean_url">Share Clean URL</string>
+    <string name="share_chooser_title">Share Cleaned URL</string>
+
+    <!-- Open Graph Preview Card -->
+    <string name="og_fetching_metadata">Fetching link metadata &amp; preview…</string>
+    <string name="og_default_thumbnail_cd">Link thumbnail</string>
+    <string name="og_image_failed_cd">Failed to load image</string>
+    <string name="og_image_unavailable">Preview image unavailable</string>
+    <string name="og_no_metadata_found">Cleaned URL ready to share. No Open Graph tags returned by site.</string>
+    <string name="og_tags_title">Open Graph &amp; Twitter Tags (%1$d)</string>
+    <string name="og_collapse_tags">Collapse tags</string>
+    <string name="og_expand_tags">Expand tags</string>
+    <string name="og_copy_tag_cd">Copy %1$s value</string>
+    <string name="og_tag_copied_toast">Copied %1$s</string>
+
+    <!-- History Panel -->
+    <string name="history_title">Clean Link History</string>
+    <string name="history_empty_subtitle">No scrubbed links yet</string>
+    <string name="history_count_subtitle">%1$d links recorded</string>
+    <string name="history_clear_all_dialog_title">Clear All History</string>
+    <string name="history_clear_all_dialog_message">Are you sure you want to delete all saved sanitized links? This action cannot be undone.</string>
+    <string name="history_clear_all_action">Clear All</string>
+    <string name="history_search_placeholder">Search history…</string>
+    <string name="history_empty_search">No results found for \"%1$s\"</string>
+    <string name="history_empty_state_title">No clean link history</string>
+    <string name="history_empty_state_subtitle">Cleaned links are safely saved locally on this device.</string>
+    <string name="history_default_item_title">Sanitized Link</string>
+    <string name="history_from_url">From: %1$s</string>
+    <string name="history_params_removed">-%1$d params</string>
+    <string name="cd_history">History</string>
+    <string name="cd_clear_all_history">Clear All History</string>
+    <string name="cd_close_history">Close History</string>
+    <string name="cd_search">Search</string>
+    <string name="cd_clear_search">Clear Search</string>
+    <string name="cd_delete">Delete</string>
+
+    <!-- Help & FAQ Bottom Sheet -->
+    <string name="help_title">Help &amp; Information</string>
+    <string name="help_subtitle">Guides, FAQs, and privacy principles</string>
+    <string name="help_tab_faq">FAQ</string>
+    <string name="help_tab_how_it_works">How It Works</string>
+    <string name="help_tab_about">About</string>
+    <string name="cd_help_faq">Help &amp; FAQ</string>
+    <string name="cd_expand">Expand</string>
+    <string name="cd_collapse">Collapse</string>
+
+    <!-- FAQ Items -->
+    <string name="faq_q1">What does LinkScrub do?</string>
+    <string name="faq_a1">LinkScrub cleans web addresses (URLs) by stripping tracking parameters (such as utm_*, fbclid, gclid, and session markers). It also unshortens short links (bit.ly, t.co) so you can see where they really lead before sharing or visiting.</string>
+    <string name="faq_q2">Does LinkScrub store or upload my links?</string>
+    <string name="faq_a2">No. LinkScrub is 100% on-device and privacy-first. Your links, parameters, and browsing history are never transmitted to external cloud servers. All link analysis and history are kept strictly on your phone.</string>
+    <string name="faq_q3">Will scrubbing break important features like YouTube video timestamps?</string>
+    <string name="faq_a3">No. LinkScrub features domain-aware intelligence that preserves essential parameters (such as \'t=…\' start timestamps on YouTube videos and core product paths on Amazon) while stripping tracking garbage (like \'si=\' or referral tags).</string>
+    <string name="faq_q4">How do I use LinkScrub from other apps?</string>
+    <string name="faq_a4">Whenever you want to clean a link in Twitter, WhatsApp, Chrome, or Reddit, tap \'Share\' in that app and choose \'LinkScrub\'. LinkScrub will automatically receive, scrub, and allow you to copy or re-share the clean URL immediately.</string>
+    <string name="faq_q5">What is Quick-Clean Mode?</string>
+    <string name="faq_a5">Quick-Clean Mode allows you to paste a link and have it immediately sanitized and copied to your clipboard with a single tap, bypassing intermediate review steps for speedy sharing.</string>
+    <string name="faq_q6">How does unshortening work?</string>
+    <string name="faq_a6">Short URLs (e.g. bit.ly, t.co) redirect through one or more hops to their destination. LinkScrub follows these HTTP redirect headers on-device with built-in cyclic loop detection to reveal the genuine destination safely.</string>
+
+    <!-- How It Works Items -->
+    <string name="how_it_works_step1_number">1</string>
+    <string name="how_it_works_step1_title">Input &amp; Detection</string>
+    <string name="how_it_works_step1_desc">Paste a URL, scan a QR code, or share directly to LinkScrub from another app. LinkScrub automatically parses links even when embedded in conversational text blocks.</string>
+    <string name="how_it_works_step2_number">2</string>
+    <string name="how_it_works_step2_title">Inspect &amp; Parameter Stripping</string>
+    <string name="how_it_works_step2_desc">LinkScrub inspects query tokens and categorizes them into known tracking markers (UTM, Facebook fbclid, Google Ads gclid, TikTok telemetry) and legitimate parameters. You can toggle any parameter on or off.</string>
+    <string name="how_it_works_step3_number">3</string>
+    <string name="how_it_works_step3_title">Unshortening &amp; Open Graph Preview</string>
+    <string name="how_it_works_step3_desc">If the URL is a shortlink, redirect headers are resolved with cyclic loop protection. Rich metadata (title, preview image, description) is fetched so you can verify the target safely before sharing.</string>
+
+    <!-- About Section -->
+    <string name="about_app_name">🧼 LinkScrub</string>
+    <string name="about_version">Version 1.0.0</string>
+    <string name="about_description">Clean, Private, and Intelligent URL Sanitizer for Android. Free and open-source under the GNU General Public License v3.0 (GPLv3).</string>
+    <string name="about_play_store_title">View on Google Play</string>
+    <string name="about_play_store_subtitle">Rate and review LinkScrub on Play Store</string>
+    <string name="about_github_title">Source Code on GitHub</string>
+    <string name="about_github_subtitle">Contribute, report issues, or view code</string>
+    <string name="about_privacy_title">Privacy Policy</string>
+    <string name="about_privacy_subtitle">Read our 100% on-device privacy guarantee</string>
+
+    <!-- In-App Update (MainActivity) -->
+    <string name="update_downloaded_message">An update has just been downloaded. Restart to install</string>
+    <string name="update_restart_action">Restart</string>
+
+    <!-- Feedback & User Messages -->
+    <string name="msg_enter_valid_url">Please enter or paste a valid URL.</string>
+    <string name="msg_enter_valid_http_url">Please enter a valid HTTP or HTTPS URL.</string>
+    <string name="msg_cleaned_copied">Cleaned URL copied to clipboard!</string>
+    <string name="msg_cleaned_copied_with_savings">Cleaned URL copied to clipboard! (saved %1$d chars)</string>
+    <string name="msg_failed_to_clean_url">Failed to clean URL: %1$s</string>
+    <string name="msg_unknown_error">Unknown error</string>
+    <string name="msg_link_sanitized_params_removed">Link sanitized: %1$d params removed (%2$d chars saved)</string>
+    <string name="msg_link_cleaned">Link cleaned</string>
+    <string name="msg_no_valid_url_in_shared_text">No valid URL found in shared text.</string>
+    <string name="msg_scanned_qr_code_url">Scanned QR code URL</string>
+    <string name="msg_loaded_link_from_history">Loaded link from history</string>
+    <string name="msg_item_removed_from_history">Item removed from history</string>
+    <string name="msg_all_history_cleared">All history cleared</string>
 </resources>

@@ -106,6 +106,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -116,6 +117,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import com.androidfung.linkscrub.ui.components.HelpFaqBottomSheet
@@ -213,12 +215,12 @@ fun LinkScrubScreen(
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Column {
                                         Text(
-                                            text = "LinkScrub",
+                                            text = stringResource(R.string.app_name),
                                             style = MaterialTheme.typography.titleLarge,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Privacy URL Sanitizer",
+                                            text = stringResource(R.string.app_tagline),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -230,7 +232,7 @@ fun LinkScrubScreen(
                                 IconButton(onClick = { viewModel.toggleHelpSheet() }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Rounded.HelpOutline,
-                                        contentDescription = "Help & FAQ",
+                                        contentDescription = stringResource(R.string.cd_help_faq),
                                         tint = if (uiState.isHelpSheetVisible) {
                                             MaterialTheme.colorScheme.primary
                                         } else {
@@ -242,7 +244,7 @@ fun LinkScrubScreen(
                                 IconButton(onClick = { viewModel.toggleHistoryPane() }) {
                                     Icon(
                                         imageVector = Icons.Rounded.History,
-                                        contentDescription = "History",
+                                        contentDescription = stringResource(R.string.cd_history),
                                         tint = if (uiState.isHistoryPaneVisible || isDualPane) {
                                             MaterialTheme.colorScheme.primary
                                         } else {
@@ -254,7 +256,7 @@ fun LinkScrubScreen(
                                     IconButton(onClick = { viewModel.clearInput() }) {
                                         Icon(
                                             imageVector = Icons.Rounded.RestartAlt,
-                                            contentDescription = "Start over",
+                                            contentDescription = stringResource(R.string.action_start_over),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
@@ -499,14 +501,14 @@ fun Step1InputView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.ContentPaste,
-                        contentDescription = "Clipboard found",
+                        contentDescription = stringResource(R.string.cd_clipboard_found),
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Link detected on clipboard",
+                            text = stringResource(R.string.input_link_detected_clipboard),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -525,7 +527,7 @@ fun Step1InputView(
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text(
-                            text = "Paste",
+                            text = stringResource(R.string.action_paste),
                             maxLines = 1,
                             softWrap = false
                         )
@@ -541,8 +543,8 @@ fun Step1InputView(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("url_input_field"),
-            label = { Text("Paste or enter link to scrub") },
-            placeholder = { Text("https://example.com?utm_source=...") },
+            label = { Text(stringResource(R.string.input_url_label)) },
+            placeholder = { Text(stringResource(R.string.input_url_placeholder)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Rounded.Link,
@@ -558,7 +560,7 @@ fun Step1InputView(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.QrCodeScanner,
-                            contentDescription = "Scan QR Code",
+                            contentDescription = stringResource(R.string.action_scan_qr),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -566,7 +568,7 @@ fun Step1InputView(
                         IconButton(onClick = onClearUrl) {
                             Icon(
                                 imageVector = Icons.Rounded.Clear,
-                                contentDescription = "Clear input",
+                                contentDescription = stringResource(R.string.action_clear_input),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -620,19 +622,19 @@ fun Step1InputView(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Scrubbing link...",
+                        text = stringResource(R.string.action_scrubbing_link),
                         maxLines = 1,
                         softWrap = false
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.Bolt,
-                        contentDescription = "Quick Clean icon",
+                        contentDescription = stringResource(R.string.cd_quick_clean_icon),
                         modifier = Modifier.size(22.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Quick Clean & Copy",
+                        text = stringResource(R.string.action_quick_clean_copy),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
@@ -657,12 +659,12 @@ fun Step1InputView(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Tune,
-                    contentDescription = "Tune / Inspect icon",
+                    contentDescription = stringResource(R.string.cd_tune_inspect_icon),
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Tune / Inspect Parameters",
+                    text = stringResource(R.string.action_tune_inspect),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -711,7 +713,7 @@ fun Step2InspectView(
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Tracing redirects and unshortening URL...",
+                        text = stringResource(R.string.inspect_unshortening),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -726,13 +728,13 @@ fun Step2InspectView(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Rounded.Route,
-                            contentDescription = "Redirect traced",
+                            contentDescription = stringResource(R.string.cd_redirect_traced),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Short link resolved (${redirectChain.size} hops)",
+                            text = stringResource(R.string.inspect_redirect_resolved, redirectChain.size),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -740,7 +742,7 @@ fun Step2InspectView(
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Destination: $unshortenedUrl",
+                        text = stringResource(R.string.inspect_destination, unshortenedUrl),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         maxLines = 2,
@@ -768,7 +770,7 @@ fun Step2InspectView(
         ) {
             Column(modifier = Modifier.padding(14.dp)) {
                 Text(
-                    text = "Live Cleaned URL Preview",
+                    text = stringResource(R.string.inspect_candidate_preview_title),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
@@ -796,11 +798,11 @@ fun Step2InspectView(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.action_back)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Back",
+                    text = stringResource(R.string.action_back),
                     maxLines = 1,
                     softWrap = false
                 )
@@ -812,7 +814,7 @@ fun Step2InspectView(
                 modifier = Modifier.weight(2f).height(50.dp)
             ) {
                 Text(
-                    text = "Confirm & Preview",
+                    text = stringResource(R.string.action_confirm_preview),
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     softWrap = false,
@@ -821,7 +823,7 @@ fun Step2InspectView(
                 Spacer(modifier = Modifier.width(6.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
-                    contentDescription = "Preview"
+                    contentDescription = stringResource(R.string.cd_preview)
                 )
             }
         }
@@ -871,7 +873,7 @@ fun Step3PreviewView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Check,
-                        contentDescription = "Success",
+                        contentDescription = stringResource(R.string.cd_success),
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -879,13 +881,13 @@ fun Step3PreviewView(
                 Spacer(modifier = Modifier.width(14.dp))
                 Column {
                     Text(
-                        text = "Link Successfully Sanitized!",
+                        text = stringResource(R.string.preview_success_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = "$removedParamsCount tracking parameter(s) eliminated",
+                        text = stringResource(R.string.preview_params_eliminated, removedParamsCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -910,7 +912,7 @@ fun Step3PreviewView(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Scrubbed Clean URL",
+                    text = stringResource(R.string.preview_clean_url_title),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -945,11 +947,11 @@ fun Step3PreviewView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.ContentCopy,
-                        contentDescription = "Copy Clean URL"
+                        contentDescription = stringResource(R.string.cd_copy_clean_url)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Copy",
+                        text = stringResource(R.string.action_copy),
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         softWrap = false
@@ -964,11 +966,11 @@ fun Step3PreviewView(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Share,
-                        contentDescription = "Share Clean URL"
+                        contentDescription = stringResource(R.string.cd_share_clean_url)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Share",
+                        text = stringResource(R.string.action_share),
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         softWrap = false
@@ -984,12 +986,12 @@ fun Step3PreviewView(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                    contentDescription = "Open in Browser",
+                    contentDescription = stringResource(R.string.action_open_in_browser),
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Open in Browser",
+                    text = stringResource(R.string.action_open_in_browser),
                     maxLines = 1,
                     softWrap = false
                 )
@@ -1014,7 +1016,7 @@ fun Step3PreviewView(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Adjust Parameters",
+                    text = stringResource(R.string.action_adjust_parameters),
                     maxLines = 1,
                     softWrap = false,
                     overflow = TextOverflow.Ellipsis
@@ -1034,7 +1036,7 @@ fun Step3PreviewView(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Scrub Another",
+                    text = stringResource(R.string.action_scrub_another),
                     maxLines = 1,
                     softWrap = false,
                     overflow = TextOverflow.Ellipsis
@@ -1058,12 +1060,13 @@ fun Step3PreviewView(
  */
 fun shareUrl(context: Context, url: String) {
     if (url.isBlank()) return
+    val chooserTitle = context.getString(R.string.share_chooser_title)
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, url)
         type = "text/plain"
     }
-    val shareIntent = Intent.createChooser(sendIntent, "Share Cleaned URL")
+    val shareIntent = Intent.createChooser(sendIntent, chooserTitle)
     context.startActivity(shareIntent)
 }
 

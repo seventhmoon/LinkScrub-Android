@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">LinkScrub</string>
+    <string name="app_tagline">注重隱私的網址淨化工具</string>
+
+    <!-- Wizard Steps -->
+    <string name="wizard_step_input">輸入連結</string>
+    <string name="wizard_step_inspect">檢查與篩選</string>
+    <string name="wizard_step_preview">預覽與操作</string>
+    <string name="wizard_step_number">步驟 %1$d</string>
+    <string name="wizard_step_completed">%1$s 已完成</string>
+
+    <!-- Actions & Common Buttons -->
+    <string name="action_restart">重新啟動</string>
+    <string name="action_start_over">重新開始</string>
+    <string name="action_paste">貼上</string>
+    <string name="action_clear_input">清除輸入</string>
+    <string name="action_scan_qr">掃描 QR 碼</string>
+    <string name="action_quick_clean_copy">快速淨化並複製</string>
+    <string name="action_scrubbing_link">正在淨化連結…</string>
+    <string name="action_tune_inspect">微調 / 檢查參數</string>
+    <string name="action_confirm_preview">確認並預覽</string>
+    <string name="action_back">返回</string>
+    <string name="action_copy">複製</string>
+    <string name="action_share">分享</string>
+    <string name="action_open_in_browser">在瀏覽器中開啟</string>
+    <string name="action_adjust_parameters">調整參數</string>
+    <string name="action_scrub_another">淨化另一個連結</string>
+    <string name="action_cancel">取消</string>
+
+    <!-- Step 1: Input -->
+    <string name="input_link_detected_clipboard">在剪貼簿中偵測到連結</string>
+    <string name="input_url_label">貼上或輸入要淨化的連結</string>
+    <string name="input_url_placeholder">https://example.com?utm_source=&#8230;</string>
+    <string name="cd_clipboard_found">找到剪貼簿內容</string>
+    <string name="cd_quick_clean_icon">快速淨化圖示</string>
+    <string name="cd_tune_inspect_icon">微調/檢查圖示</string>
+
+    <!-- Step 2: Inspect -->
+    <string name="inspect_unshortening">正在追蹤重定向並還原短網址…</string>
+    <string name="inspect_redirect_resolved">短網址已解析（經過 %1$d 次跳轉）</string>
+    <string name="inspect_destination">目標網址：%1$s</string>
+    <string name="inspect_candidate_preview_title">淨化網址即時預覽</string>
+    <string name="cd_redirect_traced">重定向已追蹤</string>
+    <string name="cd_preview">預覽</string>
+
+    <!-- Parameter Chip Group -->
+    <string name="param_group_title">查詢參數 (%1$d)</string>
+    <string name="param_group_subtitle">%1$d 個標記移除（含 %2$d 個追蹤參數）</string>
+    <string name="param_action_scrub_all">全部移除</string>
+    <string name="param_action_keep_all">全部保留</string>
+    <string name="param_empty_clean">此網址中未發現任何查詢參數，網址很乾淨！</string>
+    <string name="cd_param_marked_for_scrub">已標記為移除</string>
+    <string name="cd_param_tracking">追蹤參數</string>
+    <string name="cd_param_safe">安全參數</string>
+
+    <!-- Step 3: Preview -->
+    <string name="preview_success_title">連結已成功淨化！</string>
+    <string name="preview_params_eliminated">已清除 %1$d 個追蹤參數</string>
+    <string name="preview_clean_url_title">淨化後的網址</string>
+    <string name="cd_success">成功</string>
+    <string name="cd_copy_clean_url">複製淨化網址</string>
+    <string name="cd_share_clean_url">分享淨化網址</string>
+    <string name="share_chooser_title">分享淨化後的網址</string>
+
+    <!-- Open Graph Preview Card -->
+    <string name="og_fetching_metadata">正在取得連結詮釋資料與預覽…</string>
+    <string name="og_default_thumbnail_cd">連結縮圖</string>
+    <string name="og_image_failed_cd">無法載入圖片</string>
+    <string name="og_image_unavailable">無法提供預覽圖片</string>
+    <string name="og_no_metadata_found">淨化網址已可分享。網站未提供 Open Graph 標籤。</string>
+    <string name="og_tags_title">Open Graph 與 Twitter 標籤 (%1$d)</string>
+    <string name="og_collapse_tags">收合標籤</string>
+    <string name="og_expand_tags">展開標籤</string>
+    <string name="og_copy_tag_cd">複製 %1$s 數值</string>
+    <string name="og_tag_copied_toast">已複製 %1$s</string>
+
+    <!-- History Panel -->
+    <string name="history_title">淨化紀錄</string>
+    <string name="history_empty_subtitle">尚無淨化紀錄</string>
+    <string name="history_count_subtitle">已記錄 %1$d 筆連結</string>
+    <string name="history_clear_all_dialog_title">清除所有紀錄</string>
+    <string name="history_clear_all_dialog_message">您確定要刪除所有已儲存的淨化連結嗎？此操作無法復原。</string>
+    <string name="history_clear_all_action">全部清除</string>
+    <string name="history_search_placeholder">搜尋紀錄…</string>
+    <string name="history_empty_search">找不到符合「%1$s」的結果</string>
+    <string name="history_empty_state_title">尚無淨化紀錄</string>
+    <string name="history_empty_state_subtitle">淨化後的連結已安全保存在本裝置中。</string>
+    <string name="history_default_item_title">已淨化連結</string>
+    <string name="history_from_url">來源：%1$s</string>
+    <string name="history_params_removed">-%1$d 個參數</string>
+    <string name="cd_history">歷史紀錄</string>
+    <string name="cd_clear_all_history">清除所有紀錄</string>
+    <string name="cd_close_history">關閉歷史紀錄</string>
+    <string name="cd_search">搜尋</string>
+    <string name="cd_clear_search">清除搜尋</string>
+    <string name="cd_delete">刪除</string>
+
+    <!-- Help & FAQ Bottom Sheet -->
+    <string name="help_title">說明與資訊</string>
+    <string name="help_subtitle">使用指南、常見問題與隱私原則</string>
+    <string name="help_tab_faq">常見問題</string>
+    <string name="help_tab_how_it_works">運作原理</string>
+    <string name="help_tab_about">關於</string>
+    <string name="cd_help_faq">說明與常見問題</string>
+    <string name="cd_expand">展開</string>
+    <string name="cd_collapse">收合</string>
+
+    <!-- FAQ Items -->
+    <string name="faq_q1">LinkScrub 的功能是什麼？</string>
+    <string name="faq_a1">LinkScrub 可移除追蹤參數（例如 utm_*、fbclid、gclid 及工作階段標記），淨化網路位址（URL）。它還能還原短網址（bit.ly、t.co），讓您在分享或造訪前查看真實目的地。</string>
+    <string name="faq_q2">LinkScrub 會儲存或上傳我的連結嗎？</string>
+    <string name="faq_a2">不會。LinkScrub 100% 於本機端執行且隱私優先。您的連結、參數與瀏覽紀錄絕不會傳送到外部雲端伺服器，所有分析與紀錄均嚴格保留在您的手機上。</string>
+    <string name="faq_q3">淨化會破壞重要功能（例如 YouTube 影片時間戳記）嗎？</string>
+    <string name="faq_a3">不會。LinkScrub 具備網域感知智慧，會保留必要參數（如 YouTube 影片的「t=…」開始時間標記與 Amazon 的核心商品路徑），同時剔除追蹤垃圾（如「si=」或推薦標籤）。</string>
+    <string name="faq_q4">如何從其他應用程式中使用 LinkScrub？</string>
+    <string name="faq_a4">每當您想在 Twitter、WhatsApp、Chrome 或 Reddit 中清理連結時，只需點選該應用程式中的「分享」並選擇「LinkScrub」，LinkScrub 便會自動接收、淨化，並讓您立即複製或重新分享乾淨網址。</string>
+    <string name="faq_q5">什麼是快速淨化模式？</string>
+    <string name="faq_a5">快速淨化模式可讓您貼上連結後一鍵完成淨化並複製到剪貼簿，略過中間檢查步驟，實現快速分享。</string>
+    <string name="faq_q6">短網址還原是如何運作的？</string>
+    <string name="faq_a6">短網址（例如 bit.ly、t.co）會透過一次或多次跳轉重定向至目標。LinkScrub 會在裝置本機端追蹤這些 HTTP 重定向標頭，並內建循環跳轉偵測，安全揭示真實目標。</string>
+
+    <!-- How It Works Items -->
+    <string name="how_it_works_step1_number">1</string>
+    <string name="how_it_works_step1_title">輸入與偵測</string>
+    <string name="how_it_works_step1_desc">貼上網址、掃描 QR 碼，或直接從其他應用程式分享至 LinkScrub。即使連結嵌入在對話文字中，LinkScrub 也能自動解析。</string>
+    <string name="how_it_works_step2_number">2</string>
+    <string name="how_it_works_step2_title">檢查與參數剝除</string>
+    <string name="how_it_works_step2_desc">LinkScrub 檢查查詢參數並將其歸類為已知追蹤標記（UTM、Facebook fbclid、Google Ads gclid、TikTok 遙測）或正常參數。您可以自由切換任何參數的保留或移除。</string>
+    <string name="how_it_works_step3_number">3</string>
+    <string name="how_it_works_step3_title">短網址還原與 Open Graph 預覽</string>
+    <string name="how_it_works_step3_desc">若網址為短連結，系統會在循環保護機制下解析重定向標頭，並取得豐富的詮釋資料（標題、預覽圖、說明），讓您在分享前安全確認目標內容。</string>
+
+    <!-- About Section -->
+    <string name="about_app_name">🧼 LinkScrub</string>
+    <string name="about_version">版本 1.0.0</string>
+    <string name="about_description">為 Android 打造的乾淨、隱私、智慧的網址淨化工具。在 GNU 通用公眾授權條款第三版 (GPLv3) 下免費開源。</string>
+    <string name="about_play_store_title">在 Google Play 上查看</string>
+    <string name="about_play_store_subtitle">在 Play 商店為 LinkScrub 評分與評論</string>
+    <string name="about_github_title">GitHub 原始碼</string>
+    <string name="about_github_subtitle">參與貢獻、回報問題或查看程式碼</string>
+    <string name="about_privacy_title">隱私權政策</string>
+    <string name="about_privacy_subtitle">閱讀我們 100% 本機執行的隱私保證</string>
+
+    <!-- In-App Update (MainActivity) -->
+    <string name="update_downloaded_message">更新已下載完成。請重新啟動以安裝</string>
+    <string name="update_restart_action">重新啟動</string>
+
+    <!-- Feedback & User Messages -->
+    <string name="msg_enter_valid_url">請輸入或貼上有效的網址。</string>
+    <string name="msg_enter_valid_http_url">請輸入有效的 HTTP 或 HTTPS 網址。</string>
+    <string name="msg_cleaned_copied">淨化後的網址已複製到剪貼簿！</string>
+    <string name="msg_cleaned_copied_with_savings">淨化後的網址已複製到剪貼簿！（節省了 %1$d 個字元）</string>
+    <string name="msg_failed_to_clean_url">淨化網址失敗：%1$s</string>
+    <string name="msg_unknown_error">未知錯誤</string>
+    <string name="msg_link_sanitized_params_removed">連結已淨化：移除了 %1$d 個參數（節省了 %2$d 個字元）</string>
+    <string name="msg_link_cleaned">連結已淨化</string>
+    <string name="msg_no_valid_url_in_shared_text">分享文字中未找到有效網址。</string>
+    <string name="msg_scanned_qr_code_url">已掃描 QR 碼網址</string>
+    <string name="msg_loaded_link_from_history">已從紀錄中載入連結</string>
+    <string name="msg_item_removed_from_history">已從紀錄中移除項目</string>
+    <string name="msg_all_history_cleared">所有紀錄已清除</string>
+</resources>

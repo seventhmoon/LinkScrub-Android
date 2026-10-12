@@ -31,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.ui.WizardStep
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
 
@@ -99,6 +101,7 @@ private fun StepItem(
     isCompleted: Boolean,
     onClick: () -> Unit
 ) {
+    val stepTitle = stringResource(step.titleRes)
     val bgColor by animateColorAsState(
         targetValue = when {
             isCurrent -> MaterialTheme.colorScheme.primary
@@ -133,7 +136,7 @@ private fun StepItem(
             if (isCompleted) {
                 Icon(
                     imageVector = Icons.Rounded.Check,
-                    contentDescription = "${step.title} Completed",
+                    contentDescription = stringResource(R.string.wizard_step_completed, stepTitle),
                     tint = contentColor,
                     modifier = Modifier.size(20.dp)
                 )
@@ -145,7 +148,7 @@ private fun StepItem(
                 }
                 Icon(
                     imageVector = icon,
-                    contentDescription = step.title,
+                    contentDescription = stepTitle,
                     tint = contentColor,
                     modifier = Modifier.size(18.dp)
                 )
@@ -153,7 +156,7 @@ private fun StepItem(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Step ${step.stepNumber}",
+            text = stringResource(R.string.wizard_step_number, step.stepNumber),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
             color = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface

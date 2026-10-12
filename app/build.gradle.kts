@@ -21,10 +21,14 @@ android {
         applicationId = "com.androidfung.linkscrub"
         minSdk = 28
         targetSdk = 37
-        versionCode = 5
-        versionName = "1.0.0-261010"
+        versionCode = 7
+        versionName = "1.0.0-261012"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    androidResources {
+        generateLocaleConfig = true
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -70,6 +74,9 @@ android {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")
+            }
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
             }
             // R8 Full Mode is enabled by default with isMinifyEnabled = true
             // packageScope was previously limiting whole-program optimization to a subset of packages

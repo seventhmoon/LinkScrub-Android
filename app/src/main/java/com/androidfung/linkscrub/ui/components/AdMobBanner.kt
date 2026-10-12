@@ -43,7 +43,7 @@ import com.google.android.gms.ads.LoadAdError
 @Composable
 fun AdMobBanner(
     modifier: Modifier = Modifier,
-    adUnitId: String = "ca-app-pub-3940256099942544/6300978111"
+    adUnitId: String = "ca-app-pub-9890667024752973/7297786455"
 ) {
     val isInspectionMode = LocalInspectionMode.current
 

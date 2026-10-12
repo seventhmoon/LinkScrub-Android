@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
 
@@ -95,7 +97,7 @@ fun OpenGraphPreviewCard(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Fetching link metadata & preview...",
+                            text = stringResource(R.string.og_fetching_metadata),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -108,7 +110,7 @@ fun OpenGraphPreviewCard(
                         .data(metadata.imageUrl)
                         .crossfade(true)
                         .build(),
-                    contentDescription = metadata.title ?: "Link thumbnail",
+                    contentDescription = metadata.title ?: stringResource(R.string.og_default_thumbnail_cd),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -142,11 +144,11 @@ fun OpenGraphPreviewCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Rounded.BrokenImage,
-                                    contentDescription = "Failed to load image",
+                                    contentDescription = stringResource(R.string.og_image_failed_cd),
                                     tint = MaterialTheme.colorScheme.outline
                                 )
                                 Text(
-                                    text = "Preview image unavailable",
+                                    text = stringResource(R.string.og_image_unavailable),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.outline
                                 )
@@ -220,7 +222,7 @@ fun OpenGraphPreviewCard(
                 if (!isLoading && metadata == null) {
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = "Cleaned URL ready to share. No Open Graph tags returned by site.",
+                        text = stringResource(R.string.og_no_metadata_found),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -253,7 +255,7 @@ fun OpenGraphPreviewCard(
                                 modifier = Modifier.size(16.dp)
                             )
                             Text(
-                                text = "Open Graph & Twitter Tags (${tags.size})",
+                                text = stringResource(R.string.og_tags_title, tags.size),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.primary
@@ -261,11 +263,12 @@ fun OpenGraphPreviewCard(
                         }
                         Icon(
                             imageVector = if (isTagsExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
-                            contentDescription = if (isTagsExpanded) "Collapse tags" else "Expand tags",
+                            contentDescription = if (isTagsExpanded) stringResource(R.string.og_collapse_tags) else stringResource(R.string.og_expand_tags),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
+                    val copiedToastFormat = stringResource(R.string.og_tag_copied_toast)
                     AnimatedVisibility(
                         visible = isTagsExpanded,
                         enter = fadeIn() + expandVertically(),
@@ -284,7 +287,7 @@ fun OpenGraphPreviewCard(
                                     onCopy = {
                                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                         clipboard.setPrimaryClip(ClipData.newPlainText(key, value))
-                                        Toast.makeText(context, "Copied $key", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, String.format(copiedToastFormat, key), Toast.LENGTH_SHORT).show()
                                     }
                                 )
                             }
@@ -342,7 +345,7 @@ private fun MetadataTagRow(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.ContentCopy,
-                    contentDescription = "Copy $key value",
+                    contentDescription = stringResource(R.string.og_copy_tag_cd, key),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(16.dp)
                 )

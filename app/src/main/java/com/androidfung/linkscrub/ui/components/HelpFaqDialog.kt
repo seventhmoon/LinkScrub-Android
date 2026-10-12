@@ -51,8 +51,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.androidfung.linkscrub.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +63,10 @@ fun HelpFaqBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("FAQ", "How It Works", "About")
+    val tabFaq = stringResource(R.string.help_tab_faq)
+    val tabHowItWorks = stringResource(R.string.help_tab_how_it_works)
+    val tabAbout = stringResource(R.string.help_tab_about)
+    val tabs = listOf(tabFaq, tabHowItWorks, tabAbout)
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -90,12 +95,12 @@ fun HelpFaqBottomSheet(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Help & Information",
+                        text = stringResource(R.string.help_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Guides, FAQs, and privacy principles",
+                        text = stringResource(R.string.help_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -146,32 +151,27 @@ fun HelpFaqBottomSheet(
 private fun FaqSection() {
     val expandedMap = remember { mutableStateMapOf<Int, Boolean>() }
 
-    val faqs = remember {
+    val q1 = stringResource(R.string.faq_q1)
+    val a1 = stringResource(R.string.faq_a1)
+    val q2 = stringResource(R.string.faq_q2)
+    val a2 = stringResource(R.string.faq_a2)
+    val q3 = stringResource(R.string.faq_q3)
+    val a3 = stringResource(R.string.faq_a3)
+    val q4 = stringResource(R.string.faq_q4)
+    val a4 = stringResource(R.string.faq_a4)
+    val q5 = stringResource(R.string.faq_q5)
+    val a5 = stringResource(R.string.faq_a5)
+    val q6 = stringResource(R.string.faq_q6)
+    val a6 = stringResource(R.string.faq_a6)
+
+    val faqs = remember(q1, a1, q2, a2, q3, a3, q4, a4, q5, a5, q6, a6) {
         listOf(
-            FaqItem(
-                question = "What does LinkScrub do?",
-                answer = "LinkScrub cleans web addresses (URLs) by stripping tracking parameters (such as utm_*, fbclid, gclid, and session markers). It also unshortens short links (bit.ly, t.co) so you can see where they really lead before sharing or visiting."
-            ),
-            FaqItem(
-                question = "Does LinkScrub store or upload my links?",
-                answer = "No. LinkScrub is 100% on-device and privacy-first. Your links, parameters, and browsing history are never transmitted to external cloud servers. All link analysis and history are kept strictly on your phone."
-            ),
-            FaqItem(
-                question = "Will scrubbing break important features like YouTube video timestamps?",
-                answer = "No. LinkScrub features domain-aware intelligence that preserves essential parameters (such as 't=...' start timestamps on YouTube videos and core product paths on Amazon) while stripping tracking garbage (like 'si=' or referral tags)."
-            ),
-            FaqItem(
-                question = "How do I use LinkScrub from other apps?",
-                answer = "Whenever you want to clean a link in Twitter, WhatsApp, Chrome, or Reddit, tap 'Share' in that app and choose 'LinkScrub'. LinkScrub will automatically receive, scrub, and allow you to copy or re-share the clean URL immediately."
-            ),
-            FaqItem(
-                question = "What is Quick-Clean Mode?",
-                answer = "Quick-Clean Mode allows you to paste a link and have it immediately sanitized and copied to your clipboard with a single tap, bypassing intermediate review steps for speedy sharing."
-            ),
-            FaqItem(
-                question = "How does unshortening work?",
-                answer = "Short URLs (e.g. bit.ly, t.co) redirect through one or more hops to their destination. LinkScrub follows these HTTP redirect headers on-device with built-in cyclic loop detection to reveal the genuine destination safely."
-            )
+            FaqItem(q1, a1),
+            FaqItem(q2, a2),
+            FaqItem(q3, a3),
+            FaqItem(q4, a4),
+            FaqItem(q5, a5),
+            FaqItem(q6, a6)
         )
     }
 
@@ -225,7 +225,7 @@ private fun FaqCard(
                 )
                 Icon(
                     imageVector = if (isExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(R.string.cd_collapse) else stringResource(R.string.cd_expand),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -248,23 +248,23 @@ private fun FaqCard(
 private fun HowItWorksSection() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         HowItWorksStepCard(
-            stepNumber = "1",
-            title = "Input & Detection",
-            description = "Paste a URL, scan a QR code, or share directly to LinkScrub from another app. LinkScrub automatically parses links even when embedded in conversational text blocks.",
+            stepNumber = stringResource(R.string.how_it_works_step1_number),
+            title = stringResource(R.string.how_it_works_step1_title),
+            description = stringResource(R.string.how_it_works_step1_desc),
             icon = Icons.Rounded.CleaningServices
         )
 
         HowItWorksStepCard(
-            stepNumber = "2",
-            title = "Inspect & Parameter Stripping",
-            description = "LinkScrub inspects query tokens and categorizes them into known tracking markers (UTM, Facebook fbclid, Google Ads gclid, TikTok telemetry) and legitimate parameters. You can toggle any parameter on or off.",
+            stepNumber = stringResource(R.string.how_it_works_step2_number),
+            title = stringResource(R.string.how_it_works_step2_title),
+            description = stringResource(R.string.how_it_works_step2_desc),
             icon = Icons.Rounded.Shield
         )
 
         HowItWorksStepCard(
-            stepNumber = "3",
-            title = "Unshortening & Open Graph Preview",
-            description = "If the URL is a shortlink, redirect headers are resolved with cyclic loop protection. Rich metadata (title, preview image, description) is fetched so you can verify the target safely before sharing.",
+            stepNumber = stringResource(R.string.how_it_works_step3_number),
+            title = stringResource(R.string.how_it_works_step3_title),
+            description = stringResource(R.string.how_it_works_step3_desc),
             icon = Icons.Rounded.Lock
         )
     }
@@ -354,18 +354,18 @@ private fun AboutSection() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "🧼 LinkScrub",
+                    text = stringResource(R.string.about_app_name),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Version 1.0.0",
+                    text = stringResource(R.string.about_version),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Clean, Private, and Intelligent URL Sanitizer for Android. Free and open-source under the GNU General Public License v3.0 (GPLv3).",
+                    text = stringResource(R.string.about_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -374,8 +374,8 @@ private fun AboutSection() {
 
         // Action links
         ActionLinkCard(
-            title = "View on Google Play",
-            subtitle = "Rate and review LinkScrub on Play Store",
+            title = stringResource(R.string.about_play_store_title),
+            subtitle = stringResource(R.string.about_play_store_subtitle),
             icon = Icons.AutoMirrored.Rounded.OpenInNew,
             onClick = {
                 openWebUrl(
@@ -386,8 +386,8 @@ private fun AboutSection() {
         )
 
         ActionLinkCard(
-            title = "Source Code on GitHub",
-            subtitle = "Contribute, report issues, or view code",
+            title = stringResource(R.string.about_github_title),
+            subtitle = stringResource(R.string.about_github_subtitle),
             icon = Icons.Rounded.Info,
             onClick = {
                 openWebUrl(
@@ -398,8 +398,8 @@ private fun AboutSection() {
         )
 
         ActionLinkCard(
-            title = "Privacy Policy",
-            subtitle = "Read our 100% on-device privacy guarantee",
+            title = stringResource(R.string.about_privacy_title),
+            subtitle = stringResource(R.string.about_privacy_subtitle),
             icon = Icons.Rounded.Policy,
             onClick = {
                 openWebUrl(

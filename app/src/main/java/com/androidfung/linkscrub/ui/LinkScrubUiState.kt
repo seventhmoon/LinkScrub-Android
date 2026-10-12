@@ -1,6 +1,8 @@
 package com.androidfung.linkscrub.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 
 /**
@@ -18,10 +20,10 @@ data class ParameterChipItem(
 /**
  * Steps in the guided 3-step sanitization wizard.
  */
-enum class WizardStep(val stepNumber: Int, val title: String) {
-    INPUT(1, "Input Link"),
-    INSPECT(2, "Inspect & Filter"),
-    PREVIEW(3, "Preview & Action")
+enum class WizardStep(val stepNumber: Int, @StringRes val titleRes: Int) {
+    INPUT(1, R.string.wizard_step_input),
+    INSPECT(2, R.string.wizard_step_inspect),
+    PREVIEW(3, R.string.wizard_step_preview)
 }
 
 /**

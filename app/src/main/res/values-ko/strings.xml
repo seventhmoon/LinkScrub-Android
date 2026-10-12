@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">LinkScrub</string>
+    <string name="app_tagline">개인정보 보호 URL 클리너</string>
+
+    <!-- Wizard Steps -->
+    <string name="wizard_step_input">링크 입력</string>
+    <string name="wizard_step_inspect">검토 및 필터</string>
+    <string name="wizard_step_preview">미리보기 및 실행</string>
+    <string name="wizard_step_number">%1$d단계</string>
+    <string name="wizard_step_completed">%1$s 완료</string>
+
+    <!-- Actions & Common Buttons -->
+    <string name="action_restart">다시 시작</string>
+    <string name="action_start_over">처음부터 다시</string>
+    <string name="action_paste">붙여넣기</string>
+    <string name="action_clear_input">입력 지우기</string>
+    <string name="action_scan_qr">QR 코드 스캔</string>
+    <string name="action_quick_clean_copy">빠른 정리 및 복사</string>
+    <string name="action_scrubbing_link">링크 정리 중…</string>
+    <string name="action_tune_inspect">매개변수 조정 및 검토</string>
+    <string name="action_confirm_preview">확인 및 미리보기</string>
+    <string name="action_back">뒤로</string>
+    <string name="action_copy">복사</string>
+    <string name="action_share">공유</string>
+    <string name="action_open_in_browser">브라우저에서 열기</string>
+    <string name="action_adjust_parameters">매개변수 조정</string>
+    <string name="action_scrub_another">다른 링크 정리</string>
+    <string name="action_cancel">취소</string>
+
+    <!-- Step 1: Input -->
+    <string name="input_link_detected_clipboard">클립보드에서 링크 감지됨</string>
+    <string name="input_url_label">정리할 링크 붙여넣기 또는 입력</string>
+    <string name="input_url_placeholder">https://example.com?utm_source=&#8230;</string>
+    <string name="cd_clipboard_found">클립보드 발견</string>
+    <string name="cd_quick_clean_icon">빠른 정리 아이콘</string>
+    <string name="cd_tune_inspect_icon">조정/검토 아이콘</string>
+
+    <!-- Step 2: Inspect -->
+    <string name="inspect_unshortening">리디렉션을 추적하고 단축 링크를 복원하는 중…</string>
+    <string name="inspect_redirect_resolved">단축 링크 확인 완료 (%1$d회 경유)</string>
+    <string name="inspect_destination">도착지: %1$s</string>
+    <string name="inspect_candidate_preview_title">정리된 URL 실시간 미리보기</string>
+    <string name="cd_redirect_traced">리디렉션 추적됨</string>
+    <string name="cd_preview">미리보기</string>
+
+    <!-- Parameter Chip Group -->
+    <string name="param_group_title">쿼리 매개변수 (%1$d)</string>
+    <string name="param_group_subtitle">%1$d개 제거 대상 (추적 매개변수 %2$d개)</string>
+    <string name="param_action_scrub_all">모두 제거</string>
+    <string name="param_action_keep_all">모두 유지</string>
+    <string name="param_empty_clean">이 URL에는 쿼리 매개변수가 없습니다. 깔끔한 링크입니다!</string>
+    <string name="cd_param_marked_for_scrub">제거 대상으로 선택됨</string>
+    <string name="cd_param_tracking">추적 매개변수</string>
+    <string name="cd_param_safe">안전한 매개변수</string>
+
+    <!-- Step 3: Preview -->
+    <string name="preview_success_title">링크가 성공적으로 정리되었습니다!</string>
+    <string name="preview_params_eliminated">%1$d개의 추적 매개변수가 제거되었습니다</string>
+    <string name="preview_clean_url_title">정리된 깔끔한 URL</string>
+    <string name="cd_success">성공</string>
+    <string name="cd_copy_clean_url">정리된 URL 복사</string>
+    <string name="cd_share_clean_url">정리된 URL 공유</string>
+    <string name="share_chooser_title">정리된 URL 공유</string>
+
+    <!-- Open Graph Preview Card -->
+    <string name="og_fetching_metadata">링크 메타데이터 및 미리보기를 가져오는 중…</string>
+    <string name="og_default_thumbnail_cd">링크 썸네일</string>
+    <string name="og_image_failed_cd">이미지를 불러올 수 없습니다</string>
+    <string name="og_image_unavailable">미리보기 이미지를 사용할 수 없습니다</string>
+    <string name="og_no_metadata_found">정리된 URL을 공유할 준비가 되었습니다. 사이트에서 제공하는 Open Graph 태그가 없습니다.</string>
+    <string name="og_tags_title">Open Graph 및 Twitter 태그 (%1$d)</string>
+    <string name="og_collapse_tags">태그 접기</string>
+    <string name="og_expand_tags">태그 펼치기</string>
+    <string name="og_copy_tag_cd">%1$s 값 복사</string>
+    <string name="og_tag_copied_toast">%1$s 복사됨</string>
+
+    <!-- History Panel -->
+    <string name="history_title">정리 기록</string>
+    <string name="history_empty_subtitle">아직 정리된 링크가 없습니다</string>
+    <string name="history_count_subtitle">%1$d개의 링크가 기록됨</string>
+    <string name="history_clear_all_dialog_title">모든 기록 삭제</string>
+    <string name="history_clear_all_dialog_message">저장된 모든 정리 링크를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
+    <string name="history_clear_all_action">모두 삭제</string>
+    <string name="history_search_placeholder">기록 검색…</string>
+    <string name="history_empty_search">\"%1$s\"에 대한 검색 결과가 없습니다</string>
+    <string name="history_empty_state_title">정리 기록 없음</string>
+    <string name="history_empty_state_subtitle">정리된 링크는 이 기기에 안전하게 로컬 저장됩니다.</string>
+    <string name="history_default_item_title">정리된 링크</string>
+    <string name="history_from_url">원본: %1$s</string>
+    <string name="history_params_removed">-%1$d개 매개변수</string>
+    <string name="cd_history">기록</string>
+    <string name="cd_clear_all_history">모든 기록 삭제</string>
+    <string name="cd_close_history">기록 닫기</string>
+    <string name="cd_search">검색</string>
+    <string name="cd_clear_search">검색어 지우기</string>
+    <string name="cd_delete">삭제</string>
+
+    <!-- Help & FAQ Bottom Sheet -->
+    <string name="help_title">도움말 및 정보</string>
+    <string name="help_subtitle">가이드, 자주 묻는 질문, 개인정보 보호 원칙</string>
+    <string name="help_tab_faq">FAQ</string>
+    <string name="help_tab_how_it_works">작동 방식</string>
+    <string name="help_tab_about">앱 정보</string>
+    <string name="cd_help_faq">도움말 및 FAQ</string>
+    <string name="cd_expand">펼치기</string>
+    <string name="cd_collapse">접기</string>
+
+    <!-- FAQ Items -->
+    <string name="faq_q1">LinkScrub은 어떤 앱인가요?</string>
+    <string name="faq_a1">LinkScrub은 웹 주소(URL)에서 추적 매개변수(utm_*, fbclid, gclid, 세션 마커 등)를 제거하여 안전하게 정리합니다. 또한 단축 링크(bit.ly, t.co 등)를 해제하여 방문하거나 공유하기 전에 실제 이동 경로를 확인할 수 있도록 합니다.</string>
+    <string name="faq_q2">LinkScrub이 내 링크를 저장하거나 서버로 업로드하나요?</string>
+    <string name="faq_a2">아닙니다. LinkScrub은 100% 온디바이스에서 작동하며 개인정보 보호를 최우선으로 합니다. 링크, 매개변수 및 방문 기록은 외부 클라우드 서버로 전송되지 않으며, 모든 분석과 기록은 기기 내에만 안전하게 보관됩니다.</string>
+    <string name="faq_q3">정리 후 YouTube 영상 시작 시간 등의 유용한 기능도 지워지나요?</string>
+    <string name="faq_a3">아닙니다. LinkScrub은 도메인 인식 지능을 갖추고 있어 불필요한 추적 태그(si= 또는 추천인 태그 등)는 제거하면서도 필수 매개변수(YouTube 시작 시간 \'t=…\'이나 Amazon 핵심 상품 경로)는 안전하게 보존합니다.</string>
+    <string name="faq_q4">다른 앱에서 LinkScrub을 어떻게 사용하나요?</string>
+    <string name="faq_a4">Twitter, WhatsApp, Chrome, Reddit 등에서 링크를 정리하고 싶을 때 해당 앱에서 \'공유\'를 누르고 \'LinkScrub\'을 선택하세요. LinkScrub이 자동으로 링크를 수신하고 정리하여 즉시 복사하거나 다시 공유할 수 있도록 합니다.</string>
+    <string name="faq_q5">빠른 정리 모드는 무엇인가요?</string>
+    <string name="faq_a5">빠른 정리 모드를 사용하면 링크를 붙여넣는 즉시 한 번의 탭으로 정리되어 클립보드에 복사되므로, 검토 단계를 건너뛰고 신속하게 공유할 수 있습니다.</string>
+    <string name="faq_q6">단축 링크 해제는 어떻게 작동하나요?</string>
+    <string name="faq_a6">단축 URL(예: bit.ly, t.co)은 목적지까지 하나 이상의 리디렉션을 거칩니다. LinkScrub은 순환 루프 감지 기능을 갖추고 기기 내에서 직접 HTTP 리디렉션 헤더를 추적하여 실제 목적지를 안전하게 확인합니다.</string>
+
+    <!-- How It Works Items -->
+    <string name="how_it_works_step1_number">1</string>
+    <string name="how_it_works_step1_title">입력 및 감지</string>
+    <string name="how_it_works_step1_desc">URL을 붙여넣거나, QR 코드를 스캔하거나, 다른 앱에서 LinkScrub으로 직접 공유하세요. 대화형 텍스트에 포함된 링크도 자동으로 감지하여 추출합니다.</string>
+    <string name="how_it_works_step2_number">2</string>
+    <string name="how_it_works_step2_title">검토 및 매개변수 제거</string>
+    <string name="how_it_works_step2_desc">LinkScrub이 쿼리 토큰을 검사하여 알려진 추적 마커(UTM, Facebook fbclid, Google Ads gclid, TikTok 텔레메트리)와 정상적인 매개변수로 분류합니다. 원하는 매개변수를 직접 켜거나 끌 수 있습니다.</string>
+    <string name="how_it_works_step3_number">3</string>
+    <string name="how_it_works_step3_title">단축 링크 복원 및 Open Graph 미리보기</string>
+    <string name="how_it_works_step3_desc">단축 링크인 경우 루프 보호 기능과 함께 리디렉션을 분석합니다. 제목, 썸네일, 설명 등의 상세 정보를 가져와 공유 전에 대상 링크를 안전하게 확인할 수 있습니다.</string>
+
+    <!-- About Section -->
+    <string name="about_app_name">🧼 LinkScrub</string>
+    <string name="about_version">버전 1.0.0</string>
+    <string name="about_description">Android를 위한 깔끔하고 안전하며 스마트한 URL 클리너. GNU 일반 공중 사용 허가서 v3.0 (GPLv3) 하에 무료 오픈소스로 제공됩니다.</string>
+    <string name="about_play_store_title">Google Play에서 보기</string>
+    <string name="about_play_store_subtitle">Play 스토어에서 LinkScrub 평가 및 리뷰 작성</string>
+    <string name="about_github_title">GitHub 소스 코드</string>
+    <string name="about_github_subtitle">기여, 문제 보고 또는 코드 확인</string>
+    <string name="about_privacy_title">개인정보 처리방침</string>
+    <string name="about_privacy_subtitle">100% 온디바이스 개인정보 보호 약관 읽기</string>
+
+    <!-- In-App Update (MainActivity) -->
+    <string name="update_downloaded_message">업데이트 다운로드가 완료되었습니다. 설치하려면 다시 시작하세요</string>
+    <string name="update_restart_action">다시 시작</string>
+
+    <!-- Feedback & User Messages -->
+    <string name="msg_enter_valid_url">유효한 URL을 입력하거나 붙여넣으세요.</string>
+    <string name="msg_enter_valid_http_url">유효한 HTTP 또는 HTTPS URL을 입력하세요.</string>
+    <string name="msg_cleaned_copied">정리된 URL이 클립보드에 복사되었습니다!</string>
+    <string name="msg_cleaned_copied_with_savings">정리된 URL이 클립보드에 복사되었습니다! (%1$d자 절약)</string>
+    <string name="msg_failed_to_clean_url">URL 정리 실패: %1$s</string>
+    <string name="msg_unknown_error">알 수 없는 오류</string>
+    <string name="msg_link_sanitized_params_removed">링크 정리 완료: %1$d개 매개변수 제거 (%2$d자 절약)</string>
+    <string name="msg_link_cleaned">링크가 정리되었습니다</string>
+    <string name="msg_no_valid_url_in_shared_text">공유된 텍스트에서 유효한 URL을 찾을 수 없습니다.</string>
+    <string name="msg_scanned_qr_code_url">QR 코드 URL을 스캔했습니다</string>
+    <string name="msg_loaded_link_from_history">기록에서 링크를 불러왔습니다</string>
+    <string name="msg_item_removed_from_history">기록에서 항목이 삭제되었습니다</string>
+    <string name="msg_all_history_cleared">모든 기록이 삭제되었습니다</string>
+</resources>

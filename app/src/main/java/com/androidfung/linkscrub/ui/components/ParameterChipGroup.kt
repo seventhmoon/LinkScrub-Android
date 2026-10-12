@@ -31,10 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.ui.ParameterChipItem
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
 
@@ -74,7 +76,7 @@ fun ParameterChipGroup(
                 ) {
                     Column(modifier = Modifier.weight(1f, fill = false)) {
                         Text(
-                            text = "Query Parameters (${parameters.size})",
+                            text = stringResource(R.string.param_group_title, parameters.size),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -82,7 +84,7 @@ fun ParameterChipGroup(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "$markedCount marked for scrub ($trackingCount tracking)",
+                            text = stringResource(R.string.param_group_subtitle, markedCount, trackingCount),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -100,12 +102,12 @@ fun ParameterChipGroup(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.DeleteSweep,
-                                contentDescription = "Scrub All",
+                                contentDescription = stringResource(R.string.param_action_scrub_all),
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Scrub All",
+                                text = stringResource(R.string.param_action_scrub_all),
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 softWrap = false
@@ -121,12 +123,12 @@ fun ParameterChipGroup(
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.Check,
-                                contentDescription = "Keep All",
+                                contentDescription = stringResource(R.string.param_action_keep_all),
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Keep All",
+                                text = stringResource(R.string.param_action_keep_all),
                                 style = MaterialTheme.typography.labelSmall,
                                 maxLines = 1,
                                 softWrap = false
@@ -140,7 +142,7 @@ fun ParameterChipGroup(
 
             if (parameters.isEmpty()) {
                 Text(
-                    text = "No query parameters found in this URL. The URL is clean!",
+                    text = stringResource(R.string.param_empty_clean),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -206,21 +208,21 @@ fun ParameterChip(
             if (isRemoved) {
                 Icon(
                     imageVector = Icons.Rounded.Block,
-                    contentDescription = "Marked for scrub",
+                    contentDescription = stringResource(R.string.cd_param_marked_for_scrub),
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.size(16.dp)
                 )
             } else if (isTracking) {
                 Icon(
                     imageVector = Icons.Rounded.WarningAmber,
-                    contentDescription = "Tracking parameter",
+                    contentDescription = stringResource(R.string.cd_param_tracking),
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier.size(16.dp)
                 )
             } else {
                 Icon(
                     imageVector = Icons.Rounded.CheckCircle,
-                    contentDescription = "Safe parameter",
+                    contentDescription = stringResource(R.string.cd_param_safe),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(16.dp)
                 )

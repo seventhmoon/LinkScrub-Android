@@ -14,10 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LinkScrub">
 
-        <!-- Google AdMob Application ID (official sample/test App ID) -->
+        <!-- Google AdMob Application ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9890667024752973~6616180040" />
 
         <!-- Disable Firebase Performance automatic collection for development builds -->
         <meta-data

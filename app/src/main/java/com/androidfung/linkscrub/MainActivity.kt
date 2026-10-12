@@ -58,12 +58,14 @@ class MainActivity : ComponentActivity() {
             LinkScrubTheme {
                 val isUpdateDownloaded by inAppUpdateManager.isUpdateDownloaded.collectAsState()
                 val snackbarHostState = remember { SnackbarHostState() }
+                val updateMessage = androidx.compose.ui.res.stringResource(R.string.update_downloaded_message)
+                val restartAction = androidx.compose.ui.res.stringResource(R.string.update_restart_action)
 
                 LaunchedEffect(isUpdateDownloaded) {
                     if (isUpdateDownloaded) {
                         val result = snackbarHostState.showSnackbar(
-                            message = "An update has just been downloaded. Restart to install",
-                            actionLabel = "Restart",
+                            message = updateMessage,
+                            actionLabel = restartAction,
                             duration = SnackbarDuration.Indefinite
                         )
                         if (result == SnackbarResult.ActionPerformed) {
