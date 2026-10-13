@@ -1,0 +1,47 @@
+name: 🧹 Tracking Parameter / Rule Request
+description: Request support for stripping new tracking tokens, affiliate parameters, or shortener domains
+labels: ["enhancement", "rules"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help LinkScrub expand its tracking parameters catalog! Please provide details about the tracking parameter or service.
+  - type: input
+    id: service_name
+    attributes:
+      label: Service / Platform Name
+      placeholder: e.g. Threads, TikTok, Amazon, Substack
+      description: The service or platform that adds this parameter.
+    validations:
+      required: true
+  - type: textarea
+    id: sample_dirty_url
+    attributes:
+      label: Sample Raw / Dirty URL
+      description: Provide an example URL containing the parameter (redact any sensitive private account info).
+      placeholder: https://example.com/item?tracking_param=xyz123&clean_arg=456
+    validations:
+      required: true
+  - type: textarea
+    id: expected_clean_url
+    attributes:
+      label: Desired Clean URL
+      description: What should the URL look like after scrubbing?
+      placeholder: https://example.com/item?clean_arg=456
+    validations:
+      required: true
+  - type: input
+    id: parameter_names
+    attributes:
+      label: Tracking Parameter Name(s)
+      description: Comma-separated list of query parameters to strip.
+      placeholder: e.g. fb_source, tracking_id, s_kwcid
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes / Documentation
+      description: Any documentation or context on whether this parameter is purely tracking or required for functionality.
+    validations:
+      required: false

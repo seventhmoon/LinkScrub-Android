@@ -1,0 +1,59 @@
+name: 🐛 Bug Report
+description: Report an issue or unexpected behavior in LinkScrub
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! Please provide as much detail as possible.
+  - type: input
+    id: url
+    attributes:
+      label: Problematic URL
+      description: The original URL that caused the issue (if applicable). Please redact sensitive personal identifiers if necessary.
+      placeholder: https://example.com/?utm_source=test&...
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened or what should the cleaned URL look like?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: dropdown
+    id: android_version
+    attributes:
+      label: Android Version
+      options:
+        - "Android 15 (API 35)"
+        - "Android 14 (API 34)"
+        - "Android 13 (API 33)"
+        - "Android 12 / 12L (API 31/32)"
+        - "Android 11 (API 30)"
+        - "Android 10 (API 29)"
+        - "Android 9 (API 28)"
+        - "Other"
+    validations:
+      required: true
+  - type: input
+    id: device_model
+    attributes:
+      label: Device Model
+      placeholder: e.g. Google Pixel 8, Samsung Galaxy S23
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs or Screenshots
+      description: Paste any crash logs or drag and drop screenshots if available.
+    validations:
+      required: false

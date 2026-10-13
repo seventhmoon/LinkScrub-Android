@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/seventhmoon/LinkScrub-Android/actions/workflows/ci.yml"><img src="https://github.com/seventhmoon/LinkScrub-Android/actions/workflows/ci.yml/badge.svg" alt="Android CI" /></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0.21-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin Version" /></a>
   <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-BOM%202025.02.00-4285F4?logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" /></a>
   <a href="https://m3.material.io"><img src="https://img.shields.io/badge/Material%20Design-3%20Expressive-6750A4?logo=materialdesign&logoColor=white" alt="Material Design 3" /></a>
