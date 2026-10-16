@@ -66,9 +66,8 @@ import androidx.compose.ui.unit.dp
 import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
-import com.androidfung.linkscrub.ui.openInBrowser
-import com.androidfung.linkscrub.ui.shareUrl
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
+import com.androidfung.linkscrub.util.IntentUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -256,8 +255,8 @@ fun HistoryPanel(
                             item = item,
                             onClick = { onSelectItem(item) },
                             onCopy = { onCopyItem(item) },
-                            onShare = { shareUrl(context, item.cleanedUrl) },
-                            onOpen = { openInBrowser(context, item.cleanedUrl) },
+                            onShare = { IntentUtils.shareUrl(context, item.cleanedUrl) },
+                            onOpen = { IntentUtils.openInBrowser(context, item.cleanedUrl) },
                             onDelete = { onDeleteItem(item.id) }
                         )
                     }

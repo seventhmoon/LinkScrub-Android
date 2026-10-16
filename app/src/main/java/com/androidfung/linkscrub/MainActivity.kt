@@ -22,6 +22,7 @@ import com.androidfung.linkscrub.ui.LinkScrubScreen
 import com.androidfung.linkscrub.ui.LinkScrubViewModel
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
 import com.androidfung.linkscrub.util.AnalyticsHelper
+import android.os.Build
 import com.androidfung.linkscrub.util.InAppUpdateManager
 import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Disable navigation bar contrast enforcement for true edge-to-edge on supported Android versions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
 
         // Initialize Analytics & Crashlytics helper
         AnalyticsHelper.initialize(this)
@@ -120,18 +126,23 @@ class MainActivity : ComponentActivity() {
                 if ("text/plain" == type || type.startsWith("text/")) {
                     val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                         ?: intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()
-                    if (!sharedText.isNullOrBlank()) {
+                    // Guard against excessively large payloads to avoid memory spikes / DoS
+                    if (!sharedText.isNullOrBlank() && sharedText.length <= MAX_INTENT_TEXT_LENGTH) {
                         viewModel.handleSharedUrl(sharedText)
                     }
                 }
             }
             Intent.ACTION_VIEW == action -> {
                 val dataUri = intent.dataString
-                if (!dataUri.isNullOrBlank()) {
+                if (!dataUri.isNullOrBlank() && dataUri.length <= MAX_INTENT_TEXT_LENGTH) {
                     viewModel.handleSharedUrl(dataUri)
                 }
             }
         }
+    }
+
+    companion object {
+        private const val MAX_INTENT_TEXT_LENGTH = 100_000 // 100 KB limit for intent payloads
     }
 }
 

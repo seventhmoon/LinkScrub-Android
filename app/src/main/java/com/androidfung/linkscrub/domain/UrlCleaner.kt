@@ -117,6 +117,21 @@ class UrlCleaner(
         return false
     }
 
+    fun computeCleanedUrlWithExcludedParams(rawUrl: String, paramsToRemove: Set<String>): String {
+        val parsed = rawUrl.toHttpUrlOrNull() ?: return rawUrl
+        val builder = parsed.newBuilder()
+
+        for (param in paramsToRemove) {
+            builder.removeAllQueryParameters(param)
+        }
+
+        var result = builder.build().toString()
+        if (parsed.host.contains("amazon.", ignoreCase = true)) {
+            result = cleanAmazonPath(result)
+        }
+        return result
+    }
+
     private fun cleanAmazonPath(url: String): String {
         return url.replace(AMAZON_REF_PATH_REGEX, "")
     }

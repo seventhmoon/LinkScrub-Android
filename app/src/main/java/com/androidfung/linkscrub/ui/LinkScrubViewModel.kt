@@ -640,24 +640,11 @@ class LinkScrubViewModel(
         rawUrl: String,
         chips: List<ParameterChipItem>
     ): String {
-        val parsed = rawUrl.toHttpUrlOrNull() ?: return rawUrl
-        val builder = parsed.newBuilder()
-
         val paramsToRemove = chips.filter { it.isMarkedForRemoval }.map { it.key }.toSet()
-        for (param in paramsToRemove) {
-            builder.removeAllQueryParameters(param)
-        }
-
-        var result = builder.build().toString()
-        if (parsed.host.contains("amazon.", ignoreCase = true)) {
-            result = result.replace(AMAZON_REF_PATH_REGEX, "")
-        }
-        return result
+        return urlCleaner.computeCleanedUrlWithExcludedParams(rawUrl, paramsToRemove)
     }
 
     companion object {
-        private val AMAZON_REF_PATH_REGEX = Regex("""/ref=[^/?#]+""")
-
         fun provideFactory(application: Application): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")

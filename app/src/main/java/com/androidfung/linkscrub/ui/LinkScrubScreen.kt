@@ -1,6 +1,5 @@
 package com.androidfung.linkscrub.ui
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedContent
@@ -122,10 +121,17 @@ import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import com.androidfung.linkscrub.ui.components.HelpFaqBottomSheet
 import com.androidfung.linkscrub.ui.components.HistoryPanel
-import com.androidfung.linkscrub.ui.components.OpenGraphPreviewCard
-import com.androidfung.linkscrub.ui.components.ParameterChipGroup
 import com.androidfung.linkscrub.ui.components.WizardStepIndicator
+import com.androidfung.linkscrub.ui.steps.Step1Actions
+import com.androidfung.linkscrub.ui.steps.Step1InputView
+import com.androidfung.linkscrub.ui.steps.Step2Actions
+import com.androidfung.linkscrub.ui.steps.Step2InspectView
+import com.androidfung.linkscrub.ui.steps.Step3Actions
+import com.androidfung.linkscrub.ui.steps.Step3PreviewView
 import com.androidfung.linkscrub.ui.theme.LinkScrubTheme
+import com.androidfung.linkscrub.util.AnalyticsHelper
+import com.androidfung.linkscrub.util.IntentUtils
+import com.androidfung.linkscrub.util.QrCodeScanner
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class, ExperimentalLayoutApi::class)
 @Composable
@@ -167,6 +173,24 @@ fun LinkScrubScreen(
         uiState.userMessage?.let { msg ->
             snackbarHostState.showSnackbar(msg)
             viewModel.dismissUserMessage()
+        }
+    }
+
+    // Predictive back handling: navigate back within wizard or dismiss sheet instead of exiting app
+    androidx.activity.compose.BackHandler(
+        enabled = uiState.isHelpSheetVisible || (!isDualPane && uiState.isHistoryPaneVisible) || uiState.currentStep != WizardStep.INPUT
+    ) {
+        when {
+            uiState.isHelpSheetVisible -> viewModel.setHelpSheetVisible(false)
+            !isDualPane && uiState.isHistoryPaneVisible -> viewModel.setHistoryPaneVisible(false)
+            uiState.currentStep == WizardStep.PREVIEW -> {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                viewModel.goToStep(WizardStep.INSPECT)
+            }
+            uiState.currentStep == WizardStep.INSPECT -> {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                viewModel.goToStep(WizardStep.INPUT)
+            }
         }
     }
 
@@ -303,48 +327,76 @@ fun LinkScrubScreen(
                         ) { targetStep ->
                             when (targetStep) {
                                 WizardStep.INPUT -> {
+                                    val step1Actions = remember(viewModel, context) {
+                                        Step1Actions(
+                                            onUrlChange = { viewModel.onInputUrlChanged(it) },
+                                            onPasteClipboard = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.useClipboardUrl()
+                                            },
+                                            onClearUrl = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.clearInput()
+                                            },
+                                            onQuickClean = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.onQuickCleanClicked()
+                                            },
+                                            onTuneInspect = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.onTuneInspectClicked()
+                                            },
+                                            onScanQrCode = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                QrCodeScanner.startScan(
+                                                    context = context,
+                                                    onSuccess = { scannedUrl ->
+                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        viewModel.onQrCodeScanned(scannedUrl)
+                                                    },
+                                                    onFailure = { error ->
+                                                        AnalyticsHelper.recordException(error)
+                                                    },
+                                                    onCanceled = {
+                                                        // User canceled or dismissed
+                                                    }
+                                                )
+                                            }
+                                        )
+                                    }
                                     Step1InputView(
                                         inputUrl = uiState.inputUrl,
                                         detectedClipboardUrl = uiState.detectedClipboardUrl,
                                         isProcessing = uiState.isProcessing,
-                                        onUrlChange = { viewModel.onInputUrlChanged(it) },
-                                        onPasteClipboard = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            viewModel.useClipboardUrl()
-                                        },
-                                        onClearUrl = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.clearInput()
-                                        },
-                                        onQuickClean = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            viewModel.onQuickCleanClicked()
-                                        },
-                                        onTuneInspect = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.onTuneInspectClicked()
-                                        },
-                                        onScanQrCode = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            com.androidfung.linkscrub.util.QrCodeScanner.startScan(
-                                                context = context,
-                                                onSuccess = { scannedUrl ->
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                    viewModel.onQrCodeScanned(scannedUrl)
-                                                },
-                                                onFailure = { error ->
-                                                    // Record error and inform analytics
-                                                    com.androidfung.linkscrub.util.AnalyticsHelper.recordException(error)
-                                                },
-                                                onCanceled = {
-                                                    // User canceled or dismissed, no action needed
-                                                }
-                                            )
-                                        }
+                                        actions = step1Actions
                                     )
                                 }
 
                                 WizardStep.INSPECT -> {
+                                    val step2Actions = remember(viewModel) {
+                                        Step2Actions(
+                                            onToggleParam = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.toggleParameterRemoval(it)
+                                            },
+                                            onScrubAllTracking = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.selectAllTrackingParamsForRemoval()
+                                            },
+                                            onKeepAll = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.resetAllParameters()
+                                            },
+                                            onBack = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.goToStep(WizardStep.INPUT)
+                                            },
+                                            onProceedToPreview = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.onProceedToPreview()
+                                            }
+                                        )
+                                    }
                                     Step2InspectView(
                                         inputUrl = uiState.inputUrl,
                                         unshortenedUrl = uiState.unshortenedUrl,
@@ -353,57 +405,41 @@ fun LinkScrubScreen(
                                         isUnshortening = uiState.isUnshortening,
                                         parameters = uiState.detectedParameters,
                                         cleanedUrlCandidate = uiState.cleanedUrl,
-                                        onToggleParam = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.toggleParameterRemoval(it)
-                                        },
-                                        onScrubAllTracking = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            viewModel.selectAllTrackingParamsForRemoval()
-                                        },
-                                        onKeepAll = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.resetAllParameters()
-                                        },
-                                        onBack = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.goToStep(WizardStep.INPUT)
-                                        },
-                                        onProceedToPreview = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            viewModel.onProceedToPreview()
-                                        }
+                                        actions = step2Actions
                                     )
                                 }
 
                                 WizardStep.PREVIEW -> {
+                                    val step3Actions = remember(viewModel, context, uiState.cleanedUrl) {
+                                        Step3Actions(
+                                            onCopy = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.copyCleanedUrlToClipboard()
+                                            },
+                                            onShare = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                IntentUtils.shareUrl(context, uiState.cleanedUrl)
+                                            },
+                                            onOpenInBrowser = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                IntentUtils.openInBrowser(context, uiState.cleanedUrl)
+                                            },
+                                            onInspectAgain = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.goToStep(WizardStep.INSPECT)
+                                            },
+                                            onScrubAnother = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                viewModel.clearInput()
+                                            }
+                                        )
+                                    }
                                     Step3PreviewView(
-                                        originalUrl = uiState.inputUrl,
                                         cleanedUrl = uiState.cleanedUrl,
-                                        unshortenedUrl = uiState.unshortenedUrl,
                                         removedParamsCount = uiState.removedParamsCount,
                                         metadata = uiState.metadata,
                                         isLoadingMetadata = uiState.isLoadingMetadata,
-                                        onCopy = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                            viewModel.copyCleanedUrlToClipboard()
-                                        },
-                                        onShare = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            shareUrl(context, uiState.cleanedUrl)
-                                        },
-                                        onOpenInBrowser = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            openInBrowser(context, uiState.cleanedUrl)
-                                        },
-                                        onInspectAgain = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.goToStep(WizardStep.INSPECT)
-                                        },
-                                        onScrubAnother = {
-                                            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                            viewModel.clearInput()
-                                        }
+                                        actions = step3Actions
                                     )
                                 }
                             }
@@ -460,633 +496,6 @@ fun LinkScrubScreen(
     }
 }
 
-/**
- * Step 1: Input URL and clipboard paste detection with clear action buttons (Quick Clean vs Tune / Inspect).
- */
-@Composable
-fun Step1InputView(
-    inputUrl: String,
-    detectedClipboardUrl: String?,
-    isProcessing: Boolean,
-    onUrlChange: (String) -> Unit,
-    onPasteClipboard: () -> Unit,
-    onClearUrl: () -> Unit,
-    onQuickClean: () -> Unit,
-    onTuneInspect: () -> Unit,
-    onScanQrCode: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Clipboard detection alert pill
-        AnimatedVisibility(
-            visible = !detectedClipboardUrl.isNullOrBlank() && detectedClipboardUrl != inputUrl
-        ) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onPasteClipboard() }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ContentPaste,
-                        contentDescription = stringResource(R.string.cd_clipboard_found),
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.input_link_detected_clipboard),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Text(
-                            text = detectedClipboardUrl.orEmpty(),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    FilledTonalButton(
-                        onClick = onPasteClipboard,
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.action_paste),
-                            maxLines = 1,
-                            softWrap = false
-                        )
-                    }
-                }
-            }
-        }
-
-        // URL input text field with Scan QR Code action
-        OutlinedTextField(
-            value = inputUrl,
-            onValueChange = onUrlChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("url_input_field"),
-            label = { Text(stringResource(R.string.input_url_label)) },
-            placeholder = { Text(stringResource(R.string.input_url_placeholder)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Rounded.Link,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-            trailingIcon = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = onScanQrCode,
-                        modifier = Modifier.testTag("scan_qr_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.QrCodeScanner,
-                            contentDescription = stringResource(R.string.action_scan_qr),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    if (inputUrl.isNotBlank()) {
-                        IconButton(onClick = onClearUrl) {
-                            Icon(
-                                imageVector = Icons.Rounded.Clear,
-                                contentDescription = stringResource(R.string.action_clear_input),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(18.dp),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Uri,
-                imeAction = ImeAction.Go
-            ),
-            keyboardActions = KeyboardActions(
-                onGo = {
-                    if (inputUrl.isNotBlank() && !isProcessing) {
-                        onQuickClean()
-                    }
-                }
-            ),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-            ),
-            singleLine = false,
-            maxLines = 4
-        )
-
-        // Action Buttons: Quick Clean (Prominent primary) & Tune / Inspect (Tonal / Detailed)
-        val hasUrl = inputUrl.isNotBlank()
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            // Quick Clean: Instant scrub and copy to clipboard
-            Button(
-                onClick = onQuickClean,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(16.dp),
-                enabled = hasUrl && !isProcessing,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                if (isProcessing) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.5.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = stringResource(R.string.action_scrubbing_link),
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Rounded.Bolt,
-                        contentDescription = stringResource(R.string.cd_quick_clean_icon),
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.action_quick_clean_copy),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            // Tune / Inspect: Step-by-step query parameter selection
-            FilledTonalButton(
-                onClick = onTuneInspect,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(16.dp),
-                enabled = hasUrl && !isProcessing,
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Tune,
-                    contentDescription = stringResource(R.string.cd_tune_inspect_icon),
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.action_tune_inspect),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
-
-/**
- * Step 2: Parameter inspection, unshortening info, and interactive chip removal
- */
-@Composable
-fun Step2InspectView(
-    inputUrl: String,
-    unshortenedUrl: String?,
-    isRedirected: Boolean,
-    redirectChain: List<String>,
-    isUnshortening: Boolean,
-    parameters: List<ParameterChipItem>,
-    cleanedUrlCandidate: String,
-    onToggleParam: (String) -> Unit,
-    onScrubAllTracking: () -> Unit,
-    onKeepAll: () -> Unit,
-    onBack: () -> Unit,
-    onProceedToPreview: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Redirect & Unshortening notification card
-        if (isUnshortening) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.inspect_unshortening),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        } else if (isRedirected && !unshortenedUrl.isNullOrBlank()) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Rounded.Route,
-                            contentDescription = stringResource(R.string.cd_redirect_traced),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = stringResource(R.string.inspect_redirect_resolved, redirectChain.size),
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = stringResource(R.string.inspect_destination, unshortenedUrl),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-        }
-
-        // Parameter Chip Group
-        ParameterChipGroup(
-            parameters = parameters,
-            onToggleParameter = onToggleParam,
-            onSelectAllTracking = onScrubAllTracking,
-            onResetAll = onKeepAll
-        )
-
-        // Real-time Preview of Candidate Clean URL
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(14.dp)) {
-                Text(
-                    text = stringResource(R.string.inspect_candidate_preview_title),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = cleanedUrlCandidate.ifBlank { inputUrl },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-
-        // Navigation controls (Back & Forward)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedButton(
-                onClick = onBack,
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.weight(1f).height(50.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = stringResource(R.string.action_back)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.action_back),
-                    maxLines = 1,
-                    softWrap = false
-                )
-            }
-
-            Button(
-                onClick = onProceedToPreview,
-                shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.weight(2f).height(50.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.action_confirm_preview),
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
-                    contentDescription = stringResource(R.string.cd_preview)
-                )
-            }
-        }
-    }
-}
-
-/**
- * Step 3: Open Graph preview card with Coil, and Share, Copy, Open in Browser actions
- */
-@Composable
-fun Step3PreviewView(
-    originalUrl: String,
-    cleanedUrl: String,
-    unshortenedUrl: String?,
-    removedParamsCount: Int,
-    metadata: OpenGraphMetadata?,
-    isLoadingMetadata: Boolean,
-    onCopy: () -> Unit,
-    onShare: () -> Unit,
-    onOpenInBrowser: () -> Unit,
-    onInspectAgain: () -> Unit,
-    onScrubAnother: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Success Badge Card
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = stringResource(R.string.cd_success),
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(14.dp))
-                Column {
-                    Text(
-                        text = stringResource(R.string.preview_success_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                    Text(
-                        text = stringResource(R.string.preview_params_eliminated, removedParamsCount),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-        }
-
-        // Open Graph Thumbnail Preview Card (using Coil)
-        OpenGraphPreviewCard(
-            metadata = metadata,
-            isLoading = isLoadingMetadata,
-            url = cleanedUrl
-        )
-
-        // Cleaned URL display card
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-            ),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.preview_clean_url_title),
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = cleanedUrl,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        // Primary Action Buttons: Copy, Share, Open in Browser
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // Copy Clean URL Button
-                Button(
-                    onClick = onCopy,
-                    modifier = Modifier.weight(1f).height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ContentCopy,
-                        contentDescription = stringResource(R.string.cd_copy_clean_url)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.action_copy),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                }
-
-                // Share Clean URL Button
-                FilledTonalButton(
-                    onClick = onShare,
-                    modifier = Modifier.weight(1f).height(52.dp),
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Share,
-                        contentDescription = stringResource(R.string.cd_share_clean_url)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = stringResource(R.string.action_share),
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                }
-            }
-
-            // Open in Browser Button
-            OutlinedButton(
-                onClick = onOpenInBrowser,
-                modifier = Modifier.fillMaxWidth().height(48.dp),
-                shape = RoundedCornerShape(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                    contentDescription = stringResource(R.string.action_open_in_browser),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.action_open_in_browser),
-                    maxLines = 1,
-                    softWrap = false
-                )
-            }
-        }
-
-        // Auxiliary actions
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedButton(
-                onClick = onInspectAgain,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.weight(1f).height(48.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 6.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Tune,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.action_adjust_parameters),
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            FilledTonalButton(
-                onClick = onScrubAnother,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.weight(1f).height(48.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 6.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.CleaningServices,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.action_scrub_another),
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-
-        // Placement 1: AdMob Adaptive Banner at the bottom of Step 3
-        Spacer(modifier = Modifier.height(8.dp))
-        com.androidfung.linkscrub.ui.components.AdMobBanner(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-/**
- * System Share Intent helper
- */
-fun shareUrl(context: Context, url: String) {
-    if (url.isBlank()) return
-    val chooserTitle = context.getString(R.string.share_chooser_title)
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
-    }
-    val shareIntent = Intent.createChooser(sendIntent, chooserTitle)
-    context.startActivity(shareIntent)
-}
-
-/**
- * System Open in Browser Intent helper
- */
-fun openInBrowser(context: Context, url: String) {
-    if (url.isBlank()) return
-    try {
-        val safeUrl = if (!url.startsWith("http://", ignoreCase = true) && !url.startsWith("https://", ignoreCase = true)) {
-            "https://$url"
-        } else {
-            url
-        }
-        val intent = Intent(Intent.ACTION_VIEW, safeUrl.toUri())
-        context.startActivity(intent)
-    } catch (_: Exception) {
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun Step1InputPreview() {
@@ -1095,12 +504,14 @@ fun Step1InputPreview() {
             inputUrl = "https://example.com?utm_source=twitter&gclid=123",
             detectedClipboardUrl = "https://news.ycombinator.com",
             isProcessing = false,
-            onUrlChange = {},
-            onPasteClipboard = {},
-            onClearUrl = {},
-            onQuickClean = {},
-            onTuneInspect = {},
-            onScanQrCode = {}
+            actions = Step1Actions(
+                onUrlChange = {},
+                onPasteClipboard = {},
+                onClearUrl = {},
+                onQuickClean = {},
+                onTuneInspect = {},
+                onScanQrCode = {}
+            )
         )
     }
 }
@@ -1110,9 +521,7 @@ fun Step1InputPreview() {
 fun Step3Preview() {
     LinkScrubTheme {
         Step3PreviewView(
-            originalUrl = "https://example.com?utm_source=twitter&fbclid=abc",
             cleanedUrl = "https://example.com",
-            unshortenedUrl = null,
             removedParamsCount = 2,
             metadata = OpenGraphMetadata(
                 title = "Example Domain",
@@ -1121,11 +530,14 @@ fun Step3Preview() {
                 siteName = "example.com"
             ),
             isLoadingMetadata = false,
-            onCopy = {},
-            onShare = {},
-            onOpenInBrowser = {},
-            onInspectAgain = {},
-            onScrubAnother = {}
+            actions = Step3Actions(
+                onCopy = {},
+                onShare = {},
+                onOpenInBrowser = {},
+                onInspectAgain = {},
+                onScrubAnother = {}
+            )
         )
     }
 }
+
