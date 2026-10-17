@@ -1,7 +1,9 @@
+package com.androidfung.linkscrub.ui
+
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -27,37 +29,38 @@ class LinkScrubUiTest {
         val inputField = composeTestRule.onNodeWithTag("url_input_field")
         inputField.assertIsDisplayed()
 
-        // Button should initially be disabled when input is blank
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").assertIsNotEnabled()
+        // Buttons should initially be disabled when input is blank
+        composeTestRule.onNodeWithText("Quick Clean & Copy").assertIsNotEnabled()
+        composeTestRule.onNodeWithText("Tune / Inspect Parameters").assertIsNotEnabled()
 
         // Input a dirty tracking URL
         inputField.performTextInput("https://example.com/product?utm_source=twitter&utm_medium=social&ref=123")
 
-        // Button should now be enabled
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").assertIsEnabled()
+        // Buttons should now be enabled
+        composeTestRule.onNodeWithText("Quick Clean & Copy").assertIsEnabled()
+        composeTestRule.onNodeWithText("Tune / Inspect Parameters").assertIsEnabled()
 
         // Clear input via trailing icon
         composeTestRule.onNodeWithContentDescription("Clear input").performClick()
 
-        // Button is disabled again
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").assertIsNotEnabled()
+        // Buttons are disabled again
+        composeTestRule.onNodeWithText("Quick Clean & Copy").assertIsNotEnabled()
+        composeTestRule.onNodeWithText("Tune / Inspect Parameters").assertIsNotEnabled()
     }
 
     @Test
-    fun testStep1_QuickCleanToggle() {
-        // Initially in Step-by-step mode
-        composeTestRule.onNodeWithText("Quick-Clean Mode").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Step-by-step parameter review").assertIsDisplayed()
+    fun testStep1_QuickClean_ExecutesDirectlyToStep3() {
+        val inputField = composeTestRule.onNodeWithTag("url_input_field")
+        inputField.performTextInput("https://example.com/item?utm_source=test&session=abc")
 
-        // Toggle Quick-Clean Mode
-        composeTestRule.onNodeWithText("Quick-Clean Mode").performClick()
+        // Click Quick Clean & Copy
+        composeTestRule.onNodeWithText("Quick Clean & Copy").performClick()
+        composeTestRule.waitForIdle()
 
-        // Subtitle changes to auto-scrub description
-        composeTestRule.onNodeWithText("Auto-scrub & copy to clipboard instantly").assertIsDisplayed()
-
-        // Toggle back
-        composeTestRule.onNodeWithText("Quick-Clean Mode").performClick()
-        composeTestRule.onNodeWithText("Step-by-step parameter review").assertIsDisplayed()
+        // Verify Step 3 is reached directly
+        composeTestRule.onNodeWithText("Cleaned URL").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Copy").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Share").assertIsDisplayed()
     }
 
     @Test
@@ -65,8 +68,8 @@ class LinkScrubUiTest {
         val inputField = composeTestRule.onNodeWithTag("url_input_field")
         inputField.performTextInput("https://example.com/article?utm_source=newsletter&utm_campaign=spring&article_id=987")
 
-        // Proceed to Step 2
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").performClick()
+        // Proceed to Step 2 via Tune / Inspect Parameters
+        composeTestRule.onNodeWithText("Tune / Inspect Parameters").performClick()
 
         // Verify Step 2 is displayed
         composeTestRule.waitForIdle()
@@ -95,9 +98,8 @@ class LinkScrubUiTest {
         composeTestRule.onNodeWithText("Confirm & Preview").performScrollTo().performClick()
         composeTestRule.waitForIdle()
 
-        // Verify Step 3: Preview card, Clean URL card, and Action buttons
-        composeTestRule.onNodeWithText("Link Successfully Sanitized!").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Scrubbed Clean URL").assertIsDisplayed()
+        // Verify Step 3: Clean URL card and Action buttons
+        composeTestRule.onNodeWithText("Cleaned URL").assertIsDisplayed()
         composeTestRule.onNodeWithText("Copy").assertIsDisplayed()
         composeTestRule.onNodeWithText("Share").assertIsDisplayed()
         composeTestRule.onNodeWithText("Open in Browser").assertIsDisplayed()
@@ -154,8 +156,8 @@ class LinkScrubUiTest {
 
         // Verify input text updated without crash or layout collapse
         inputField.assertIsDisplayed()
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Inspect & Scrub Link").assertIsEnabled()
+        composeTestRule.onNodeWithText("Quick Clean & Copy").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Quick Clean & Copy").assertIsEnabled()
 
         // Clear text
         inputField.performTextClearance()

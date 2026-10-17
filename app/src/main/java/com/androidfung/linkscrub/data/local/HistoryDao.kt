@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface HistoryDao {
 
-    @Query("SELECT * FROM history_entries ORDER BY timestamp DESC")
+    @Query("SELECT * FROM history_entries ORDER BY timestamp DESC LIMIT 500")
     fun getAllHistory(): Flow<List<HistoryEntity>>
 
     @Query("SELECT * FROM history_entries WHERE id = :id")
     suspend fun getHistoryById(id: Long): HistoryEntity?
 
-    @Query("SELECT * FROM history_entries WHERE cleanedUrl LIKE '%' || :query || '%' OR originalUrl LIKE '%' || :query || '%' OR title LIKE '%' || :query || '%' ORDER BY timestamp DESC")
+    @Query("SELECT * FROM history_entries WHERE cleanedUrl LIKE '%' || :query || '%' OR originalUrl LIKE '%' || :query || '%' OR title LIKE '%' || :query || '%' ORDER BY timestamp DESC LIMIT 200")
     fun searchHistory(query: String): Flow<List<HistoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

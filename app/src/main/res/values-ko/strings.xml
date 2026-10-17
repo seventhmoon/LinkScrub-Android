@@ -132,7 +132,7 @@
 
     <!-- About Section -->
     <string name="about_app_name">🧼 LinkScrub</string>
-    <string name="about_version">버전 1.0.0</string>
+    <string name="about_version">버전 %1$s</string>
     <string name="about_description">Android를 위한 깔끔하고 안전하며 스마트한 URL 클리너. GNU 일반 공중 사용 허가서 v3.0 (GPLv3) 하에 무료 오픈소스로 제공됩니다.</string>
     <string name="about_play_store_title">Google Play에서 보기</string>
     <string name="about_play_store_subtitle">Play 스토어에서 LinkScrub 평가 및 리뷰 작성</string>

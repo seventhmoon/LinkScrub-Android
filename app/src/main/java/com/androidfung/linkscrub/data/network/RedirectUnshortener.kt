@@ -43,8 +43,20 @@ class OkHttpRedirectUnshortener(
         val visitedUrls = mutableSetOf<String>(currentUrl)
         var hops = 0
 
+        if (!NetworkClientProvider.isSafePublicUrl(currentUrl)) {
+            return@withContext UnshortenResult(
+                initialUrl = url,
+                finalUrl = currentUrl,
+                redirectChain = emptyList(),
+                isRedirected = false
+            )
+        }
+
         try {
             while (hops < maxHops) {
+                if (!NetworkClientProvider.isSafePublicUrl(currentUrl)) {
+                    break
+                }
                 // Try HEAD request first to avoid downloading body
                 var targetLocation: String? = null
                 val headRequest = Request.Builder()
@@ -99,8 +111,8 @@ class OkHttpRedirectUnshortener(
                 if (targetLocation != null) {
                     // Resolve relative redirect locations if necessary
                     val resolvedUrl = resolveUrl(currentUrl, targetLocation!!)
-                    if (resolvedUrl in visitedUrls) {
-                        // Cyclic redirect loop detected: break immediately to avoid infinite redirect cycle
+                    if (resolvedUrl in visitedUrls || !NetworkClientProvider.isSafePublicUrl(resolvedUrl)) {
+                        // Cyclic redirect loop or unsafe host detected: break immediately
                         break
                     }
                     chain.add(resolvedUrl)

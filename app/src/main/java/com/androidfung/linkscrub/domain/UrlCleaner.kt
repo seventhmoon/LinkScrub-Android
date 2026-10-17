@@ -45,11 +45,37 @@ class UrlCleaner(
         )
 
         val URL_REGEX = Regex("""https?://[^\s<>"'{}|\\^`]+""", RegexOption.IGNORE_CASE)
-        private val AMAZON_REF_PATH_REGEX = Regex("""/ref=[^/?#]+""")
+        val AMAZON_REF_PATH_REGEX = Regex("""/ref=[^/?#]+""")
+        const val AMAZON_PATH_PARAM_KEY = "ref (path)"
+
+        /**
+         * Trims trailing punctuation like '.', ',', ';', ')', ']' from extracted URLs in conversational text.
+         */
+        fun trimTrailingPunctuation(url: String): String {
+            var result = url
+            while (result.isNotEmpty()) {
+                val lastChar = result.last()
+                if (lastChar in ".,;:!?\"'>`") {
+                    result = result.dropLast(1)
+                } else if (lastChar == ')' && result.count { it == '(' } < result.count { it == ')' }) {
+                    result = result.dropLast(1)
+                } else if (lastChar == ']' && result.count { it == '[' } < result.count { it == ']' }) {
+                    result = result.dropLast(1)
+                } else {
+                    break
+                }
+            }
+            return result
+        }
+
+        fun findFirstUrl(text: String): String? {
+            val match = URL_REGEX.find(text) ?: return null
+            return trimTrailingPunctuation(match.value)
+        }
     }
 
     fun cleanUrl(rawUrl: String): CleaningResult {
-        val trimmed = rawUrl.trim()
+        val trimmed = trimTrailingPunctuation(rawUrl.trim())
         val parsed = trimmed.toHttpUrlOrNull() ?: return CleaningResult(
             originalUrl = trimmed,
             cleanedUrl = trimmed,
@@ -70,8 +96,9 @@ class UrlCleaner(
 
         // Handle path-based tracking for Amazon URLs e.g., /ref=...
         var cleanedUrlString = builder.build().toString()
-        if (parsed.host.contains("amazon.", ignoreCase = true)) {
+        if (parsed.host.contains("amazon.", ignoreCase = true) && AMAZON_REF_PATH_REGEX.containsMatchIn(cleanedUrlString)) {
             cleanedUrlString = cleanAmazonPath(cleanedUrlString)
+            removedParams.add(AMAZON_PATH_PARAM_KEY)
         }
 
         return CleaningResult(
@@ -84,7 +111,7 @@ class UrlCleaner(
     fun extractAndCleanUrlsInText(text: String): Pair<String, List<CleaningResult>> {
         val results = mutableListOf<CleaningResult>()
         val replacedText = URL_REGEX.replace(text) { matchResult ->
-            val foundUrl = matchResult.value
+            val foundUrl = trimTrailingPunctuation(matchResult.value)
             val cleaningResult = cleanUrl(foundUrl)
             results.add(cleaningResult)
             cleaningResult.cleanedUrl
@@ -106,7 +133,7 @@ class UrlCleaner(
             }
         }
 
-        if (lower in EXACT_TRACKING_PARAMS || lower in customBlocklist) {
+        if (lower in EXACT_TRACKING_PARAMS || lower in customBlocklist || lower == AMAZON_PATH_PARAM_KEY) {
             return true
         }
         for (prefix in TRACKING_PARAM_PREFIXES) {
@@ -122,17 +149,19 @@ class UrlCleaner(
         val builder = parsed.newBuilder()
 
         for (param in paramsToRemove) {
-            builder.removeAllQueryParameters(param)
+            if (param != AMAZON_PATH_PARAM_KEY) {
+                builder.removeAllQueryParameters(param)
+            }
         }
 
         var result = builder.build().toString()
-        if (parsed.host.contains("amazon.", ignoreCase = true)) {
+        if (parsed.host.contains("amazon.", ignoreCase = true) && paramsToRemove.contains(AMAZON_PATH_PARAM_KEY)) {
             result = cleanAmazonPath(result)
         }
         return result
     }
 
-    private fun cleanAmazonPath(url: String): String {
+    fun cleanAmazonPath(url: String): String {
         return url.replace(AMAZON_REF_PATH_REGEX, "")
     }
 

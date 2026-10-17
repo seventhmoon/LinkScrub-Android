@@ -238,6 +238,9 @@ class LinkScrubViewModelTest {
         assertEquals(WizardStep.PREVIEW, state.currentStep)
         assertEquals("https://example.com/item", state.cleanedUrl)
         assertTrue(state.isQuickCleanCopiedNotification)
+        // Ensure parameter chips are populated so adjusting parameters from Step 3 works
+        assertEquals(2, state.detectedParameters.size)
+        assertTrue(state.detectedParameters.all { it.isMarkedForRemoval })
     }
 
     @Test
@@ -256,6 +259,33 @@ class LinkScrubViewModelTest {
         assertEquals(WizardStep.PREVIEW, state.currentStep)
         assertEquals("https://example.com", state.cleanedUrl)
         assertEquals("History Title", state.metadata?.title)
+        // Ensure parameter chips are populated from history
+        assertEquals(1, state.detectedParameters.size)
+        assertEquals("fbclid", state.detectedParameters[0].key)
+        assertTrue(state.detectedParameters[0].isMarkedForRemoval)
+    }
+
+    @Test
+    fun step2_amazonUrl_createsAmazonPathChipAndAllowsToggling() = runTest {
+        viewModel.onInputUrlChanged("https://www.amazon.com/dp/B08N5WRWNW/ref=cm_sw?tag=affiliate-20")
+        viewModel.onProceedFromInput()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(WizardStep.INSPECT, state.currentStep)
+        val amazonRefChip = state.detectedParameters.find { it.key == UrlCleaner.AMAZON_PATH_PARAM_KEY }
+        assertNotNull(amazonRefChip)
+        assertTrue(amazonRefChip!!.isTracking)
+        assertTrue(amazonRefChip.isMarkedForRemoval)
+
+        // By default, cleaned candidate strips Amazon ref and tag
+        assertEquals("https://www.amazon.com/dp/B08N5WRWNW", state.cleanedUrl)
+
+        // Toggle Amazon ref chip to keep it
+        viewModel.toggleParameterRemoval(UrlCleaner.AMAZON_PATH_PARAM_KEY)
+        val updatedState = viewModel.uiState.value
+        assertFalse(updatedState.detectedParameters.find { it.key == UrlCleaner.AMAZON_PATH_PARAM_KEY }!!.isMarkedForRemoval)
+        assertTrue(updatedState.cleanedUrl.contains("/ref=cm_sw"))
     }
 
     @Test

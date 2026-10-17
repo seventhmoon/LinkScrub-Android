@@ -7,104 +7,155 @@
     android:viewportHeight="108">
 
     <!--
-        LinkScrub Adaptive Icon Foreground:
-        Icon theme: Soap Bar 🧼 with fresh sud lather bubbles and clean sparkles.
-        Adaptive icon safe zone is within circle centered at (54,54) with radius 36.
+        LinkScrub Adaptive Icon Foreground (108x108 viewport, 66dp safe zone centered at (54,54)):
+        Visual Motif: Interlocked Hyperlink Chain (🔗) being scrubbed squeaky clean by frothy
+        soap sud bubbles (🫧) and gleaming with 4-point clean sparkles (✨).
     -->
 
-    <!-- Soap Bar Base Shadow / Depth -->
+    <!-- Soft Ambient Drop Shadow beneath the interlocked chain links -->
     <path
-        android:pathData="M34,48 L74,48 C81.73,48 88,54.27 88,62 L88,66 C88,73.73 81.73,80 74,80 L34,80 C26.27,80 20,73.73 20,66 L20,62 C20,54.27 26.27,48 34,48 Z"
-        android:fillColor="#00363D" />
+        android:pathData="M49,70 L45,74 A8.49,8.49 0 0,1 33,62 L44,51 A8.49,8.49 0 0,1 56,51"
+        android:strokeWidth="6.4"
+        android:strokeColor="#55001418"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 
-    <!-- Soap Bar Main Body (Crisp clean cyan-turquoise bar) -->
     <path
-        android:pathData="M34,44 L74,44 C81.73,44 88,50.27 88,58 L88,62 C88,69.73 81.73,76 74,76 L34,76 C26.27,76 20,69.73 20,62 L20,58 C20,50.27 26.27,44 34,44 Z">
-        <aapt:attr name="android:fillColor">
+        android:pathData="M59,44 L63,40 A8.49,8.49 0 0,1 75,52 L64,63 A8.49,8.49 0 0,1 52,63"
+        android:strokeWidth="6.4"
+        android:strokeColor="#55001418"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- Bottom-Left Chain Link Loop (Being scrubbed in aqua-cyan lather) -->
+    <path
+        android:pathData="M49,67 L45,71 A8.49,8.49 0 0,1 33,59 L44,48 A8.49,8.49 0 0,1 56,48"
+        android:strokeWidth="6.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
             <gradient
-                android:startX="20"
-                android:startY="44"
-                android:endX="88"
-                android:endY="76"
+                android:startX="31"
+                android:startY="73"
+                android:endX="56"
+                android:endY="48"
                 android:type="linear">
-                <item android:offset="0.0" android:color="#E0F7FA" />
-                <item android:offset="0.3" android:color="#80DEEA" />
-                <item android:offset="0.75" android:color="#26C6DA" />
-                <item android:offset="1.0" android:color="#00ACC1" />
+                <item android:offset="0.0" android:color="#26C6DA" />
+                <item android:offset="0.5" android:color="#4DD0E1" />
+                <item android:offset="1.0" android:color="#B2EBF2" />
             </gradient>
         </aapt:attr>
     </path>
 
-    <!-- Soap Top Gloss / Ergonomic Indentation Reflection -->
+    <!-- Top-Right Chain Link Loop (Freshly scrubbed, gleaming ice-white to cyan) -->
     <path
-        android:pathData="M35,47 L73,47 C78.52,47 83,51.48 83,57 C83,62.52 78.52,67 73,67 L35,67 C29.48,67 25,62.52 25,57 C25,51.48 29.48,47 35,47 Z"
-        android:fillColor="#35FFFFFF" />
-
-    <!-- Embedded Soap Logo / Wave Crest (Subtle pressed emblem on the soap) -->
-    <path
-        android:pathData="M37,56 C42,52 47,60 52,56 C57,52 62,60 67,56"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.5"
+        android:pathData="M59,41 L63,37 A8.49,8.49 0 0,1 75,49 L64,60 A8.49,8.49 0 0,1 52,60"
+        android:strokeWidth="6.2"
         android:strokeLineCap="round"
-        android:strokeAlpha="0.65" />
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="76"
+                android:startY="35"
+                android:endX="52"
+                android:endY="60"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFFF" />
+                <item android:offset="0.6" android:color="#E0F7FA" />
+                <item android:offset="1.0" android:color="#80DEEA" />
+            </gradient>
+        </aapt:attr>
+    </path>
 
+    <!-- Specular Rim Highlight on Top-Right Link -->
     <path
-        android:pathData="M42,61 C46,58 50,64 54,61 C58,58 62,64 66,61"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeAlpha="0.45" />
+        android:pathData="M61,39 L63,37 A8.49,8.49 0 0,1 75,49"
+        android:strokeWidth="1.8"
+        android:strokeColor="#CCFFFFFF"
+        android:strokeLineCap="round" />
 
-    <!-- Suds & Bubbles 🧼 -->
-    <!-- Large Bubble Top-Right (72, 36, r=8) -->
+    <!-- ================================================================= -->
+    <!-- Scrubbing Soap Suds & Lather Bubbles Cluster 🫧                    -->
+    <!-- ================================================================= -->
+
+    <!-- Bubble 1: Large Frothy Sud (Bottom-Right of link junction: 66, 68, r=7) -->
     <path
-        android:pathData="M72,28A8,8 0 1,0 72,44A8,8 0 1,0 72,28Z"
-        android:fillColor="#E0F7FA" />
+        android:pathData="M66,61A7,7 0 1,0 66,75A7,7 0 1,0 66,61Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="60"
+                android:startY="62"
+                android:endX="72"
+                android:endY="74"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFFF" />
+                <item android:offset="0.65" android:color="#B2EBF2" />
+                <item android:offset="1.0" android:color="#4DD0E1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Bubble 1 Gloss Highlight -->
     <path
-        android:pathData="M69,32A2.5,2.5 0 1,0 69,37A2.5,2.5 0 1,0 69,32Z"
+        android:pathData="M63.5,63.5A2.2,2.2 0 1,0 63.5,67.9A2.2,2.2 0 1,0 63.5,63.5Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Medium Bubble Center-Top (50, 27, r=6) -->
+    <!-- Bubble 2: Medium Sud Overlapping (Bottom-Center: 55.5, 73.5, r=4.8) -->
     <path
-        android:pathData="M50,21A6,6 0 1,0 50,33A6,6 0 1,0 50,21Z"
+        android:pathData="M55.5,68.7A4.8,4.8 0 1,0 55.5,78.3A4.8,4.8 0 1,0 55.5,68.7Z"
+        android:fillColor="#E0F7FA" />
+    <path
+        android:pathData="M54,70.5A1.5,1.5 0 1,0 54,73.5A1.5,1.5 0 1,0 54,70.5Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Bubble 3: Medium Sud (Top-Left of junction: 37, 40, r=5.2) -->
+    <path
+        android:pathData="M37,34.8A5.2,5.2 0 1,0 37,45.2A5.2,5.2 0 1,0 37,34.8Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="33"
+                android:startY="35"
+                android:endX="41"
+                android:endY="45"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FFFFFF" />
+                <item android:offset="1.0" android:color="#80DEEA" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M35.2,36.8A1.6,1.6 0 1,0 35.2,40A1.6,1.6 0 1,0 35.2,36.8Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Bubble 4: Small Sud (Top-Center: 46, 33, r=3.2) -->
+    <path
+        android:pathData="M46,29.8A3.2,3.2 0 1,0 46,36.2A3.2,3.2 0 1,0 46,29.8Z"
+        android:fillColor="#E0F7FA" />
+    <path
+        android:pathData="M45,31A1,1 0 1,0 45,33A1,1 0 1,0 45,31Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Bubble 5: Tiny Floating Sud (Right: 76.5, 59.5, r=2.8) -->
+    <path
+        android:pathData="M76.5,56.7A2.8,2.8 0 1,0 76.5,62.3A2.8,2.8 0 1,0 76.5,56.7Z"
         android:fillColor="#B2EBF2" />
+
+    <!-- ================================================================= -->
+    <!-- Sparkling Clean Stars / Glints ✨                                  -->
+    <!-- ================================================================= -->
+
+    <!-- Primary 4-Point Star Sparkle (Top-Left: 28, 29) -->
     <path
-        android:pathData="M48,24A1.8,1.8 0 1,0 48,27.6A1.8,1.8 0 1,0 48,24Z"
+        android:pathData="M28,22 Q28,29 21,29 Q28,29 28,36 Q28,29 35,29 Q28,29 28,22 Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Small Bubble Top-Left (35, 32, r=4.5) -->
+    <!-- Secondary 4-Point Star Sparkle (Top-Right: 77, 29) -->
     <path
-        android:pathData="M35,27.5A4.5,4.5 0 1,0 35,36.5A4.5,4.5 0 1,0 35,27.5Z"
+        android:pathData="M77,24 Q77,29 72,29 Q77,29 77,34 Q77,29 82,29 Q77,29 77,24 Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Small Accent Glint (Left: 25, 48) -->
+    <path
+        android:pathData="M25,44.5 Q25,48 21.5,48 Q25,48 25,51.5 Q25,48 28.5,48 Q25,48 25,44.5 Z"
         android:fillColor="#E0F7FA" />
-    <path
-        android:pathData="M33.5,29.5A1.3,1.3 0 1,0 33.5,32.1A1.3,1.3 0 1,0 33.5,29.5Z"
-        android:fillColor="#FFFFFF" />
-
-    <!-- Tiny Sud Bubble Float (62, 22, r=2.5) -->
-    <path
-        android:pathData="M62,19.5A2.5,2.5 0 1,0 62,24.5A2.5,2.5 0 1,0 62,19.5Z"
-        android:fillColor="#FFFFFF"
-        android:fillAlpha="0.85" />
-
-    <!-- Tiny Sud Bubble Bottom-Left (23, 44, r=3) -->
-    <path
-        android:pathData="M23,41A3,3 0 1,0 23,47A3,3 0 1,0 23,41Z"
-        android:fillColor="#B2EBF2" />
-
-    <!-- Sparkling Clean Stars / Glints ✨ -->
-    <!-- Large Sparkle Top-Right (83, 24) -->
-    <path
-        android:pathData="M83,18 Q83,24 77,24 Q83,24 83,30 Q83,24 89,24 Q83,24 83,18 Z"
-        android:fillColor="#FFFFFF" />
-
-    <!-- Medium Sparkle Left (23, 30) -->
-    <path
-        android:pathData="M23,26 Q23,30 19,30 Q23,30 23,34 Q23,30 27,30 Q23,30 23,26 Z"
-        android:fillColor="#E0F7FA" />
-
-    <!-- Small Sparkle Bottom-Right (80, 68) -->
-    <path
-        android:pathData="M80,65 Q80,68 77,68 Q80,68 80,71 Q80,68 83,68 Q80,68 80,65 Z"
-        android:fillColor="#FFFFFF" />
 
 </vector>

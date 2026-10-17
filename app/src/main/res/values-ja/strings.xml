@@ -132,7 +132,7 @@
 
     <!-- About Section -->
     <string name="about_app_name">🧼 LinkScrub</string>
-    <string name="about_version">バージョン 1.0.0</string>
+    <string name="about_version">バージョン %1$s</string>
     <string name="about_description">Android向けのクリーンで安全、高知能なURLサニタイザー。GNU General Public License v3.0 (GPLv3) のもとで提供される完全無料のオープンソースソフトウェアです。</string>
     <string name="about_play_store_title">Google Playで確認</string>
     <string name="about_play_store_subtitle">Play ストアでLinkScrubを評価・レビュー</string>

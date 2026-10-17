@@ -59,6 +59,7 @@ class RoomHistoryRepository(
             description = metadata?.description,
             imageUrl = metadata?.imageUrl,
             siteName = metadata?.siteName,
+            allTagsJson = serializeTags(metadata?.allTags.orEmpty()),
             timestamp = System.currentTimeMillis()
         )
         return historyDao.insert(entity)
@@ -73,12 +74,14 @@ class RoomHistoryRepository(
     }
 
     private fun HistoryEntity.toDomain(): HistoryItem {
-        val metadata = if (title != null || description != null || imageUrl != null || siteName != null) {
+        val tags = deserializeTags(allTagsJson)
+        val metadata = if (title != null || description != null || imageUrl != null || siteName != null || tags.isNotEmpty()) {
             OpenGraphMetadata(
                 title = title,
                 description = description,
                 imageUrl = imageUrl,
-                siteName = siteName
+                siteName = siteName,
+                allTags = tags
             )
         } else {
             null
@@ -111,6 +114,27 @@ class RoomHistoryRepository(
             list
         } catch (_: Exception) {
             emptyList()
+        }
+    }
+
+    private fun serializeTags(tags: Map<String, String>): String {
+        val json = org.json.JSONObject()
+        tags.forEach { (k, v) -> json.put(k, v) }
+        return json.toString()
+    }
+
+    private fun deserializeTags(jsonString: String): Map<String, String> {
+        return try {
+            val json = org.json.JSONObject(jsonString)
+            val map = linkedMapOf<String, String>()
+            val keys = json.keys()
+            while (keys.hasNext()) {
+                val key = keys.next()
+                map[key] = json.optString(key)
+            }
+            map
+        } catch (_: Exception) {
+            emptyMap()
         }
     }
 }

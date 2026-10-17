@@ -70,5 +70,5 @@ We may update this Privacy Policy periodically to reflect new features or regula
 ## 7. Contact Us
 
 If you have questions or concerns regarding this Privacy Policy, please contact us by opening an issue on GitHub or reaching out via email:
-- **Email:** support@androidfung.com (or your designated developer contact email)
+- **Email:** support@androidfung.com
 - **GitHub Repository:** https://github.com/androidfung/LinkScrub

@@ -94,6 +94,36 @@ class UrlCleanerTest {
 
         assertEquals("https://www.amazon.com/dp/B08N5WRWNW?psc=1", result.cleanedUrl)
         assertTrue(result.removedParams.contains("tag"))
+        assertTrue(result.removedParams.contains(UrlCleaner.AMAZON_PATH_PARAM_KEY))
+    }
+
+    @Test
+    fun `trimTrailingPunctuation removes punctuation but preserves valid URL ends`() {
+        assertEquals("https://example.com", UrlCleaner.trimTrailingPunctuation("https://example.com."))
+        assertEquals("https://example.com/path", UrlCleaner.trimTrailingPunctuation("https://example.com/path),"))
+        assertEquals("https://en.wikipedia.org/wiki/Kotlin_(programming_language)", UrlCleaner.trimTrailingPunctuation("https://en.wikipedia.org/wiki/Kotlin_(programming_language)"))
+    }
+
+    @Test
+    fun `findFirstUrl extracts cleanly trimmed url from surrounding text`() {
+        val text = "Check out this link (https://example.com/test?utm_source=tw), thanks!"
+        assertEquals("https://example.com/test?utm_source=tw", UrlCleaner.findFirstUrl(text))
+    }
+
+    @Test
+    fun `computeCleanedUrlWithExcludedParams handles Amazon path tracking`() {
+        val input = "https://www.amazon.com/dp/B08N5WRWNW/ref=cm_sw?tag=affiliate-20&psc=1"
+        val cleaned = urlCleaner.computeCleanedUrlWithExcludedParams(
+            rawUrl = input,
+            paramsToRemove = setOf(UrlCleaner.AMAZON_PATH_PARAM_KEY, "tag")
+        )
+        assertEquals("https://www.amazon.com/dp/B08N5WRWNW?psc=1", cleaned)
+
+        val kept = urlCleaner.computeCleanedUrlWithExcludedParams(
+            rawUrl = input,
+            paramsToRemove = setOf("tag")
+        )
+        assertEquals("https://www.amazon.com/dp/B08N5WRWNW/ref=cm_sw?psc=1", kept)
     }
 
     @Test

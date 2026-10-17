@@ -338,6 +338,11 @@ private fun HowItWorksStepCard(
 @Composable
 private fun AboutSection() {
     val context = LocalContext.current
+    val versionName = remember {
+        runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }.getOrNull() ?: "1.0.0"
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Card(
@@ -353,13 +358,33 @@ private fun AboutSection() {
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Card(
+                    modifier = Modifier.size(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Box(
+                        modifier = Modifier.size(56.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = androidx.compose.ui.res.painterResource(R.drawable.ic_linkscrub_logo),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(34.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.about_app_name),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = stringResource(R.string.about_version),
+                    text = stringResource(R.string.about_version, versionName),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -392,7 +417,7 @@ private fun AboutSection() {
             onClick = {
                 openWebUrl(
                     context,
-                    "https://github.com/seventhmoon/LinkScrub-Android"
+                    "https://github.com/androidfung/LinkScrub"
                 )
             }
         )
@@ -404,7 +429,7 @@ private fun AboutSection() {
             onClick = {
                 openWebUrl(
                     context,
-                    "https://github.com/seventhmoon/LinkScrub-Android/blob/main/PRIVACY_POLICY.md"
+                    "https://github.com/androidfung/LinkScrub/blob/main/PRIVACY_POLICY.md"
                 )
             }
         )

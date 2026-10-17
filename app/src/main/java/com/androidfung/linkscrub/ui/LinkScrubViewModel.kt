@@ -108,19 +108,26 @@ class LinkScrubViewModel(
 
     /**
      * Checks device clipboard for any valid URL and surfaces it to the user.
+     * Checks clip mime type prior to accessing clip content to reduce clipboard alerts on Android 12+.
      */
     fun checkClipboardForUrl() {
         try {
             val clipboard = getApplication<Application>().getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
             if (clipboard != null && clipboard.hasPrimaryClip()) {
-                val clipData = clipboard.primaryClip
-                if (clipData != null && clipData.itemCount > 0) {
-                    val text = clipData.getItemAt(0)?.text?.toString()?.trim()
-                    if (!text.isNullOrBlank()) {
-                        val match = UrlCleaner.URL_REGEX.find(text)
-                        val extractedUrl = match?.value ?: if (text.startsWith("http://", ignoreCase = true) || text.startsWith("https://", ignoreCase = true)) text else null
-                        if (extractedUrl != null && extractedUrl != _uiState.value.inputUrl) {
-                            _uiState.update { it.copy(detectedClipboardUrl = extractedUrl) }
+                val clipDesc = clipboard.primaryClipDescription
+                if (clipDesc != null && (
+                    clipDesc.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_PLAIN) ||
+                    clipDesc.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_HTML) ||
+                    clipDesc.hasMimeType(android.content.ClipDescription.MIMETYPE_TEXT_URILIST)
+                )) {
+                    val clipData = clipboard.primaryClip
+                    if (clipData != null && clipData.itemCount > 0) {
+                        val text = clipData.getItemAt(0)?.text?.toString()?.trim()
+                        if (!text.isNullOrBlank()) {
+                            val extractedUrl = UrlCleaner.findFirstUrl(text)
+                            if (extractedUrl != null && extractedUrl != _uiState.value.inputUrl) {
+                                _uiState.update { it.copy(detectedClipboardUrl = extractedUrl) }
+                            }
                         }
                     }
                 }
@@ -283,6 +290,9 @@ class LinkScrubViewModel(
                     getString(R.string.msg_cleaned_copied)
                 }
 
+                val effectiveUrl = result.unshortenedUrl ?: rawUrl
+                val chips = extractChipsForUrl(effectiveUrl, result.removedParams.toSet())
+
                 _uiState.update {
                     it.copy(
                         isProcessing = false,
@@ -290,6 +300,7 @@ class LinkScrubViewModel(
                         unshortenedUrl = result.unshortenedUrl,
                         isRedirected = result.unshortenedUrl != null,
                         removedParamsCount = result.removedParams.size,
+                        detectedParameters = chips,
                         metadata = result.metadata,
                         currentStep = WizardStep.PREVIEW,
                         isQuickCleanCopiedNotification = true,
@@ -307,6 +318,50 @@ class LinkScrubViewModel(
                 }
             }
         }
+    }
+
+    /**
+     * Extracts query parameters and Amazon path tracking parameters into parameter chips.
+     */
+    fun extractChipsForUrl(url: String, removedParams: Set<String>? = null): List<ParameterChipItem> {
+        val parsed = url.toHttpUrlOrNull() ?: return emptyList()
+        val chips = mutableListOf<ParameterChipItem>()
+
+        // Amazon path tracking parameter e.g., /ref=...
+        if (parsed.host.contains("amazon.", ignoreCase = true) && UrlCleaner.AMAZON_REF_PATH_REGEX.containsMatchIn(url)) {
+            val match = UrlCleaner.AMAZON_REF_PATH_REGEX.find(url)
+            val valueStr = match?.value?.removePrefix("/ref=") ?: ""
+            val isRemoved = removedParams?.contains(UrlCleaner.AMAZON_PATH_PARAM_KEY) ?: true
+            chips.add(
+                ParameterChipItem(
+                    key = UrlCleaner.AMAZON_PATH_PARAM_KEY,
+                    value = valueStr,
+                    isTracking = true,
+                    isMarkedForRemoval = isRemoved
+                )
+            )
+        }
+
+        for (name in parsed.queryParameterNames) {
+            val values = parsed.queryParameterValues(name)
+            val valueStr = values.filterNotNull().joinToString(",")
+            val isTracking = urlCleaner.isTrackingParam(name, parsed.host)
+            val isMarkedForRemoval = if (removedParams != null) {
+                removedParams.contains(name)
+            } else {
+                isTracking
+            }
+            chips.add(
+                ParameterChipItem(
+                    key = name,
+                    value = valueStr,
+                    isTracking = isTracking,
+                    isMarkedForRemoval = isMarkedForRemoval
+                )
+            )
+        }
+
+        return chips
     }
 
     /**
@@ -328,25 +383,7 @@ class LinkScrubViewModel(
             val unshortenResult = redirectUnshortener.unshorten(rawUrl)
             val effectiveUrl = if (unshortenResult.isRedirected) unshortenResult.finalUrl else rawUrl
 
-            val parsed = effectiveUrl.toHttpUrlOrNull()
-            val chips = mutableListOf<ParameterChipItem>()
-
-            if (parsed != null) {
-                for (name in parsed.queryParameterNames) {
-                    val values = parsed.queryParameterValues(name)
-                    val valueStr = values.filterNotNull().joinToString(",")
-                    val isTracking = urlCleaner.isTrackingParam(name, parsed.host)
-                    chips.add(
-                        ParameterChipItem(
-                            key = name,
-                            value = valueStr,
-                            isTracking = isTracking,
-                            // By default, tracking parameters are marked for removal
-                            isMarkedForRemoval = isTracking
-                        )
-                    )
-                }
-            }
+            val chips = extractChipsForUrl(effectiveUrl)
 
             // Recalculate candidate clean URL
             val candidateClean = computeCleanedUrlFromChips(effectiveUrl, chips)
@@ -520,11 +557,7 @@ class LinkScrubViewModel(
      */
     fun handleSharedUrl(sharedText: String) {
         cancelInFlightJobs()
-        val match = UrlCleaner.URL_REGEX.find(sharedText)
-        val extractedUrl = match?.value ?: if (
-            sharedText.startsWith("http://", ignoreCase = true) ||
-            sharedText.startsWith("https://", ignoreCase = true)
-        ) sharedText.trim() else null
+        val extractedUrl = UrlCleaner.findFirstUrl(sharedText)
 
         if (extractedUrl != null) {
             _uiState.update {
@@ -549,13 +582,9 @@ class LinkScrubViewModel(
     fun onQrCodeScanned(scannedText: String) {
         cancelInFlightJobs()
         val trimmed = scannedText.trim()
-        val match = UrlCleaner.URL_REGEX.find(trimmed)
-        val extractedUrl = match?.value ?: if (
-            trimmed.startsWith("http://", ignoreCase = true) ||
-            trimmed.startsWith("https://", ignoreCase = true)
-        ) trimmed else null
-
+        val extractedUrl = UrlCleaner.findFirstUrl(trimmed)
         val finalUrl = extractedUrl ?: trimmed
+
         _uiState.update {
             it.copy(
                 inputUrl = finalUrl,
@@ -594,6 +623,8 @@ class LinkScrubViewModel(
     }
 
     fun selectHistoryItem(item: com.androidfung.linkscrub.data.model.HistoryItem) {
+        val effectiveUrl = item.unshortenedUrl ?: item.originalUrl
+        val chips = extractChipsForUrl(effectiveUrl, item.removedParams.toSet())
         _uiState.update {
             it.copy(
                 inputUrl = item.originalUrl,
@@ -601,6 +632,7 @@ class LinkScrubViewModel(
                 unshortenedUrl = item.unshortenedUrl,
                 isRedirected = item.unshortenedUrl != null,
                 removedParamsCount = item.removedParams.size,
+                detectedParameters = chips,
                 metadata = item.metadata,
                 currentStep = WizardStep.PREVIEW,
                 userMessage = getString(R.string.msg_loaded_link_from_history)

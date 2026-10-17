@@ -6,56 +6,68 @@
     android:viewportHeight="108">
 
     <!--
-        LinkScrub Adaptive Icon Monochrome:
-        Clean solid silhouette of soap bar 🧼 with bubbles and sparkles for Android 13+ Themed Icons.
-        All elements placed safely within the central circular safe zone (radius 36 from (54,54)).
+        LinkScrub Adaptive Icon Monochrome (Android 13+ Themed Icons & In-App Brand Mark):
+        Single-color stencil of the interlocked chain link, scrubbing soap bubbles, and sparkles.
     -->
 
-    <!-- Soap Bar Main Body -->
+    <!-- Bottom-Left Chain Link Loop -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M34,44 L74,44 C81.73,44 88,50.27 88,58 L88,62 C88,69.73 81.73,76 74,76 L34,76 C26.27,76 20,69.73 20,62 L20,58 C20,50.27 26.27,44 34,44 Z" />
+        android:pathData="M49,67 L45,71 A8.49,8.49 0 0,1 33,59 L44,48 A8.49,8.49 0 0,1 56,48"
+        android:strokeWidth="6.2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 
-    <!-- Suds & Bubbles 🧼 -->
-    <!-- Large Bubble Top-Right (72, 36, r=8) -->
+    <!-- Top-Right Chain Link Loop -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M72,28A8,8 0 1,0 72,44A8,8 0 1,0 72,28Z" />
+        android:pathData="M59,41 L63,37 A8.49,8.49 0 0,1 75,49 L64,60 A8.49,8.49 0 0,1 52,60"
+        android:strokeWidth="6.2"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 
-    <!-- Medium Bubble Center-Top (50, 27, r=6) -->
+    <!-- Scrubbing Soap Bubbles (Ring/Stencil style for clear monochrome readability) -->
+    <!-- Bubble 1: Large Sud (66, 68, r=6.2) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M50,21A6,6 0 1,0 50,33A6,6 0 1,0 50,21Z" />
+        android:pathData="M66,61.8A6.2,6.2 0 1,0 66,74.2A6.2,6.2 0 1,0 66,61.8Z"
+        android:strokeWidth="2.8"
+        android:strokeColor="#FFFFFF" />
 
-    <!-- Small Bubble Top-Left (35, 32, r=4.5) -->
+    <!-- Bubble 2: Medium Sud (55.5, 73.5, r=4.2) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M35,27.5A4.5,4.5 0 1,0 35,36.5A4.5,4.5 0 1,0 35,27.5Z" />
+        android:pathData="M55.5,69.3A4.2,4.2 0 1,0 55.5,77.7A4.2,4.2 0 1,0 55.5,69.3Z"
+        android:fillColor="#FFFFFF" />
 
-    <!-- Tiny Sud Bubble Float (62, 22, r=2.5) -->
+    <!-- Bubble 3: Top-Left Sud (37, 40, r=4.6) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M62,19.5A2.5,2.5 0 1,0 62,24.5A2.5,2.5 0 1,0 62,19.5Z" />
+        android:pathData="M37,35.4A4.6,4.6 0 1,0 37,44.6A4.6,4.6 0 1,0 37,35.4Z"
+        android:strokeWidth="2.5"
+        android:strokeColor="#FFFFFF" />
 
-    <!-- Tiny Sud Bubble Bottom-Left (23, 44, r=3) -->
+    <!-- Bubble 4: Small Sud (46, 33, r=3.0) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M23,41A3,3 0 1,0 23,47A3,3 0 1,0 23,41Z" />
+        android:pathData="M46,30A3,3 0 1,0 46,36A3,3 0 1,0 46,30Z"
+        android:fillColor="#FFFFFF" />
 
-    <!-- Sparkles ✨ -->
-    <!-- Large Sparkle Top-Right (83, 24) -->
+    <!-- Bubble 5: Tiny Floating Sud (76.5, 59.5, r=2.6) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M83,18 Q83,24 77,24 Q83,24 83,30 Q83,24 89,24 Q83,24 83,18 Z" />
+        android:pathData="M76.5,56.9A2.6,2.6 0 1,0 76.5,62.1A2.6,2.6 0 1,0 76.5,56.9Z"
+        android:fillColor="#FFFFFF" />
 
-    <!-- Medium Sparkle Left (23, 30) -->
+    <!-- Sparkling Clean Stars ✨ -->
+    <!-- Primary 4-Point Star Sparkle (Top-Left: 28, 29) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M23,26 Q23,30 19,30 Q23,30 23,34 Q23,30 27,30 Q23,30 23,26 Z" />
+        android:pathData="M28,22 Q28,29 21,29 Q28,29 28,36 Q28,29 35,29 Q28,29 28,22 Z" />
 
-    <!-- Small Sparkle Bottom-Right (80, 68) -->
+    <!-- Secondary 4-Point Star Sparkle (Top-Right: 77, 29) -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M80,65 Q80,68 77,68 Q80,68 80,71 Q80,68 83,68 Q80,68 80,65 Z" />
+        android:pathData="M77,24 Q77,29 72,29 Q77,29 77,34 Q77,29 82,29 Q77,29 77,24 Z" />
+
+    <!-- Small Accent Glint (Left: 25, 48) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M25,44.5 Q25,48 21.5,48 Q25,48 25,51.5 Q25,48 28.5,48 Q25,48 25,44.5 Z" />
 
 </vector>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="68"
+    android:viewportHeight="68">
+
+    <!--
+        In-App VectorDrawable Brand Mark (cropped to the 68x68 safe-zone of ic_launcher_monochrome
+        via translate(-20, -20) so it fills standard 24dp/36dp Compose Icon containers cleanly).
+    -->
+    <group
+        android:translateX="-20"
+        android:translateY="-20">
+
+        <!-- Bottom-Left Chain Link Loop -->
+        <path
+            android:pathData="M49,67 L45,71 A8.49,8.49 0 0,1 33,59 L44,48 A8.49,8.49 0 0,1 56,48"
+            android:strokeWidth="6.2"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+
+        <!-- Top-Right Chain Link Loop -->
+        <path
+            android:pathData="M59,41 L63,37 A8.49,8.49 0 0,1 75,49 L64,60 A8.49,8.49 0 0,1 52,60"
+            android:strokeWidth="6.2"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+
+        <!-- Scrubbing Soap Bubbles -->
+        <path
+            android:pathData="M66,61.8A6.2,6.2 0 1,0 66,74.2A6.2,6.2 0 1,0 66,61.8Z"
+            android:strokeWidth="2.8"
+            android:strokeColor="#FFFFFF" />
+
+        <path
+            android:pathData="M55.5,69.3A4.2,4.2 0 1,0 55.5,77.7A4.2,4.2 0 1,0 55.5,69.3Z"
+            android:fillColor="#FFFFFF" />
+
+        <path
+            android:pathData="M37,35.4A4.6,4.6 0 1,0 37,44.6A4.6,4.6 0 1,0 37,35.4Z"
+            android:strokeWidth="2.5"
+            android:strokeColor="#FFFFFF" />
+
+        <path
+            android:pathData="M46,30A3,3 0 1,0 46,36A3,3 0 1,0 46,30Z"
+            android:fillColor="#FFFFFF" />
+
+        <path
+            android:pathData="M76.5,56.9A2.6,2.6 0 1,0 76.5,62.1A2.6,2.6 0 1,0 76.5,56.9Z"
+            android:fillColor="#FFFFFF" />
+
+        <!-- Sparkling Clean Stars ✨ -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M28,22 Q28,29 21,29 Q28,29 28,36 Q28,29 35,29 Q28,29 28,22 Z" />
+
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M77,24 Q77,29 72,29 Q77,29 77,34 Q77,29 82,29 Q77,29 77,24 Z" />
+
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M25,44.5 Q25,48 21.5,48 Q25,48 25,51.5 Q25,48 28.5,48 Q25,48 25,44.5 Z" />
+    </group>
+
+</vector>

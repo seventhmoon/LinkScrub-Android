@@ -20,10 +20,6 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9890667024752973~6616180040" />
 
-        <!-- Disable Firebase Performance automatic collection for development builds -->
-        <meta-data
-            android:name="firebase_performance_collection_enabled"
-            android:value="false" />
 
         <!-- Optional: Enable automatic download of Code Scanner module at install time -->
         <meta-data

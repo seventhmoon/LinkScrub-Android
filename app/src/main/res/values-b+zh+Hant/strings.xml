@@ -132,7 +132,7 @@
 
     <!-- About Section -->
     <string name="about_app_name">🧼 LinkScrub</string>
-    <string name="about_version">版本 1.0.0</string>
+    <string name="about_version">版本 %1$s</string>
     <string name="about_description">為 Android 打造的乾淨、隱私、智慧的網址淨化工具。在 GNU 通用公眾授權條款第三版 (GPLv3) 下免費開源。</string>
     <string name="about_play_store_title">在 Google Play 上查看</string>
     <string name="about_play_store_subtitle">在 Play 商店為 LinkScrub 評分與評論</string>

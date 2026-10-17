@@ -27,23 +27,26 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import android.content.pm.ApplicationInfo
 import com.google.android.gms.ads.LoadAdError
+
+const val TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
+const val PROD_BANNER_AD_UNIT_ID = "ca-app-pub-9890667024752973/7297786455"
 
 /**
  * Google AdMob Adaptive Banner Ad Composable.
  *
  * Wraps an [AdView] using [AndroidView], dynamically computes an anchored adaptive banner ad size
  * based on the actual available width measured via [BoxWithConstraints] rather than full device width.
- * This guarantees proper sizing and prevents overflow or clipping when placed inside cards,
- * padded columns, or split-pane / multi-window layouts.
+ * Automatically uses Google's official test ad unit ID when running in debug builds to prevent policy violations.
  *
- * @param adUnitId The AdMob banner ad unit ID (defaults to Google's official sample/test ID).
+ * @param adUnitId The AdMob banner ad unit ID (defaults to test ID in debug builds, production ID otherwise).
  * @param modifier The modifier for layout customisation.
  */
 @Composable
 fun AdMobBanner(
     modifier: Modifier = Modifier,
-    adUnitId: String = "ca-app-pub-9890667024752973/7297786455"
+    adUnitId: String? = null
 ) {
     val isInspectionMode = LocalInspectionMode.current
 
@@ -104,6 +107,9 @@ fun AdMobBanner(
                     AndroidView(
                         modifier = Modifier.wrapContentHeight(),
                         factory = { ctx ->
+                            val isDebug = (ctx.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+                            val targetAdUnitId = adUnitId ?: if (isDebug) TEST_BANNER_AD_UNIT_ID else PROD_BANNER_AD_UNIT_ID
+
                             val adSize = AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
                                 ctx,
                                 availableWidthDp
@@ -111,7 +117,7 @@ fun AdMobBanner(
                             val adHeightPx = adSize.getHeightInPixels(ctx)
 
                             AdView(ctx).apply {
-                                this.adUnitId = adUnitId
+                                this.adUnitId = targetAdUnitId
                                 layoutParams = android.view.ViewGroup.LayoutParams(
                                     android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
                                     if (adHeightPx > 0) adHeightPx else android.view.ViewGroup.LayoutParams.WRAP_CONTENT

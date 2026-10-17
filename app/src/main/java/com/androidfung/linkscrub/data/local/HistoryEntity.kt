@@ -22,5 +22,6 @@ data class HistoryEntity(
     val description: String? = null,
     val imageUrl: String? = null,
     val siteName: String? = null,
+    val allTagsJson: String = "{}",
     val timestamp: Long = System.currentTimeMillis()
 )

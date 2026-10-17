@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
-    alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
@@ -21,8 +20,8 @@ android {
         applicationId = "com.androidfung.linkscrub"
         minSdk = 28
         targetSdk = 37
-        versionCode = 7
-        versionName = "1.0.0-261012"
+        versionCode = 8
+        versionName = "1.0.0-261015"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,13 +51,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true
-            enableUnitTestCoverage = false
-            enableAndroidTestCoverage = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = false
             configure<com.google.firebase.perf.plugin.FirebasePerfExtension> {
                 setInstrumentationEnabled(false)
             }
@@ -78,8 +71,6 @@ android {
             ndk {
                 debugSymbolLevel = "SYMBOL_TABLE"
             }
-            // R8 Full Mode is enabled by default with isMinifyEnabled = true
-            // packageScope was previously limiting whole-program optimization to a subset of packages
         }
     }
     compileOptions {
@@ -101,7 +92,6 @@ android {
                 "META-INF/AL2.0",
                 "META-INF/LGPL2.1",
                 "META-INF/INDEX.LIST",
-                "META-INF/io.netty.versions.properties",
                 "META-INF/LICENSE*",
                 "META-INF/NOTICE*",
                 "META-INF/*.version"
@@ -114,6 +104,10 @@ android {
     lint {
         disable += "InvalidFragmentVersionForActivityResult"
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 kotlin {
@@ -134,7 +128,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.adaptive)
     implementation(libs.androidx.compose.adaptive.layout)
-    implementation(libs.androidx.compose.adaptive.navigation3)
+    implementation(libs.androidx.compose.adaptive.navigation)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
@@ -142,27 +136,18 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     implementation(libs.coil.compose)
-    implementation(libs.converter.moshi)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.logging.interceptor)
-    implementation(libs.moshi.kotlin)
     implementation(libs.okhttp)
     implementation(libs.jsoup)
     implementation(libs.play.services.ads)
     implementation(libs.play.services.code.scanner)
-    implementation(libs.retrofit)
     testImplementation(libs.androidx.core)
     testImplementation(libs.androidx.junit)
     testImplementation(libs.junit)
@@ -174,5 +159,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     "ksp"(libs.androidx.room.compiler)
-    "ksp"(libs.moshi.kotlin.codegen)
 }

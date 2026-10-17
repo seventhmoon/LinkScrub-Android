@@ -2,6 +2,8 @@ package com.androidfung.linkscrub.data.network
 
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
@@ -86,6 +88,10 @@ class JsoupOpenGraphScraper(
     }
 
     override suspend fun scrape(url: String): OpenGraphMetadata? = withContext(Dispatchers.IO) {
+        if (!NetworkClientProvider.isSafePublicUrl(url)) {
+            return@withContext null
+        }
+
         val youTubeVideoId = extractYouTubeVideoId(url)
 
         // For YouTube URLs, query YouTube's official oEmbed API first.
@@ -175,43 +181,58 @@ class JsoupOpenGraphScraper(
     }
 
     /**
-     * Queries YouTube's official oEmbed endpoint and verifies the best thumbnail resolution.
+     * Queries YouTube's official oEmbed endpoint and verifies the best thumbnail resolution in parallel.
      */
-    private fun fetchYouTubeMetadata(videoId: String): OpenGraphMetadata? {
-        return try {
-            val oEmbedRequest = Request.Builder()
-                .url("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=$videoId&format=json")
-                .header("User-Agent", USER_AGENT)
-                .build()
-
-            client.newCall(oEmbedRequest).execute().use { response ->
-                if (!response.isSuccessful) return null
-                val bodyString = response.body.string()
-                val json = JSONObject(bodyString)
-
-                val title = json.optString("title").takeIf { it.isNotBlank() }
-                val author = json.optString("author_name").takeIf { it.isNotBlank() }
-                val provider = json.optString("provider_name").takeIf { it.isNotBlank() } ?: "YouTube"
-
-                // Prefer maxresdefault or fall back to oembed thumbnail / hqdefault
-                val bestThumbnail = getBestYouTubeThumbnail(videoId)
-                    .ifBlank { json.optString("thumbnail_url") }
-                    .takeIf { it.isNotBlank() }
-
-                val tags = linkedMapOf<String, String>()
-                tags["og:site_name"] = provider
-                if (title != null) tags["og:title"] = title
-                if (bestThumbnail != null) tags["og:image"] = bestThumbnail
-                if (author != null) tags["author"] = author
-
-                OpenGraphMetadata(
-                    title = title,
-                    description = author?.let { "Video by $it" },
-                    imageUrl = bestThumbnail,
-                    siteName = provider,
-                    allTags = tags
-                )
+    private suspend fun fetchYouTubeMetadata(videoId: String): OpenGraphMetadata? = coroutineScope {
+        try {
+            val thumbnailDeferred = async(Dispatchers.IO) {
+                getBestYouTubeThumbnail(videoId)
             }
+
+            val oEmbedDeferred = async(Dispatchers.IO) {
+                try {
+                    val oEmbedRequest = Request.Builder()
+                        .url("https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=$videoId&format=json")
+                        .header("User-Agent", USER_AGENT)
+                        .build()
+
+                    client.newCall(oEmbedRequest).execute().use { response ->
+                        if (!response.isSuccessful) null
+                        else JSONObject(response.body.string())
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+            }
+
+            val json = oEmbedDeferred.await()
+            val bestThumbnailCandidate = thumbnailDeferred.await()
+
+            if (json == null && bestThumbnailCandidate.isBlank()) {
+                return@coroutineScope null
+            }
+
+            val title = json?.optString("title")?.takeIf { it.isNotBlank() }
+            val author = json?.optString("author_name")?.takeIf { it.isNotBlank() }
+            val provider = json?.optString("provider_name")?.takeIf { it.isNotBlank() } ?: "YouTube"
+
+            val bestThumbnail = bestThumbnailCandidate.ifBlank {
+                json?.optString("thumbnail_url").orEmpty()
+            }.takeIf { it.isNotBlank() }
+
+            val tags = linkedMapOf<String, String>()
+            tags["og:site_name"] = provider
+            if (title != null) tags["og:title"] = title
+            if (bestThumbnail != null) tags["og:image"] = bestThumbnail
+            if (author != null) tags["author"] = author
+
+            OpenGraphMetadata(
+                title = title,
+                description = author?.let { "Video by $it" },
+                imageUrl = bestThumbnail,
+                siteName = provider,
+                allTags = tags
+            )
         } catch (_: Exception) {
             null
         }

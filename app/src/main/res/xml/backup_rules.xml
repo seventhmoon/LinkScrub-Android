@@ -6,8 +6,8 @@
    See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Exclude local link history database to uphold 100% on-device privacy guarantee -->
+    <exclude domain="database" path="linkscrub.db" />
+    <exclude domain="database" path="linkscrub.db-shm" />
+    <exclude domain="database" path="linkscrub.db-wal" />
 </full-backup-content>
