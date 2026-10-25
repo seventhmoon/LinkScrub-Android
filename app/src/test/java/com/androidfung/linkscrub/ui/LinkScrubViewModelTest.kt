@@ -6,6 +6,7 @@ import com.androidfung.linkscrub.data.network.OpenGraphScraper
 import com.androidfung.linkscrub.data.network.RedirectUnshortener
 import com.androidfung.linkscrub.data.network.UnshortenResult
 import com.androidfung.linkscrub.data.repository.HistoryRepository
+import com.androidfung.linkscrub.data.repository.InMemorySettingsRepository
 import com.androidfung.linkscrub.domain.CleanUrlUseCase
 import com.androidfung.linkscrub.domain.UrlCleaner
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +97,8 @@ class LinkScrubViewModelTest {
             redirectUnshortener = fakeRedirectUnshortener,
             openGraphScraper = fakeOpenGraphScraper,
             historyRepository = fakeHistoryRepository,
-            cleanUrlUseCase = cleanUrlUseCase
+            cleanUrlUseCase = cleanUrlUseCase,
+            settingsRepository = InMemorySettingsRepository()
         )
     }
 
@@ -314,5 +316,51 @@ class LinkScrubViewModelTest {
         assertTrue(viewModel.uiState.value.isHistoryPaneVisible)
         viewModel.setHistoryPaneVisible(false)
         assertFalse(viewModel.uiState.value.isHistoryPaneVisible)
+    }
+
+    @Test
+    fun quickClean_preservesRedirectChainWhenInspectingAgain() = runTest {
+        viewModel.onInputUrlChanged("https://bit.ly/test123")
+        viewModel.onQuickCleanClicked()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(WizardStep.PREVIEW, state.currentStep)
+        assertTrue(state.isRedirected)
+        assertEquals(1, state.redirectChain.size)
+        assertEquals("https://example.com/article?id=42", state.cleanedUrl)
+    }
+
+    @Test
+    fun handleSharedUrl_multiLinkMessage_cleansAllLinksAndPreservesMessage() = runTest {
+        viewModel.setQuickCleanEnabled(true)
+        val sharedMessage = "Watch https://youtu.be/abc?si=track1 and read https://x.com/user/status/99?s=20&t=xyz now!"
+        viewModel.handleSharedUrl(sharedMessage)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(WizardStep.PREVIEW, state.currentStep)
+        assertEquals("https://youtu.be/abc", state.cleanedUrl)
+        assertEquals(2, state.extractedUrlsCount)
+        assertEquals(
+            "Watch https://youtu.be/abc and read https://x.com/user/status/99 now!",
+            state.cleanedFullText
+        )
+    }
+
+    @Test
+    fun customRulesAndSettings_appliedDuringCleaning() = runTest {
+        viewModel.addCustomBlockedParam("custom_ref")
+        viewModel.addCustomAllowedParam("utm_source")
+        viewModel.setFetchOpenGraphPreviewEnabled(false)
+        advanceUntilIdle()
+
+        viewModel.onInputUrlChanged("https://example.com/page?utm_source=keepme&custom_ref=stripme")
+        viewModel.onQuickCleanClicked()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals("https://example.com/page?utm_source=keepme", state.cleanedUrl)
+        assertNull(state.metadata)
     }
 }

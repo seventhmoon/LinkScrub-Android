@@ -159,4 +159,37 @@
     <string name="msg_loaded_link_from_history">기록에서 링크를 불러왔습니다</string>
     <string name="msg_item_removed_from_history">기록에서 항목이 삭제되었습니다</string>
     <string name="msg_all_history_cleared">모든 기록이 삭제되었습니다</string>
+    <string name="msg_cleaned_message_copied">정리된 메시지가 클립보드에 복사되었습니다!</string>
+
+    <!-- Redirect Hop Chain & Diff -->
+    <string name="inspect_redirect_hop_item">경유 %1$d: %2$s</string>
+    <string name="inspect_savings_badge">-%1$d 매개변수 • -%2$d자</string>
+    <string name="preview_full_message_title">정리된 전체 메시지 (%1$d개 링크)</string>
+    <string name="action_copy_full_message">메시지 복사</string>
+    <string name="action_share_full_message">메시지 공유</string>
+
+    <!-- Settings & Custom Rules Sheet -->
+    <string name="cd_settings">설정 및 규칙</string>
+    <string name="settings_title">설정 및 사용자 지정 규칙</string>
+    <string name="settings_subtitle">기본 동작 및 사용자 지정 매개변수 필터 구성</string>
+    <string name="settings_section_behavior">정리 동작</string>
+    <string name="settings_quick_clean_title">공유 링크 빠른 정리</string>
+    <string name="settings_quick_clean_subtitle">다른 앱에서 공유된 링크를 자동으로 정리하고 복사</string>
+    <string name="settings_unshorten_title">단축 링크 복원</string>
+    <string name="settings_unshorten_subtitle">HTTP 리디렉션(bit.ly, t.co 등)을 추적하여 실제 목적지 표시</string>
+    <string name="settings_og_preview_title">Open Graph 미리보기 가져오기</string>
+    <string name="settings_og_preview_subtitle">3단계에서 페이지 제목, 설명 및 썸네일 미리보기 로드</string>
+    <string name="settings_section_blocklist">차단할 매개변수 (항상 제거)</string>
+    <string name="settings_blocklist_subtitle">여기에 추가된 매개변수는 항상 추적 매개변수로 분류됩니다</string>
+    <string name="settings_blocklist_placeholder">예: ref, source, campaign_id</string>
+    <string name="settings_section_allowlist">허용할 매개변수 (항상 유지)</string>
+    <string name="settings_allowlist_subtitle">여기에 추가된 매개변수는 자동으로 제거되지 않습니다</string>
+    <string name="settings_allowlist_placeholder">예: tag, debug, lang</string>
+    <string name="settings_action_add">추가</string>
+    <string name="settings_empty_rules">추가된 사용자 지정 매개변수가 없습니다.</string>
+
+    <!-- AdMob Native Ad Strings -->
+    <string name="ad_attribution_label">광고</string>
+    <string name="ad_icon_content_description">광고 아이콘</string>
+    <string name="ad_cta_default">자세히 알아보기</string>
 </resources>

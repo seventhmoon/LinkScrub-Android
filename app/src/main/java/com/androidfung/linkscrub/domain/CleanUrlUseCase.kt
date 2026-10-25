@@ -16,12 +16,14 @@ class CleanUrlUseCase(
         inputUrl: String,
         unshorten: Boolean = true,
         fetchMetadata: Boolean = true,
-        saveToHistory: Boolean = true
+        saveToHistory: Boolean = true,
+        cleaner: UrlCleaner = urlCleaner
     ): CleanedUrlResult {
         // Step 1: Pre-clean the initial input URL
-        val initialClean = urlCleaner.cleanUrl(inputUrl)
+        val initialClean = cleaner.cleanUrl(inputUrl)
         var urlToProcess = initialClean.cleanedUrl
         var unshortenedUrl: String? = null
+        var redirectChain: List<String> = emptyList()
 
         // Step 2: If unshorten requested, trace redirects
         if (unshorten) {
@@ -29,11 +31,12 @@ class CleanUrlUseCase(
             if (unshortenResult.isRedirected) {
                 unshortenedUrl = unshortenResult.finalUrl
                 urlToProcess = unshortenResult.finalUrl
+                redirectChain = unshortenResult.redirectChain
             }
         }
 
         // Step 3: Clean the final / unshortened URL (removes any tracking params added by intermediate redirects)
-        val finalClean = urlCleaner.cleanUrl(urlToProcess)
+        val finalClean = cleaner.cleanUrl(urlToProcess)
         val totalRemovedParams = (initialClean.removedParams + finalClean.removedParams).distinct()
 
         // Step 4: Fetch Open Graph metadata if requested
@@ -59,7 +62,8 @@ class CleanUrlUseCase(
             unshortenedUrl = unshortenedUrl,
             cleanedUrl = finalClean.cleanedUrl,
             removedParams = totalRemovedParams,
-            metadata = metadata
+            metadata = metadata,
+            redirectChain = redirectChain
         )
     }
 }

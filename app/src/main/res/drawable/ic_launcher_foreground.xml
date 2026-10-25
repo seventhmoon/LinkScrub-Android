@@ -14,14 +14,14 @@
 
     <!-- Soft Ambient Drop Shadow beneath the interlocked chain links -->
     <path
-        android:pathData="M49,70 L45,74 A8.49,8.49 0 0,1 33,62 L44,51 A8.49,8.49 0 0,1 56,51"
+        android:pathData="M48,70.5 L44,74.5 A8.49,8.49 0 0,1 32,62.5 L44,50.5 A8.49,8.49 0 0,1 57.8,59.7"
         android:strokeWidth="6.4"
         android:strokeColor="#55001418"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 
     <path
-        android:pathData="M59,44 L63,40 A8.49,8.49 0 0,1 75,52 L64,63 A8.49,8.49 0 0,1 52,63"
+        android:pathData="M60,42.5 L64,38.5 A8.49,8.49 0 0,1 76,50.5 L64,62.5 A8.49,8.49 0 0,1 50.2,53.3"
         android:strokeWidth="6.4"
         android:strokeColor="#55001418"
         android:strokeLineCap="round"
@@ -29,15 +29,15 @@
 
     <!-- Bottom-Left Chain Link Loop (Being scrubbed in aqua-cyan lather) -->
     <path
-        android:pathData="M49,67 L45,71 A8.49,8.49 0 0,1 33,59 L44,48 A8.49,8.49 0 0,1 56,48"
-        android:strokeWidth="6.2"
+        android:pathData="M48,68 L44,72 A8.49,8.49 0 0,1 32,60 L44,48 A8.49,8.49 0 0,1 57.8,57.2"
+        android:strokeWidth="6.0"
         android:strokeLineCap="round"
         android:strokeLineJoin="round">
         <aapt:attr name="android:strokeColor">
             <gradient
-                android:startX="31"
-                android:startY="73"
-                android:endX="56"
+                android:startX="30"
+                android:startY="72"
+                android:endX="58"
                 android:endY="48"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#26C6DA" />
@@ -49,15 +49,15 @@
 
     <!-- Top-Right Chain Link Loop (Freshly scrubbed, gleaming ice-white to cyan) -->
     <path
-        android:pathData="M59,41 L63,37 A8.49,8.49 0 0,1 75,49 L64,60 A8.49,8.49 0 0,1 52,60"
-        android:strokeWidth="6.2"
+        android:pathData="M60,40 L64,36 A8.49,8.49 0 0,1 76,48 L64,60 A8.49,8.49 0 0,1 50.2,50.8"
+        android:strokeWidth="6.0"
         android:strokeLineCap="round"
         android:strokeLineJoin="round">
         <aapt:attr name="android:strokeColor">
             <gradient
                 android:startX="76"
-                android:startY="35"
-                android:endX="52"
+                android:startY="36"
+                android:endX="50"
                 android:endY="60"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#FFFFFF" />
@@ -67,26 +67,19 @@
         </aapt:attr>
     </path>
 
-    <!-- Specular Rim Highlight on Top-Right Link -->
-    <path
-        android:pathData="M61,39 L63,37 A8.49,8.49 0 0,1 75,49"
-        android:strokeWidth="1.8"
-        android:strokeColor="#CCFFFFFF"
-        android:strokeLineCap="round" />
-
     <!-- ================================================================= -->
     <!-- Scrubbing Soap Suds & Lather Bubbles Cluster 🫧                    -->
     <!-- ================================================================= -->
 
-    <!-- Bubble 1: Large Frothy Sud (Bottom-Right of link junction: 66, 68, r=7) -->
+    <!-- Bubble 1: Large Frothy Sud (Bottom-Right of link junction: 66, 69, r=6.8) -->
     <path
-        android:pathData="M66,61A7,7 0 1,0 66,75A7,7 0 1,0 66,61Z">
+        android:pathData="M66,62.2A6.8,6.8 0 1,0 66,75.8A6.8,6.8 0 1,0 66,62.2Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:startX="60"
-                android:startY="62"
+                android:startY="63"
                 android:endX="72"
-                android:endY="74"
+                android:endY="75"
                 android:type="linear">
                 <item android:offset="0.0" android:color="#FFFFFF" />
                 <item android:offset="0.65" android:color="#B2EBF2" />
@@ -94,22 +87,21 @@
             </gradient>
         </aapt:attr>
     </path>
-    <!-- Bubble 1 Gloss Highlight -->
     <path
-        android:pathData="M63.5,63.5A2.2,2.2 0 1,0 63.5,67.9A2.2,2.2 0 1,0 63.5,63.5Z"
+        android:pathData="M63.5,64.5A2.1,2.1 0 1,0 63.5,68.7A2.1,2.1 0 1,0 63.5,64.5Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Bubble 2: Medium Sud Overlapping (Bottom-Center: 55.5, 73.5, r=4.8) -->
+    <!-- Bubble 2: Medium Sud Overlapping (Bottom-Center: 55.5, 74, r=4.6) -->
     <path
-        android:pathData="M55.5,68.7A4.8,4.8 0 1,0 55.5,78.3A4.8,4.8 0 1,0 55.5,68.7Z"
+        android:pathData="M55.5,69.4A4.6,4.6 0 1,0 55.5,78.6A4.6,4.6 0 1,0 55.5,69.4Z"
         android:fillColor="#E0F7FA" />
     <path
-        android:pathData="M54,70.5A1.5,1.5 0 1,0 54,73.5A1.5,1.5 0 1,0 54,70.5Z"
+        android:pathData="M54,71.2A1.4,1.4 0 1,0 54,74A1.4,1.4 0 1,0 54,71.2Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Bubble 3: Medium Sud (Top-Left of junction: 37, 40, r=5.2) -->
+    <!-- Bubble 3: Medium Sud (Top-Left of junction: 37, 40, r=5.0) -->
     <path
-        android:pathData="M37,34.8A5.2,5.2 0 1,0 37,45.2A5.2,5.2 0 1,0 37,34.8Z">
+        android:pathData="M37,35A5,5 0 1,0 37,45A5,5 0 1,0 37,35Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:startX="33"
@@ -123,20 +115,20 @@
         </aapt:attr>
     </path>
     <path
-        android:pathData="M35.2,36.8A1.6,1.6 0 1,0 35.2,40A1.6,1.6 0 1,0 35.2,36.8Z"
+        android:pathData="M35.2,37A1.5,1.5 0 1,0 35.2,40A1.5,1.5 0 1,0 35.2,37Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Bubble 4: Small Sud (Top-Center: 46, 33, r=3.2) -->
+    <!-- Bubble 4: Small Sud (Top-Center: 46, 33, r=3.1) -->
     <path
-        android:pathData="M46,29.8A3.2,3.2 0 1,0 46,36.2A3.2,3.2 0 1,0 46,29.8Z"
+        android:pathData="M46,29.9A3.1,3.1 0 1,0 46,36.1A3.1,3.1 0 1,0 46,29.9Z"
         android:fillColor="#E0F7FA" />
     <path
         android:pathData="M45,31A1,1 0 1,0 45,33A1,1 0 1,0 45,31Z"
         android:fillColor="#FFFFFF" />
 
-    <!-- Bubble 5: Tiny Floating Sud (Right: 76.5, 59.5, r=2.8) -->
+    <!-- Bubble 5: Tiny Floating Sud (Right: 76.5, 60, r=2.7) -->
     <path
-        android:pathData="M76.5,56.7A2.8,2.8 0 1,0 76.5,62.3A2.8,2.8 0 1,0 76.5,56.7Z"
+        android:pathData="M76.5,57.3A2.7,2.7 0 1,0 76.5,62.7A2.7,2.7 0 1,0 76.5,57.3Z"
         android:fillColor="#B2EBF2" />
 
     <!-- ================================================================= -->

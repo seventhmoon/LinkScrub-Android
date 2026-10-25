@@ -20,8 +20,8 @@ android {
         applicationId = "com.androidfung.linkscrub"
         minSdk = 28
         targetSdk = 37
-        versionCode = 8
-        versionName = "1.0.0-261015"
+        versionCode = 11
+        versionName = "1.0.0-261023"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

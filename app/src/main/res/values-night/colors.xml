@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ad_text_primary">#E6E0E9</color>
+    <color name="ad_text_secondary">#CAC4D0</color>
+    <color name="ad_badge_bg">#F39C12</color>
+    <color name="ad_badge_text">#1C1B1F</color>
+    <color name="ad_cta_bg">#4DD0E1</color>
+    <color name="ad_cta_text">#00363D</color>
+</resources>

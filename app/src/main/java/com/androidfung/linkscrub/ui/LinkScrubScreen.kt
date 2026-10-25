@@ -49,6 +49,7 @@ import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.QrCodeScanner
 import androidx.compose.material.icons.rounded.RestartAlt
 import androidx.compose.material.icons.rounded.Route
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Button
@@ -118,6 +119,7 @@ import com.androidfung.linkscrub.data.model.HistoryItem
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
 import com.androidfung.linkscrub.ui.components.HelpFaqBottomSheet
 import com.androidfung.linkscrub.ui.components.HistoryPanel
+import com.androidfung.linkscrub.ui.components.SettingsBottomSheet
 import com.androidfung.linkscrub.ui.components.WizardStepIndicator
 import com.androidfung.linkscrub.ui.steps.Step1Actions
 import com.androidfung.linkscrub.ui.steps.Step1InputView
@@ -175,9 +177,10 @@ fun LinkScrubScreen(
 
     // Predictive back handling: navigate back within wizard or dismiss sheet instead of exiting app
     androidx.activity.compose.BackHandler(
-        enabled = uiState.isHelpSheetVisible || (!isDualPane && uiState.isHistoryPaneVisible) || uiState.currentStep != WizardStep.INPUT
+        enabled = uiState.isSettingsSheetVisible || uiState.isHelpSheetVisible || (!isDualPane && uiState.isHistoryPaneVisible) || uiState.currentStep != WizardStep.INPUT
     ) {
         when {
+            uiState.isSettingsSheetVisible -> viewModel.setSettingsSheetVisible(false)
             uiState.isHelpSheetVisible -> viewModel.setHelpSheetVisible(false)
             !isDualPane && uiState.isHistoryPaneVisible -> viewModel.setHistoryPaneVisible(false)
             uiState.currentStep == WizardStep.PREVIEW -> {
@@ -249,6 +252,18 @@ fun LinkScrubScreen(
                                 }
                             },
                             actions = {
+                                // Settings & Custom Rules action button
+                                IconButton(onClick = { viewModel.toggleSettingsSheet() }) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Settings,
+                                        contentDescription = stringResource(R.string.cd_settings),
+                                        tint = if (uiState.isSettingsSheetVisible) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
+                                    )
+                                }
                                 // Help & FAQ action button
                                 IconButton(onClick = { viewModel.toggleHelpSheet() }) {
                                     Icon(
@@ -407,7 +422,7 @@ fun LinkScrubScreen(
                                 }
 
                                 WizardStep.PREVIEW -> {
-                                    val step3Actions = remember(viewModel, context, uiState.cleanedUrl) {
+                                    val step3Actions = remember(viewModel, context, uiState.cleanedUrl, uiState.cleanedFullText) {
                                         Step3Actions(
                                             onCopy = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -428,6 +443,16 @@ fun LinkScrubScreen(
                                             onScrubAnother = {
                                                 haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                 viewModel.clearInput()
+                                            },
+                                            onCopyFullMessage = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                viewModel.copyCleanedFullTextToClipboard()
+                                            },
+                                            onShareFullMessage = {
+                                                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                uiState.cleanedFullText?.let { fullText ->
+                                                    IntentUtils.shareUrl(context, fullText)
+                                                }
                                             }
                                         )
                                     }
@@ -436,7 +461,9 @@ fun LinkScrubScreen(
                                         removedParamsCount = uiState.removedParamsCount,
                                         metadata = uiState.metadata,
                                         isLoadingMetadata = uiState.isLoadingMetadata,
-                                        actions = step3Actions
+                                        actions = step3Actions,
+                                        cleanedFullText = uiState.cleanedFullText,
+                                        extractedUrlsCount = uiState.extractedUrlsCount
                                     )
                                 }
                             }
@@ -466,6 +493,25 @@ fun LinkScrubScreen(
     if (uiState.isHelpSheetVisible) {
         HelpFaqBottomSheet(
             onDismissRequest = { viewModel.setHelpSheetVisible(false) }
+        )
+    }
+
+    // Settings & Custom Rules bottom sheet
+    if (uiState.isSettingsSheetVisible) {
+        SettingsBottomSheet(
+            isQuickCleanEnabled = uiState.isQuickCleanEnabled,
+            unshortenRedirects = uiState.unshortenRedirects,
+            fetchOpenGraphPreview = uiState.fetchOpenGraphPreview,
+            customBlocklist = uiState.customBlocklist,
+            customAllowlist = uiState.customAllowlist,
+            onQuickCleanChange = viewModel::setQuickCleanEnabled,
+            onUnshortenChange = viewModel::setUnshortenRedirectsEnabled,
+            onFetchOgPreviewChange = viewModel::setFetchOpenGraphPreviewEnabled,
+            onAddBlockedParam = viewModel::addCustomBlockedParam,
+            onRemoveBlockedParam = viewModel::removeCustomBlockedParam,
+            onAddAllowedParam = viewModel::addCustomAllowedParam,
+            onRemoveAllowedParam = viewModel::removeCustomAllowedParam,
+            onDismissRequest = { viewModel.setSettingsSheetVisible(false) }
         )
     }
 

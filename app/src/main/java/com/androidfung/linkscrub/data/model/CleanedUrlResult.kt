@@ -8,5 +8,6 @@ data class CleanedUrlResult(
     val unshortenedUrl: String?,
     val cleanedUrl: String,
     val removedParams: List<String> = emptyList(),
-    val metadata: OpenGraphMetadata? = null
+    val metadata: OpenGraphMetadata? = null,
+    val redirectChain: List<String> = emptyList()
 )

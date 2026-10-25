@@ -242,4 +242,84 @@ class UrlCleanerTest {
         assertEquals("https://youtu.be/123", results[0].cleanedUrl)
         assertEquals("https://example.com/deal?code=SAVE20", results[1].cleanedUrl)
     }
+
+    @Test
+    fun `extractAndCleanUrlsInText preserves trailing punctuation around URLs`() {
+        val text = "Read this (https://example.com/post?utm_source=rss), and this: https://x.com/user/status/99?s=20&t=abc!"
+        val (cleanedText, results) = urlCleaner.extractAndCleanUrlsInText(text)
+
+        assertEquals("Read this (https://example.com/post), and this: https://x.com/user/status/99!", cleanedText)
+        assertEquals(2, results.size)
+    }
+
+    @Test
+    fun `cleanUrl preserves s and t and keywords on non-tracking domains`() {
+        // WordPress / generic site search using ?s=
+        val searchUrl = "https://blog.example.com/?s=kotlin+coroutines&utm_source=newsletter"
+        val searchResult = urlCleaner.cleanUrl(searchUrl)
+        assertEquals("https://blog.example.com/?s=kotlin+coroutines", searchResult.cleanedUrl)
+        assertFalse(searchResult.removedParams.contains("s"))
+
+        // Twitch / Vimeo timestamp using ?t=
+        val twitchUrl = "https://www.twitch.tv/videos/123456789?t=01h15m30s&tt_medium=clips"
+        val twitchResult = urlCleaner.cleanUrl(twitchUrl)
+        assertEquals("https://www.twitch.tv/videos/123456789?t=01h15m30s", twitchResult.cleanedUrl)
+        assertFalse(twitchResult.removedParams.contains("t"))
+
+        // Job board search using ?keywords= and ?tag=
+        val jobsUrl = "https://jobs.example.com/search?keywords=android&tag=remote&gclid=123"
+        val jobsResult = urlCleaner.cleanUrl(jobsUrl)
+        assertEquals("https://jobs.example.com/search?keywords=android&tag=remote", jobsResult.cleanedUrl)
+        assertFalse(jobsResult.removedParams.contains("keywords"))
+        assertFalse(jobsResult.removedParams.contains("tag"))
+    }
+
+    @Test
+    fun `cleanUrl strips Reddit LinkedIn Threads Spotify Substack and AliExpress tracking params`() {
+        val redditUrl = "https://www.reddit.com/r/androiddev/comments/abc/title/?rdt=12345&share_id=xyz&context=3"
+        val redditResult = urlCleaner.cleanUrl(redditUrl)
+        assertEquals("https://www.reddit.com/r/androiddev/comments/abc/title/?context=3", redditResult.cleanedUrl)
+        assertTrue(redditResult.removedParams.containsAll(listOf("rdt", "share_id")))
+
+        val linkedInUrl = "https://www.linkedin.com/posts/activity-123?trk=public_profile&lipi=urn%3Ali%3Apage&rcm=abc"
+        val linkedInResult = urlCleaner.cleanUrl(linkedInUrl)
+        assertEquals("https://www.linkedin.com/posts/activity-123", linkedInResult.cleanedUrl)
+        assertTrue(linkedInResult.removedParams.containsAll(listOf("trk", "lipi", "rcm")))
+
+        val threadsUrl = "https://www.threads.net/@user/post/C123?xmt=AQGz123&s=09"
+        val threadsResult = urlCleaner.cleanUrl(threadsUrl)
+        assertEquals("https://www.threads.net/@user/post/C123", threadsResult.cleanedUrl)
+        assertTrue(threadsResult.removedParams.containsAll(listOf("xmt", "s")))
+
+        val spotifyUrl = "https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT?si=12345&nd=1&pt=abc"
+        val spotifyResult = urlCleaner.cleanUrl(spotifyUrl)
+        assertEquals("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT", spotifyResult.cleanedUrl)
+        assertTrue(spotifyResult.removedParams.containsAll(listOf("si", "nd", "pt")))
+
+        val substackUrl = "https://example.substack.com/p/my-article?r=1a2b3c&triedRedirect=true"
+        val substackResult = urlCleaner.cleanUrl(substackUrl)
+        assertEquals("https://example.substack.com/p/my-article", substackResult.cleanedUrl)
+        assertTrue(substackResult.removedParams.containsAll(listOf("r", "triedRedirect")))
+
+        val aliExpressUrl = "https://www.aliexpress.com/item/100500123.html?aff_fcid=123&aff_fsk=456&pdp_npi=4%40dis&sku_id=999"
+        val aliResult = urlCleaner.cleanUrl(aliExpressUrl)
+        assertEquals("https://www.aliexpress.com/item/100500123.html?sku_id=999", aliResult.cleanedUrl)
+        assertTrue(aliResult.removedParams.containsAll(listOf("aff_fcid", "aff_fsk", "pdp_npi")))
+    }
+
+    @Test
+    fun `cleanUrl respects customAllowlist over built-in tracking params`() {
+        val customCleaner = UrlCleaner(
+            customBlocklist = setOf("custom_track"),
+            customAllowlist = setOf("utm_source", "tag")
+        )
+        val input = "https://www.amazon.com/dp/B08N5WRWNW?utm_source=partner&utm_medium=banner&tag=keep-20&custom_track=999"
+        val result = customCleaner.cleanUrl(input)
+
+        assertEquals("https://www.amazon.com/dp/B08N5WRWNW?utm_source=partner&tag=keep-20", result.cleanedUrl)
+        assertFalse(result.removedParams.contains("utm_source"))
+        assertFalse(result.removedParams.contains("tag"))
+        assertTrue(result.removedParams.contains("utm_medium"))
+        assertTrue(result.removedParams.contains("custom_track"))
+    }
 }

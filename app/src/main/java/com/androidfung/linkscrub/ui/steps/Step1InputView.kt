@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.androidfung.linkscrub.R
+import com.androidfung.linkscrub.ui.components.AdMobNativeCard
 
 /**
  * Encapsulates user interactions for Step 1.
@@ -263,5 +264,12 @@ fun Step1InputView(
                 )
             }
         }
+
+        // Native Ad placement utilizing the empty lower area of the landing screen
+        Spacer(modifier = Modifier.height(12.dp))
+        AdMobNativeCard(
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

@@ -58,7 +58,7 @@ class LinkScrubUiTest {
         composeTestRule.waitForIdle()
 
         // Verify Step 3 is reached directly
-        composeTestRule.onNodeWithText("Cleaned URL").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Scrubbed Clean URL").assertIsDisplayed()
         composeTestRule.onNodeWithText("Copy").assertIsDisplayed()
         composeTestRule.onNodeWithText("Share").assertIsDisplayed()
     }
@@ -99,7 +99,7 @@ class LinkScrubUiTest {
         composeTestRule.waitForIdle()
 
         // Verify Step 3: Clean URL card and Action buttons
-        composeTestRule.onNodeWithText("Cleaned URL").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Scrubbed Clean URL").assertIsDisplayed()
         composeTestRule.onNodeWithText("Copy").assertIsDisplayed()
         composeTestRule.onNodeWithText("Share").assertIsDisplayed()
         composeTestRule.onNodeWithText("Open in Browser").assertIsDisplayed()
@@ -123,10 +123,10 @@ class LinkScrubUiTest {
 
         // Check history panel header is visible
         composeTestRule.onNodeWithText("Clean Link History").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Search history...").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Search history…").assertIsDisplayed()
 
         // Try searching in history
-        composeTestRule.onNodeWithText("Search history...").performTextInput("test-query")
+        composeTestRule.onNodeWithText("Search history…").performTextInput("test-query")
         composeTestRule.waitForIdle()
 
         // Clear search

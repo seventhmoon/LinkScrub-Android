@@ -48,6 +48,9 @@ data class LinkScrubUiState(
     val removedParamsCount: Int = 0,
     val metadata: OpenGraphMetadata? = null,
     val isLoadingMetadata: Boolean = false,
+    val rawInputText: String? = null,
+    val cleanedFullText: String? = null,
+    val extractedUrlsCount: Int = 0,
 
     // General status
     val isProcessing: Boolean = false,
@@ -58,6 +61,11 @@ data class LinkScrubUiState(
     val isHistoryPaneVisible: Boolean = false,
     val historySearchQuery: String = "",
 
-    // Help & FAQ sheet state
-    val isHelpSheetVisible: Boolean = false
+    // Help & FAQ and Settings sheet states
+    val isHelpSheetVisible: Boolean = false,
+    val isSettingsSheetVisible: Boolean = false,
+    val unshortenRedirects: Boolean = true,
+    val fetchOpenGraphPreview: Boolean = true,
+    val customBlocklist: Set<String> = emptySet(),
+    val customAllowlist: Set<String> = emptySet()
 )

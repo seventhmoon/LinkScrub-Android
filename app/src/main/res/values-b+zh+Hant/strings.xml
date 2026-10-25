@@ -159,4 +159,37 @@
     <string name="msg_loaded_link_from_history">已從紀錄中載入連結</string>
     <string name="msg_item_removed_from_history">已從紀錄中移除項目</string>
     <string name="msg_all_history_cleared">所有紀錄已清除</string>
+    <string name="msg_cleaned_message_copied">淨化後的完整訊息已複製到剪貼簿！</string>
+
+    <!-- Redirect Hop Chain & Diff -->
+    <string name="inspect_redirect_hop_item">跳轉 %1$d: %2$s</string>
+    <string name="inspect_savings_badge">-%1$d 個參數 • -%2$d 個字元</string>
+    <string name="preview_full_message_title">已淨化的完整訊息 (%1$d 個連結)</string>
+    <string name="action_copy_full_message">複製訊息</string>
+    <string name="action_share_full_message">分享訊息</string>
+
+    <!-- Settings & Custom Rules Sheet -->
+    <string name="cd_settings">設定與規則</string>
+    <string name="settings_title">設定與自訂規則</string>
+    <string name="settings_subtitle">設定預設行為與自訂參數篩選清單</string>
+    <string name="settings_section_behavior">淨化行為設定</string>
+    <string name="settings_quick_clean_title">分享連結快速淨化</string>
+    <string name="settings_quick_clean_subtitle">自動淨化並複製從其他應用程式分享過來的連結</string>
+    <string name="settings_unshorten_title">還原短網址重定向</string>
+    <string name="settings_unshorten_subtitle">追蹤 HTTP 重定向（例如 bit.ly、t.co）以顯示真實目標網址</string>
+    <string name="settings_og_preview_title">擷取 Open Graph 預覽</string>
+    <string name="settings_og_preview_subtitle">在步驟 3 載入網頁標題、說明與縮圖預覽</string>
+    <string name="settings_section_blocklist">自訂封鎖參數（永遠移除）</string>
+    <string name="settings_blocklist_subtitle">列於此處的參數將永遠被視為追蹤參數並移除</string>
+    <string name="settings_blocklist_placeholder">例如：ref, source, campaign_id</string>
+    <string name="settings_section_allowlist">自訂允許參數（永遠保留）</string>
+    <string name="settings_allowlist_subtitle">列於此處的參數絕不會被自動移除</string>
+    <string name="settings_allowlist_placeholder">例如：tag, debug, lang</string>
+    <string name="settings_action_add">新增</string>
+    <string name="settings_empty_rules">尚未新增自訂參數。</string>
+
+    <!-- AdMob Native Ad Strings -->
+    <string name="ad_attribution_label">廣告</string>
+    <string name="ad_icon_content_description">廣告圖示</string>
+    <string name="ad_cta_default">瞭解詳情</string>
 </resources>

@@ -243,6 +243,9 @@ fun HistoryPanel(
                     }
                 }
             } else {
+                val adInterval = 7 // Insert a native ad after every 7 history items (index 3, 10, etc.)
+                val initialAdOffset = 3 // First ad after 4th item (index 3)
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -250,25 +253,45 @@ fun HistoryPanel(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(items = historyItems, key = { it.id }) { item ->
-                        HistoryCard(
-                            item = item,
-                            onClick = { onSelectItem(item) },
-                            onCopy = { onCopyItem(item) },
-                            onShare = { IntentUtils.shareUrl(context, item.cleanedUrl) },
-                            onOpen = { IntentUtils.openInBrowser(context, item.cleanedUrl) },
-                            onDelete = { onDeleteItem(item.id) }
-                        )
+                    historyItems.forEachIndexed { index, item ->
+                        item(key = "history_${item.id}") {
+                            HistoryCard(
+                                item = item,
+                                onClick = { onSelectItem(item) },
+                                onCopy = { onCopyItem(item) },
+                                onShare = { IntentUtils.shareUrl(context, item.cleanedUrl) },
+                                onOpen = { IntentUtils.openInBrowser(context, item.cleanedUrl) },
+                                onDelete = { onDeleteItem(item.id) }
+                            )
+                        }
+
+                        // Insert inline native ad periodically
+                        if (index == initialAdOffset || (index > initialAdOffset && (index - initialAdOffset) % adInterval == 0)) {
+                            item(key = "history_native_ad_$index") {
+                                AdMobNativeCard(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                )
+                            }
+                        }
                     }
 
-                    // Placement 2: AdMob Adaptive Banner at the bottom of the history list
-                    item(key = "history_admob_banner") {
-                        AdMobBanner(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 4.dp, bottom = 8.dp)
-                                .navigationBarsPadding()
-                        )
+                    // For short history (< 4 items), show one ad at the bottom of the list
+                    if (historyItems.size in 1..initialAdOffset) {
+                        item(key = "history_native_ad_bottom") {
+                            AdMobNativeCard(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 4.dp, bottom = 8.dp)
+                                    .navigationBarsPadding()
+                            )
+                        }
+                    } else {
+                        // Inset spacer for navigation bar padding at the end of the scrollable list
+                        item(key = "history_bottom_spacing") {
+                            Spacer(modifier = Modifier.navigationBarsPadding().height(8.dp))
+                        }
                     }
                 }
             }

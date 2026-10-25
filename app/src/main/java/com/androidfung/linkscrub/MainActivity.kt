@@ -57,8 +57,10 @@ class MainActivity : ComponentActivity() {
             MobileAds.initialize(this@MainActivity) {}
         }
 
-        // Handle shared link on fresh launch
-        handleIncomingIntent(intent)
+        // Handle shared link on fresh launch only (prevent re-triggering on configuration change/rotation)
+        if (savedInstanceState == null) {
+            handleIncomingIntent(intent)
+        }
 
         setContent {
             LinkScrubTheme {

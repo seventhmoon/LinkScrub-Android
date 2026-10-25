@@ -16,6 +16,8 @@ import com.androidfung.linkscrub.data.network.OpenGraphScraper
 import com.androidfung.linkscrub.data.network.RedirectUnshortener
 import com.androidfung.linkscrub.data.repository.HistoryRepository
 import com.androidfung.linkscrub.data.repository.RoomHistoryRepository
+import com.androidfung.linkscrub.data.repository.SettingsRepository
+import com.androidfung.linkscrub.data.repository.SharedPreferencesSettingsRepository
 import com.androidfung.linkscrub.domain.CleanUrlUseCase
 import com.androidfung.linkscrub.domain.UrlCleaner
 import kotlinx.coroutines.Job
@@ -43,12 +45,25 @@ class LinkScrubViewModel(
         redirectUnshortener = redirectUnshortener,
         openGraphScraper = openGraphScraper,
         historyRepository = historyRepository
-    )
+    ),
+    private val settingsRepository: SettingsRepository = SharedPreferencesSettingsRepository(application)
 ) : AndroidViewModel(application) {
 
     private var cleanJob: Job? = null
     private var inspectJob: Job? = null
     private var metadataJob: Job? = null
+
+    private fun activeUrlCleaner(): UrlCleaner {
+        val state = _uiState.value
+        return if (state.customBlocklist.isEmpty() && state.customAllowlist.isEmpty()) {
+            urlCleaner
+        } else {
+            urlCleaner.withCustomRules(
+                blocklist = state.customBlocklist,
+                allowlist = state.customAllowlist
+            )
+        }
+    }
 
     private fun getString(resId: Int, vararg formatArgs: Any): String {
         return try {
@@ -69,6 +84,7 @@ class LinkScrubViewModel(
                 R.string.msg_loaded_link_from_history -> "Loaded link from history"
                 R.string.msg_item_removed_from_history -> "Item removed from history"
                 R.string.msg_all_history_cleared -> "All history cleared"
+                R.string.msg_cleaned_message_copied -> "Cleaned message copied to clipboard!"
                 else -> ""
             }
         }
@@ -94,6 +110,29 @@ class LinkScrubViewModel(
             )
 
     init {
+        val initialSettings = settingsRepository.settings.value
+        _uiState.update {
+            it.copy(
+                isQuickCleanEnabled = initialSettings.isQuickCleanDefault,
+                unshortenRedirects = initialSettings.unshortenRedirects,
+                fetchOpenGraphPreview = initialSettings.fetchOpenGraphPreview,
+                customBlocklist = initialSettings.customBlocklist,
+                customAllowlist = initialSettings.customAllowlist
+            )
+        }
+        viewModelScope.launch {
+            settingsRepository.settings.collect { settings ->
+                _uiState.update {
+                    it.copy(
+                        isQuickCleanEnabled = settings.isQuickCleanDefault,
+                        unshortenRedirects = settings.unshortenRedirects,
+                        fetchOpenGraphPreview = settings.fetchOpenGraphPreview,
+                        customBlocklist = settings.customBlocklist,
+                        customAllowlist = settings.customAllowlist
+                    )
+                }
+            }
+        }
         checkClipboardForUrl()
     }
 
@@ -139,18 +178,53 @@ class LinkScrubViewModel(
 
     fun onInputUrlChanged(url: String) {
         cancelInFlightJobs()
-        _uiState.update { it.copy(inputUrl = url, userMessage = null) }
+        _uiState.update { it.copy(inputUrl = url, rawInputText = null, cleanedFullText = null, extractedUrlsCount = 0, userMessage = null) }
     }
 
     fun useClipboardUrl() {
         val detected = _uiState.value.detectedClipboardUrl ?: return
         cancelInFlightJobs()
-        _uiState.update { it.copy(inputUrl = detected) }
+        _uiState.update { it.copy(inputUrl = detected, rawInputText = null, cleanedFullText = null, extractedUrlsCount = 0) }
         processInputUrl(detected)
     }
 
     fun setQuickCleanEnabled(enabled: Boolean) {
+        settingsRepository.setQuickCleanDefault(enabled)
         _uiState.update { it.copy(isQuickCleanEnabled = enabled) }
+    }
+
+    fun setUnshortenRedirectsEnabled(enabled: Boolean) {
+        settingsRepository.setUnshortenRedirects(enabled)
+        _uiState.update { it.copy(unshortenRedirects = enabled) }
+    }
+
+    fun setFetchOpenGraphPreviewEnabled(enabled: Boolean) {
+        settingsRepository.setFetchOpenGraphPreview(enabled)
+        _uiState.update { it.copy(fetchOpenGraphPreview = enabled) }
+    }
+
+    fun addCustomBlockedParam(param: String) {
+        settingsRepository.addCustomBlockedParam(param)
+    }
+
+    fun removeCustomBlockedParam(param: String) {
+        settingsRepository.removeCustomBlockedParam(param)
+    }
+
+    fun addCustomAllowedParam(param: String) {
+        settingsRepository.addCustomAllowedParam(param)
+    }
+
+    fun removeCustomAllowedParam(param: String) {
+        settingsRepository.removeCustomAllowedParam(param)
+    }
+
+    fun toggleSettingsSheet() {
+        _uiState.update { it.copy(isSettingsSheetVisible = !it.isSettingsSheetVisible) }
+    }
+
+    fun setSettingsSheetVisible(visible: Boolean) {
+        _uiState.update { it.copy(isSettingsSheetVisible = visible) }
     }
 
     fun clearInput() {
@@ -158,6 +232,9 @@ class LinkScrubViewModel(
         _uiState.update {
             it.copy(
                 inputUrl = "",
+                rawInputText = null,
+                cleanedFullText = null,
+                extractedUrlsCount = 0,
                 currentStep = WizardStep.INPUT,
                 detectedParameters = emptyList(),
                 unshortenedUrl = null,
@@ -169,6 +246,31 @@ class LinkScrubViewModel(
                 isQuickCleanCopiedNotification = false
             )
         }
+    }
+
+    private fun resolveEffectiveUrlOrExtractFromText(input: String): String? {
+        if (input.toHttpUrlOrNull() != null) {
+            return input
+        }
+        // Check if input is conversational text containing one or more URLs
+        val allUrls = UrlCleaner.findAllUrls(input)
+        if (allUrls.isNotEmpty()) {
+            val primaryUrl = allUrls.first()
+            _uiState.update {
+                it.copy(
+                    inputUrl = primaryUrl,
+                    rawInputText = input,
+                    extractedUrlsCount = allUrls.size
+                )
+            }
+            return primaryUrl
+        }
+        val withScheme = "https://$input"
+        if (withScheme.toHttpUrlOrNull() != null) {
+            _uiState.update { it.copy(inputUrl = withScheme) }
+            return withScheme
+        }
+        return null
     }
 
     /**
@@ -183,22 +285,14 @@ class LinkScrubViewModel(
             return
         }
 
-        val parsed = input.toHttpUrlOrNull()
-        if (parsed == null) {
-            val withScheme = "https://$input"
-            if (withScheme.toHttpUrlOrNull() != null) {
-                cancelInFlightJobs()
-                _uiState.update { it.copy(inputUrl = withScheme) }
-                processInputUrl(withScheme)
-                return
-            } else {
-                _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_http_url)) }
-                return
-            }
+        val effectiveUrl = resolveEffectiveUrlOrExtractFromText(input)
+        if (effectiveUrl == null) {
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_http_url)) }
+            return
         }
 
         cancelInFlightJobs()
-        processInputUrl(input)
+        processInputUrl(effectiveUrl)
     }
 
     /**
@@ -211,13 +305,7 @@ class LinkScrubViewModel(
             _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_url)) }
             return
         }
-        val effectiveUrl = if (input.toHttpUrlOrNull() == null && "https://$input".toHttpUrlOrNull() != null) {
-            val withScheme = "https://$input"
-            _uiState.update { it.copy(inputUrl = withScheme) }
-            withScheme
-        } else {
-            input
-        }
+        val effectiveUrl = resolveEffectiveUrlOrExtractFromText(input) ?: input
         cancelInFlightJobs()
         executeQuickClean(effectiveUrl)
     }
@@ -232,13 +320,7 @@ class LinkScrubViewModel(
             _uiState.update { it.copy(userMessage = getString(R.string.msg_enter_valid_url)) }
             return
         }
-        val effectiveUrl = if (input.toHttpUrlOrNull() == null && "https://$input".toHttpUrlOrNull() != null) {
-            val withScheme = "https://$input"
-            _uiState.update { it.copy(inputUrl = withScheme) }
-            withScheme
-        } else {
-            input
-        }
+        val effectiveUrl = resolveEffectiveUrlOrExtractFromText(input) ?: input
         cancelInFlightJobs()
         prepareStep2Inspection(effectiveUrl)
     }
@@ -251,6 +333,18 @@ class LinkScrubViewModel(
         }
     }
 
+    private fun buildCleanedFullText(primaryOriginalUrl: String, primaryFinalCleanedUrl: String): String? {
+        val rawText = _uiState.value.rawInputText ?: return null
+        val (cleanedBlock, results) = activeUrlCleaner().extractAndCleanUrlsInText(rawText)
+        val firstCleanResult = results.firstOrNull { it.originalUrl == primaryOriginalUrl }
+        val finalBlock = if (firstCleanResult != null && firstCleanResult.cleanedUrl != primaryFinalCleanedUrl) {
+            cleanedBlock.replaceFirst(firstCleanResult.cleanedUrl, primaryFinalCleanedUrl)
+        } else {
+            cleanedBlock
+        }
+        return finalBlock.takeIf { it != primaryFinalCleanedUrl }
+    }
+
     /**
      * Direct Quick-Clean mode: scrubs tracking parameters, unshortens,
      * copies clean URL to clipboard, and saves to history.
@@ -258,6 +352,9 @@ class LinkScrubViewModel(
     fun executeQuickClean(rawUrl: String) {
         cancelInFlightJobs()
         cleanJob = viewModelScope.launch {
+            val shouldUnshorten = _uiState.value.unshortenRedirects
+            val shouldFetchMetadata = _uiState.value.fetchOpenGraphPreview
+            val cleaner = activeUrlCleaner()
             _uiState.update {
                 it.copy(
                     isProcessing = true,
@@ -268,9 +365,10 @@ class LinkScrubViewModel(
             try {
                 val result = cleanUrlUseCase(
                     inputUrl = rawUrl,
-                    unshorten = true,
-                    fetchMetadata = true,
-                    saveToHistory = true
+                    unshorten = shouldUnshorten,
+                    fetchMetadata = shouldFetchMetadata,
+                    saveToHistory = true,
+                    cleaner = cleaner
                 )
 
                 // Log privacy-safe analytics event
@@ -280,7 +378,9 @@ class LinkScrubViewModel(
                     isQuickClean = true
                 )
 
-                // Copy to system clipboard
+                val fullTextCleaned = buildCleanedFullText(rawUrl, result.cleanedUrl)
+
+                // Copy to system clipboard (full cleaned message if multiple links/surrounding text, or cleaned URL)
                 copyToClipboard(result.cleanedUrl)
 
                 val charsSaved = (rawUrl.length - result.cleanedUrl.length).coerceAtLeast(0)
@@ -297,8 +397,10 @@ class LinkScrubViewModel(
                     it.copy(
                         isProcessing = false,
                         cleanedUrl = result.cleanedUrl,
+                        cleanedFullText = fullTextCleaned,
                         unshortenedUrl = result.unshortenedUrl,
                         isRedirected = result.unshortenedUrl != null,
+                        redirectChain = result.redirectChain,
                         removedParamsCount = result.removedParams.size,
                         detectedParameters = chips,
                         metadata = result.metadata,
@@ -325,18 +427,20 @@ class LinkScrubViewModel(
      */
     fun extractChipsForUrl(url: String, removedParams: Set<String>? = null): List<ParameterChipItem> {
         val parsed = url.toHttpUrlOrNull() ?: return emptyList()
+        val cleaner = activeUrlCleaner()
         val chips = mutableListOf<ParameterChipItem>()
 
         // Amazon path tracking parameter e.g., /ref=...
         if (parsed.host.contains("amazon.", ignoreCase = true) && UrlCleaner.AMAZON_REF_PATH_REGEX.containsMatchIn(url)) {
             val match = UrlCleaner.AMAZON_REF_PATH_REGEX.find(url)
             val valueStr = match?.value?.removePrefix("/ref=") ?: ""
-            val isRemoved = removedParams?.contains(UrlCleaner.AMAZON_PATH_PARAM_KEY) ?: true
+            val isTracking = cleaner.isTrackingParam(UrlCleaner.AMAZON_PATH_PARAM_KEY, parsed.host)
+            val isRemoved = removedParams?.contains(UrlCleaner.AMAZON_PATH_PARAM_KEY) ?: isTracking
             chips.add(
                 ParameterChipItem(
                     key = UrlCleaner.AMAZON_PATH_PARAM_KEY,
                     value = valueStr,
-                    isTracking = true,
+                    isTracking = isTracking,
                     isMarkedForRemoval = isRemoved
                 )
             )
@@ -345,7 +449,7 @@ class LinkScrubViewModel(
         for (name in parsed.queryParameterNames) {
             val values = parsed.queryParameterValues(name)
             val valueStr = values.filterNotNull().joinToString(",")
-            val isTracking = urlCleaner.isTrackingParam(name, parsed.host)
+            val isTracking = cleaner.isTrackingParam(name, parsed.host)
             val isMarkedForRemoval = if (removedParams != null) {
                 removedParams.contains(name)
             } else {
@@ -370,17 +474,22 @@ class LinkScrubViewModel(
     private fun prepareStep2Inspection(rawUrl: String) {
         cancelInFlightJobs()
         inspectJob = viewModelScope.launch {
+            val shouldUnshorten = _uiState.value.unshortenRedirects
             _uiState.update {
                 it.copy(
                     isProcessing = true,
-                    isUnshortening = true,
+                    isUnshortening = shouldUnshorten,
                     currentStep = WizardStep.INSPECT,
                     userMessage = null
                 )
             }
 
             // Check unshortening first so user sees resolved URL & parameters if redirected
-            val unshortenResult = redirectUnshortener.unshorten(rawUrl)
+            val unshortenResult = if (shouldUnshorten) {
+                redirectUnshortener.unshorten(rawUrl)
+            } else {
+                com.androidfung.linkscrub.data.network.UnshortenResult(initialUrl = rawUrl, finalUrl = rawUrl)
+            }
             val effectiveUrl = if (unshortenResult.isRedirected) unshortenResult.finalUrl else rawUrl
 
             val chips = extractChipsForUrl(effectiveUrl)
@@ -467,19 +576,24 @@ class LinkScrubViewModel(
             val finalCleanUrl = _uiState.value.cleanedUrl.ifBlank {
                 _uiState.value.unshortenedUrl ?: _uiState.value.inputUrl
             }
+            val shouldFetchMetadata = _uiState.value.fetchOpenGraphPreview
 
             _uiState.update {
                 it.copy(
                     currentStep = WizardStep.PREVIEW,
-                    isLoadingMetadata = true,
+                    isLoadingMetadata = shouldFetchMetadata,
                     userMessage = null
                 )
             }
 
-            val metadata = try {
-                openGraphScraper.scrape(finalCleanUrl)
-            } catch (e: Exception) {
-                com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
+            val metadata = if (shouldFetchMetadata) {
+                try {
+                    openGraphScraper.scrape(finalCleanUrl)
+                } catch (e: Exception) {
+                    com.androidfung.linkscrub.util.AnalyticsHelper.recordException(e)
+                    null
+                }
+            } else {
                 null
             }
 
@@ -508,6 +622,7 @@ class LinkScrubViewModel(
             }
 
             val originalUrl = _uiState.value.inputUrl
+            val fullTextCleaned = buildCleanedFullText(originalUrl, finalCleanUrl)
             val charsSaved = (originalUrl.length - finalCleanUrl.length).coerceAtLeast(0)
             val cleanFeedback = if (removedParams.isNotEmpty()) {
                 getString(R.string.msg_link_sanitized_params_removed, removedParams.size, charsSaved)
@@ -520,6 +635,7 @@ class LinkScrubViewModel(
                     isLoadingMetadata = false,
                     metadata = metadata,
                     cleanedUrl = finalCleanUrl,
+                    cleanedFullText = fullTextCleaned,
                     removedParamsCount = removedParams.size,
                     userMessage = cleanFeedback
                 )
@@ -546,6 +662,14 @@ class LinkScrubViewModel(
         }
     }
 
+    fun copyCleanedFullTextToClipboard() {
+        val fullText = _uiState.value.cleanedFullText ?: return
+        if (fullText.isNotBlank()) {
+            copyToClipboard(fullText)
+            _uiState.update { it.copy(userMessage = getString(R.string.msg_cleaned_message_copied)) }
+        }
+    }
+
     fun dismissUserMessage() {
         _uiState.update { it.copy(userMessage = null, isQuickCleanCopiedNotification = false) }
     }
@@ -557,12 +681,18 @@ class LinkScrubViewModel(
      */
     fun handleSharedUrl(sharedText: String) {
         cancelInFlightJobs()
-        val extractedUrl = UrlCleaner.findFirstUrl(sharedText)
+        val allUrls = UrlCleaner.findAllUrls(sharedText)
+        val extractedUrl = allUrls.firstOrNull()
 
         if (extractedUrl != null) {
+            val trimmedShared = sharedText.trim()
+            val hasSurroundingTextOrMultipleUrls = trimmedShared != extractedUrl || allUrls.size > 1
             _uiState.update {
                 it.copy(
                     inputUrl = extractedUrl,
+                    rawInputText = if (hasSurroundingTextOrMultipleUrls) trimmedShared else null,
+                    cleanedFullText = null,
+                    extractedUrlsCount = allUrls.size,
                     currentStep = WizardStep.INPUT,
                     userMessage = null
                 )
@@ -628,9 +758,13 @@ class LinkScrubViewModel(
         _uiState.update {
             it.copy(
                 inputUrl = item.originalUrl,
+                rawInputText = null,
+                cleanedFullText = null,
+                extractedUrlsCount = 0,
                 cleanedUrl = item.cleanedUrl,
                 unshortenedUrl = item.unshortenedUrl,
                 isRedirected = item.unshortenedUrl != null,
+                redirectChain = emptyList(),
                 removedParamsCount = item.removedParams.size,
                 detectedParameters = chips,
                 metadata = item.metadata,
@@ -673,7 +807,7 @@ class LinkScrubViewModel(
         chips: List<ParameterChipItem>
     ): String {
         val paramsToRemove = chips.filter { it.isMarkedForRemoval }.map { it.key }.toSet()
-        return urlCleaner.computeCleanedUrlWithExcludedParams(rawUrl, paramsToRemove)
+        return activeUrlCleaner().computeCleanedUrlWithExcludedParams(rawUrl, paramsToRemove)
     }
 
     companion object {

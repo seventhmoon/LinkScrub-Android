@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
-import com.androidfung.linkscrub.ui.components.AdMobBanner
+import com.androidfung.linkscrub.ui.components.AdMobNativeCard
 import com.androidfung.linkscrub.ui.components.OpenGraphPreviewCard
 
 /**
@@ -52,7 +52,9 @@ data class Step3Actions(
     val onShare: () -> Unit,
     val onOpenInBrowser: () -> Unit,
     val onInspectAgain: () -> Unit,
-    val onScrubAnother: () -> Unit
+    val onScrubAnother: () -> Unit,
+    val onCopyFullMessage: () -> Unit = {},
+    val onShareFullMessage: () -> Unit = {}
 )
 
 /**
@@ -65,7 +67,9 @@ fun Step3PreviewView(
     metadata: OpenGraphMetadata?,
     isLoadingMetadata: Boolean,
     actions: Step3Actions,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cleanedFullText: String? = null,
+    extractedUrlsCount: Int = 0
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -143,6 +147,80 @@ fun Step3PreviewView(
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium
                 )
+            }
+        }
+
+        // Full conversational message / multi-link display card when input had surrounding text or multiple links
+        if (!cleanedFullText.isNullOrBlank()) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.65f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.preview_full_message_title, extractedUrlsCount.coerceAtLeast(1)),
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = cleanedFullText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        maxLines = 6,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilledTonalButton(
+                            onClick = actions.onCopyFullMessage,
+                            modifier = Modifier.weight(1f).height(42.dp),
+                            shape = MaterialTheme.shapes.small,
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.ContentCopy,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.action_copy_full_message),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = actions.onShareFullMessage,
+                            modifier = Modifier.weight(1f).height(42.dp),
+                            shape = MaterialTheme.shapes.small,
+                            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.Share,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.action_share_full_message),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
+                    }
+                }
             }
         }
 
@@ -263,9 +341,9 @@ fun Step3PreviewView(
             }
         }
 
-        // Placement 1: AdMob Adaptive Banner at the bottom of Step 3
+        // Placement 1: AdMob Native Card at the bottom of Step 3
         Spacer(modifier = Modifier.height(8.dp))
-        AdMobBanner(
+        AdMobNativeCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()

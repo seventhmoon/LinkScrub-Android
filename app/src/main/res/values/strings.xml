@@ -159,4 +159,37 @@
     <string name="msg_loaded_link_from_history">Loaded link from history</string>
     <string name="msg_item_removed_from_history">Item removed from history</string>
     <string name="msg_all_history_cleared">All history cleared</string>
+    <string name="msg_cleaned_message_copied">Cleaned message copied to clipboard!</string>
+
+    <!-- Redirect Hop Chain & Diff -->
+    <string name="inspect_redirect_hop_item">Hop %1$d: %2$s</string>
+    <string name="inspect_savings_badge">-%1$d params • -%2$d chars</string>
+    <string name="preview_full_message_title">Cleaned Full Message (%1$d links)</string>
+    <string name="action_copy_full_message">Copy Message</string>
+    <string name="action_share_full_message">Share Message</string>
+
+    <!-- Settings & Custom Rules Sheet -->
+    <string name="cd_settings">Settings &amp; Rules</string>
+    <string name="settings_title">Settings &amp; Custom Rules</string>
+    <string name="settings_subtitle">Configure default behavior and custom parameter filters</string>
+    <string name="settings_section_behavior">Sanitization Behavior</string>
+    <string name="settings_quick_clean_title">Quick-Clean Shared Links</string>
+    <string name="settings_quick_clean_subtitle">Automatically scrub and copy links shared from other apps</string>
+    <string name="settings_unshorten_title">Unshorten Redirect Links</string>
+    <string name="settings_unshorten_subtitle">Follow HTTP redirects (e.g. bit.ly, t.co) to reveal destination</string>
+    <string name="settings_og_preview_title">Fetch Open Graph Previews</string>
+    <string name="settings_og_preview_subtitle">Load page title, description, and thumbnail preview in Step 3</string>
+    <string name="settings_section_blocklist">Custom Blocked Parameters (Always Scrub)</string>
+    <string name="settings_blocklist_subtitle">Parameters listed here will always be marked as tracking</string>
+    <string name="settings_blocklist_placeholder">e.g. ref, source, campaign_id</string>
+    <string name="settings_section_allowlist">Custom Allowed Parameters (Always Keep)</string>
+    <string name="settings_allowlist_subtitle">Parameters listed here will never be automatically stripped</string>
+    <string name="settings_allowlist_placeholder">e.g. tag, debug, lang</string>
+    <string name="settings_action_add">Add</string>
+    <string name="settings_empty_rules">No custom parameters added yet.</string>
+
+    <!-- AdMob Native Ad Strings -->
+    <string name="ad_attribution_label">Ad</string>
+    <string name="ad_icon_content_description">Ad Icon</string>
+    <string name="ad_cta_default">Learn More</string>
 </resources>

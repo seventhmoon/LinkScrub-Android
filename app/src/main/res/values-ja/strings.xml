@@ -159,4 +159,37 @@
     <string name="msg_loaded_link_from_history">履歴からリンクを読み込みました</string>
     <string name="msg_item_removed_from_history">履歴からアイテムを削除しました</string>
     <string name="msg_all_history_cleared">すべての履歴を消去しました</string>
+    <string name="msg_cleaned_message_copied">サニタイズ済みメッセージをコピーしました！</string>
+
+    <!-- Redirect Hop Chain & Diff -->
+    <string name="inspect_redirect_hop_item">ホップ %1$d: %2$s</string>
+    <string name="inspect_savings_badge">-%1$d パラメータ • -%2$d 文字</string>
+    <string name="preview_full_message_title">サニタイズ済みメッセージ全文 (%1$d リンク)</string>
+    <string name="action_copy_full_message">メッセージをコピー</string>
+    <string name="action_share_full_message">メッセージを共有</string>
+
+    <!-- Settings & Custom Rules Sheet -->
+    <string name="cd_settings">設定とルール</string>
+    <string name="settings_title">設定とカスタムルール</string>
+    <string name="settings_subtitle">デフォルト動作とカスタムパラメータフィルターの設定</string>
+    <string name="settings_section_behavior">サニタイズ動作</string>
+    <string name="settings_quick_clean_title">共有リンクのクイッククリーン</string>
+    <string name="settings_quick_clean_subtitle">他アプリから共有されたリンクを自動的にサニタイズしてコピー</string>
+    <string name="settings_unshorten_title">短縮リンクを展開</string>
+    <string name="settings_unshorten_subtitle">HTTPリダイレクト（bit.ly、t.coなど）を追跡して最終URLを表示</string>
+    <string name="settings_og_preview_title">Open Graphプレビューを取得</string>
+    <string name="settings_og_preview_subtitle">ステップ3でページのタイトル、説明、サムネイルを取得</string>
+    <string name="settings_section_blocklist">カスタムブロックパラメータ（常に削除）</string>
+    <string name="settings_blocklist_subtitle">ここに追加したパラメータは常に追跡パラメータとして削除されます</string>
+    <string name="settings_blocklist_placeholder">例: ref, source, campaign_id</string>
+    <string name="settings_section_allowlist">カスタム許可パラメータ（常に保持）</string>
+    <string name="settings_allowlist_subtitle">ここに追加したパラメータは自動的に削除されません</string>
+    <string name="settings_allowlist_placeholder">例: tag, debug, lang</string>
+    <string name="settings_action_add">追加</string>
+    <string name="settings_empty_rules">カスタムパラメータはまだ登録されていません。</string>
+
+    <!-- AdMob Native Ad Strings -->
+    <string name="ad_attribution_label">広告</string>
+    <string name="ad_icon_content_description">広告アイコン</string>
+    <string name="ad_cta_default">詳細</string>
 </resources>
