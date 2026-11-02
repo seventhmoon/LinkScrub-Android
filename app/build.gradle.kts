@@ -20,8 +20,8 @@ android {
         applicationId = "com.androidfung.linkscrub"
         minSdk = 28
         targetSdk = 37
-        versionCode = 11
-        versionName = "1.0.0-261023"
+        versionCode = 12
+        versionName = "1.0.0-261101"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -135,6 +135,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -363,4 +363,11 @@ class LinkScrubViewModelTest {
         assertEquals("https://example.com/page?utm_source=keepme", state.cleanedUrl)
         assertNull(state.metadata)
     }
+
+    @Test
+    fun onInputUrlChanged_computesInstantPreviewTrackingParams() = runTest {
+        viewModel.onInputUrlChanged("https://example.com/article?utm_source=tw&fbclid=123&page=2")
+        val state = viewModel.uiState.value
+        assertEquals(listOf("utm_source", "fbclid"), state.instantPreviewTrackingParams)
+    }
 }

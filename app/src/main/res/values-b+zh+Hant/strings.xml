@@ -172,6 +172,10 @@
     <string name="cd_settings">設定與規則</string>
     <string name="settings_title">設定與自訂規則</string>
     <string name="settings_subtitle">設定預設行為與自訂參數篩選清單</string>
+    <string name="settings_section_language">語言</string>
+    <string name="settings_language_title">應用程式語言</string>
+    <string name="settings_language_system_default">系統預設</string>
+    <string name="settings_language_dialog_title">選擇應用程式語言</string>
     <string name="settings_section_behavior">淨化行為設定</string>
     <string name="settings_quick_clean_title">分享連結快速淨化</string>
     <string name="settings_quick_clean_subtitle">自動淨化並複製從其他應用程式分享過來的連結</string>
@@ -187,6 +191,30 @@
     <string name="settings_allowlist_placeholder">例如：tag, debug, lang</string>
     <string name="settings_action_add">新增</string>
     <string name="settings_empty_rules">尚未新增自訂參數。</string>
+
+    <!-- Parameter Categories -->
+    <string name="category_utm_campaign">UTM 行銷活動</string>
+    <string name="category_ads_click_id">廣告點擊 ID</string>
+    <string name="category_social_share">社群分享追蹤</string>
+    <string name="category_ecommerce_affiliate">聯盟行銷 / 電商</string>
+    <string name="category_email_marketing">電子報 / CRM</string>
+    <string name="category_analytics_telemetry">遙測分析</string>
+    <string name="category_custom_blocked">自訂封鎖</string>
+    <string name="category_custom_allowed">自訂保留</string>
+    <string name="category_essential_safe">安全</string>
+
+    <!-- Step 1 Instant Preview & Privacy Shield Stats -->
+    <string name="input_instant_trackers_found">即時偵測到 %1$d 個追蹤參數：%2$s</string>
+    <string name="input_instant_no_trackers">表層無追蹤參數 — 點選下方以解析短網址與預覽</string>
+    <string name="stats_shield_title">本機隱私防護統計</string>
+    <string name="stats_links_cleaned">已淨化 %1$d 個連結</string>
+    <string name="stats_trackers_blocked">已攔截 %1$d 個追蹤碼</string>
+
+    <!-- Step 2 Diff & Step 3 Unshortened Badge & History Filter -->
+    <string name="inspect_show_diff">顯示差異</string>
+    <string name="inspect_hide_diff">僅顯示結果</string>
+    <string name="preview_unshortened_from">短網址還原自：%1$s</string>
+    <string name="history_filter_all">全部</string>
 
     <!-- AdMob Native Ad Strings -->
     <string name="ad_attribution_label">廣告</string>

@@ -172,6 +172,10 @@
     <string name="cd_settings">Settings &amp; Rules</string>
     <string name="settings_title">Settings &amp; Custom Rules</string>
     <string name="settings_subtitle">Configure default behavior and custom parameter filters</string>
+    <string name="settings_section_language">Language</string>
+    <string name="settings_language_title">App Language</string>
+    <string name="settings_language_system_default">System Default</string>
+    <string name="settings_language_dialog_title">Select App Language</string>
     <string name="settings_section_behavior">Sanitization Behavior</string>
     <string name="settings_quick_clean_title">Quick-Clean Shared Links</string>
     <string name="settings_quick_clean_subtitle">Automatically scrub and copy links shared from other apps</string>
@@ -187,6 +191,30 @@
     <string name="settings_allowlist_placeholder">e.g. tag, debug, lang</string>
     <string name="settings_action_add">Add</string>
     <string name="settings_empty_rules">No custom parameters added yet.</string>
+
+    <!-- Parameter Categories -->
+    <string name="category_utm_campaign">UTM Campaign</string>
+    <string name="category_ads_click_id">Ad Click ID</string>
+    <string name="category_social_share">Social Share</string>
+    <string name="category_ecommerce_affiliate">Affiliate / Retail</string>
+    <string name="category_email_marketing">Email / CRM</string>
+    <string name="category_analytics_telemetry">Telemetry</string>
+    <string name="category_custom_blocked">Custom Blocked</string>
+    <string name="category_custom_allowed">Custom Allowed</string>
+    <string name="category_essential_safe">Safe</string>
+
+    <!-- Step 1 Instant Preview & Privacy Shield Stats -->
+    <string name="input_instant_trackers_found">%1$d tracking param(s) detected: %2$s</string>
+    <string name="input_instant_no_trackers">No surface tracking params — tap below to resolve redirects &amp; preview</string>
+    <string name="stats_shield_title">On-Device Privacy Shield</string>
+    <string name="stats_links_cleaned">%1$d links scrubbed</string>
+    <string name="stats_trackers_blocked">%1$d trackers stripped</string>
+
+    <!-- Step 2 Diff & Step 3 Unshortened Badge & History Filter -->
+    <string name="inspect_show_diff">Show Diff</string>
+    <string name="inspect_hide_diff">Clean Only</string>
+    <string name="preview_unshortened_from">Resolved from: %1$s</string>
+    <string name="history_filter_all">All</string>
 
     <!-- AdMob Native Ad Strings -->
     <string name="ad_attribution_label">Ad</string>

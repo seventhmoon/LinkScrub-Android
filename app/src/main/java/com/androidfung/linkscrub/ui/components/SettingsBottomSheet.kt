@@ -21,7 +21,9 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,9 +35,11 @@ import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,6 +53,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.compose.foundation.clickable
 import com.androidfung.linkscrub.R
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -127,6 +134,9 @@ fun SettingsBottomSheet(
                     )
                 }
             }
+
+            // Section: Language Preference
+            AppLanguageSection()
 
             // Section 1: Sanitization Behavior
             Card(
@@ -350,5 +360,155 @@ private fun CustomRuleCard(
                 }
             }
         }
+    }
+}
+
+private data class SupportedLanguage(
+    val tag: String,
+    val displayName: String
+)
+
+private val SUPPORTED_LANGUAGES = listOf(
+    SupportedLanguage("", ""), // System default
+    SupportedLanguage("en", "English"),
+    SupportedLanguage("zh-Hant", "中文"),
+    SupportedLanguage("ja", "日本語"),
+    SupportedLanguage("ko", "한국어")
+)
+
+@Composable
+private fun AppLanguageSection() {
+    var showDialog by remember { mutableStateOf(false) }
+
+    val currentLocales = AppCompatDelegate.getApplicationLocales()
+    val currentTag = if (!currentLocales.isEmpty) {
+        val primary = currentLocales.get(0)?.toLanguageTag() ?: ""
+        when {
+            primary.startsWith("zh") -> "zh-Hant"
+            primary.startsWith("ja") -> "ja"
+            primary.startsWith("ko") -> "ko"
+            primary.startsWith("en") -> "en"
+            else -> primary
+        }
+    } else {
+        ""
+    }
+
+    val currentDisplayName = when (currentTag) {
+        "en" -> "English"
+        "zh-Hant" -> "中文"
+        "ja" -> "日本語"
+        "ko" -> "한국어"
+        else -> stringResource(R.string.settings_language_system_default)
+    }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.settings_section_language),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDialog = true }
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Language,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.settings_language_title),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Text(
+                        text = currentDisplayName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.settings_language_dialog_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SUPPORTED_LANGUAGES.forEach { lang ->
+                        val isSelected = (lang.tag.isEmpty() && currentTag.isEmpty()) || (lang.tag.isNotEmpty() && currentTag == lang.tag)
+                        val label = if (lang.tag.isEmpty()) {
+                            stringResource(R.string.settings_language_system_default)
+                        } else {
+                            lang.displayName
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    val newLocales = if (lang.tag.isEmpty()) {
+                                        LocaleListCompat.getEmptyLocaleList()
+                                    } else {
+                                        LocaleListCompat.forLanguageTags(lang.tag)
+                                    }
+                                    AppCompatDelegate.setApplicationLocales(newLocales)
+                                    showDialog = false
+                                }
+                                .padding(vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = isSelected,
+                                onClick = {
+                                    val newLocales = if (lang.tag.isEmpty()) {
+                                        LocaleListCompat.getEmptyLocaleList()
+                                    } else {
+                                        LocaleListCompat.forLanguageTags(lang.tag)
+                                    }
+                                    AppCompatDelegate.setApplicationLocales(newLocales)
+                                    showDialog = false
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
     }
 }

@@ -122,18 +122,31 @@ class LinkScrubViewModel(
         }
         viewModelScope.launch {
             settingsRepository.settings.collect { settings ->
-                _uiState.update {
-                    it.copy(
+                _uiState.update { state ->
+                    val updatedCleaner = urlCleaner.withCustomRules(
+                        blocklist = settings.customBlocklist,
+                        allowlist = settings.customAllowlist
+                    )
+                    state.copy(
                         isQuickCleanEnabled = settings.isQuickCleanDefault,
                         unshortenRedirects = settings.unshortenRedirects,
                         fetchOpenGraphPreview = settings.fetchOpenGraphPreview,
                         customBlocklist = settings.customBlocklist,
-                        customAllowlist = settings.customAllowlist
+                        customAllowlist = settings.customAllowlist,
+                        instantPreviewTrackingParams = computeInstantTrackingParams(state.inputUrl, updatedCleaner)
                     )
                 }
             }
         }
         checkClipboardForUrl()
+    }
+
+    private fun computeInstantTrackingParams(rawInput: String, cleaner: UrlCleaner = activeUrlCleaner()): List<String> {
+        val trimmed = rawInput.trim()
+        if (trimmed.isBlank()) return emptyList()
+        val candidate = UrlCleaner.findFirstUrl(trimmed)
+            ?: if (trimmed.toHttpUrlOrNull() != null) trimmed else "https://$trimmed"
+        return cleaner.cleanUrl(candidate).removedParams
     }
 
     private fun cancelInFlightJobs() {
@@ -178,13 +191,32 @@ class LinkScrubViewModel(
 
     fun onInputUrlChanged(url: String) {
         cancelInFlightJobs()
-        _uiState.update { it.copy(inputUrl = url, rawInputText = null, cleanedFullText = null, extractedUrlsCount = 0, userMessage = null) }
+        val instantParams = computeInstantTrackingParams(url)
+        _uiState.update {
+            it.copy(
+                inputUrl = url,
+                instantPreviewTrackingParams = instantParams,
+                rawInputText = null,
+                cleanedFullText = null,
+                extractedUrlsCount = 0,
+                userMessage = null
+            )
+        }
     }
 
     fun useClipboardUrl() {
         val detected = _uiState.value.detectedClipboardUrl ?: return
         cancelInFlightJobs()
-        _uiState.update { it.copy(inputUrl = detected, rawInputText = null, cleanedFullText = null, extractedUrlsCount = 0) }
+        val instantParams = computeInstantTrackingParams(detected)
+        _uiState.update {
+            it.copy(
+                inputUrl = detected,
+                instantPreviewTrackingParams = instantParams,
+                rawInputText = null,
+                cleanedFullText = null,
+                extractedUrlsCount = 0
+            )
+        }
         processInputUrl(detected)
     }
 
@@ -232,6 +264,7 @@ class LinkScrubViewModel(
         _uiState.update {
             it.copy(
                 inputUrl = "",
+                instantPreviewTrackingParams = emptyList(),
                 rawInputText = null,
                 cleanedFullText = null,
                 extractedUrlsCount = 0,
@@ -434,6 +467,7 @@ class LinkScrubViewModel(
         if (parsed.host.contains("amazon.", ignoreCase = true) && UrlCleaner.AMAZON_REF_PATH_REGEX.containsMatchIn(url)) {
             val match = UrlCleaner.AMAZON_REF_PATH_REGEX.find(url)
             val valueStr = match?.value?.removePrefix("/ref=") ?: ""
+            val category = cleaner.classifyParameter(UrlCleaner.AMAZON_PATH_PARAM_KEY, parsed.host)
             val isTracking = cleaner.isTrackingParam(UrlCleaner.AMAZON_PATH_PARAM_KEY, parsed.host)
             val isRemoved = removedParams?.contains(UrlCleaner.AMAZON_PATH_PARAM_KEY) ?: isTracking
             chips.add(
@@ -441,7 +475,8 @@ class LinkScrubViewModel(
                     key = UrlCleaner.AMAZON_PATH_PARAM_KEY,
                     value = valueStr,
                     isTracking = isTracking,
-                    isMarkedForRemoval = isRemoved
+                    isMarkedForRemoval = isRemoved,
+                    category = category
                 )
             )
         }
@@ -449,6 +484,7 @@ class LinkScrubViewModel(
         for (name in parsed.queryParameterNames) {
             val values = parsed.queryParameterValues(name)
             val valueStr = values.filterNotNull().joinToString(",")
+            val category = cleaner.classifyParameter(name, parsed.host)
             val isTracking = cleaner.isTrackingParam(name, parsed.host)
             val isMarkedForRemoval = if (removedParams != null) {
                 removedParams.contains(name)
@@ -460,7 +496,8 @@ class LinkScrubViewModel(
                     key = name,
                     value = valueStr,
                     isTracking = isTracking,
-                    isMarkedForRemoval = isMarkedForRemoval
+                    isMarkedForRemoval = isMarkedForRemoval,
+                    category = category
                 )
             )
         }
@@ -815,7 +852,20 @@ class LinkScrubViewModel(
             object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return LinkScrubViewModel(application) as T
+                    val container = (application as? com.androidfung.linkscrub.LinkScrubApplication)?.container
+                    return if (container != null) {
+                        LinkScrubViewModel(
+                            application = application,
+                            urlCleaner = container.urlCleaner,
+                            redirectUnshortener = container.redirectUnshortener,
+                            openGraphScraper = container.openGraphScraper,
+                            historyRepository = container.historyRepository,
+                            cleanUrlUseCase = container.cleanUrlUseCase,
+                            settingsRepository = container.settingsRepository
+                        ) as T
+                    } else {
+                        LinkScrubViewModel(application) as T
+                    }
                 }
             }
     }

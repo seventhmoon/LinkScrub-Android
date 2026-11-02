@@ -183,18 +183,34 @@ fun ParameterChip(
             onToggle()
         },
         label = {
-            Column(modifier = Modifier.padding(vertical = 2.dp)) {
-                Text(
-                    text = item.key,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    softWrap = false,
-                    overflow = TextOverflow.Ellipsis
-                )
+            Column(modifier = Modifier.padding(vertical = 3.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = item.key,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = stringResource(item.category.labelRes),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isRemoved) {
+                            MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
+                        } else {
+                            MaterialTheme.colorScheme.primary
+                        },
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                }
                 if (item.value.isNotBlank()) {
                     Text(
-                        text = if (item.value.length > 18) item.value.take(15) + "…" else item.value,
+                        text = if (item.value.length > 22) item.value.take(19) + "…" else item.value,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,

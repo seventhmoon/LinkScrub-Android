@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -86,7 +88,31 @@ fun HistoryPanel(
     onClose: (() -> Unit)? = null
 ) {
     var showClearConfirmationDialog by remember { mutableStateOf(false) }
+    var selectedDomainFilter by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
+
+    val availableDomains = remember(historyItems) {
+        historyItems.mapNotNull { item ->
+            runCatching { java.net.URI(item.cleanedUrl).host?.removePrefix("www.")?.lowercase() }
+                .getOrNull()
+                ?.takeIf { it.isNotBlank() }
+        }.groupingBy { it }.eachCount()
+            .entries
+            .sortedByDescending { it.value }
+            .map { it.key }
+            .take(8)
+    }
+
+    val displayedItems = remember(historyItems, selectedDomainFilter) {
+        if (selectedDomainFilter == null) {
+            historyItems
+        } else {
+            historyItems.filter { item ->
+                val host = runCatching { java.net.URI(item.cleanedUrl).host?.removePrefix("www.")?.lowercase() }.getOrNull()
+                host == selectedDomainFilter
+            }
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -195,11 +221,36 @@ fun HistoryPanel(
                 )
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            if (availableDomains.size > 1) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item(key = "domain_all") {
+                        FilterChip(
+                            selected = selectedDomainFilter == null,
+                            onClick = { selectedDomainFilter = null },
+                            label = { Text(stringResource(R.string.history_filter_all)) }
+                        )
+                    }
+                    items(availableDomains, key = { "domain_$it" }) { domain ->
+                        FilterChip(
+                            selected = selectedDomainFilter == domain,
+                            onClick = {
+                                selectedDomainFilter = if (selectedDomainFilter == domain) null else domain
+                            },
+                            label = { Text(domain) }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(6.dp))
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             // History List or Empty State
-            if (historyItems.isEmpty()) {
+            if (displayedItems.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -253,7 +304,7 @@ fun HistoryPanel(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    historyItems.forEachIndexed { index, item ->
+                    displayedItems.forEachIndexed { index, item ->
                         item(key = "history_${item.id}") {
                             HistoryCard(
                                 item = item,
@@ -278,7 +329,7 @@ fun HistoryPanel(
                     }
 
                     // For short history (< 4 items), show one ad at the bottom of the list
-                    if (historyItems.size in 1..initialAdOffset) {
+                    if (displayedItems.size in 1..initialAdOffset) {
                         item(key = "history_native_ad_bottom") {
                             AdMobNativeCard(
                                 modifier = Modifier

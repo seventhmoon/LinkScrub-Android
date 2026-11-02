@@ -376,11 +376,17 @@ fun LinkScrubScreen(
                                             }
                                         )
                                     }
+                                    val totalTrackersStripped = remember(historyItems) {
+                                        historyItems.sumOf { it.removedParams.size }
+                                    }
                                     Step1InputView(
                                         inputUrl = uiState.inputUrl,
                                         detectedClipboardUrl = uiState.detectedClipboardUrl,
                                         isProcessing = uiState.isProcessing,
-                                        actions = step1Actions
+                                        actions = step1Actions,
+                                        instantPreviewTrackingParams = uiState.instantPreviewTrackingParams,
+                                        totalLinksScrubbed = historyItems.size,
+                                        totalTrackersStripped = totalTrackersStripped
                                     )
                                 }
 
@@ -463,7 +469,9 @@ fun LinkScrubScreen(
                                         isLoadingMetadata = uiState.isLoadingMetadata,
                                         actions = step3Actions,
                                         cleanedFullText = uiState.cleanedFullText,
-                                        extractedUrlsCount = uiState.extractedUrlsCount
+                                        extractedUrlsCount = uiState.extractedUrlsCount,
+                                        isRedirected = uiState.isRedirected,
+                                        originalUrl = uiState.inputUrl
                                     )
                                 }
                             }

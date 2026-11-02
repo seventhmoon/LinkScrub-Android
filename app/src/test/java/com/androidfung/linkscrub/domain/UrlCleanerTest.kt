@@ -322,4 +322,16 @@ class UrlCleanerTest {
         assertTrue(result.removedParams.contains("utm_medium"))
         assertTrue(result.removedParams.contains("custom_track"))
     }
+
+    @Test
+    fun `classifyParameter categorizes tracking and safe parameters accurately`() {
+        assertEquals(ParameterCategory.UTM_CAMPAIGN, urlCleaner.classifyParameter("utm_source", "example.com"))
+        assertEquals(ParameterCategory.ADS_CLICK_ID, urlCleaner.classifyParameter("gclid", "example.com"))
+        assertEquals(ParameterCategory.SOCIAL_SHARE, urlCleaner.classifyParameter("fbclid", "example.com"))
+        assertEquals(ParameterCategory.SOCIAL_SHARE, urlCleaner.classifyParameter("s", "x.com"))
+        assertEquals(ParameterCategory.ESSENTIAL_SAFE, urlCleaner.classifyParameter("s", "blog.example.com"))
+        assertEquals(ParameterCategory.ECOMMERCE_AFFILIATE, urlCleaner.classifyParameter("tag", "amazon.com"))
+        assertEquals(ParameterCategory.ESSENTIAL_SAFE, urlCleaner.classifyParameter("tag", "blog.example.com"))
+        assertEquals(ParameterCategory.EMAIL_MARKETING, urlCleaner.classifyParameter("mc_eid", "example.com"))
+    }
 }

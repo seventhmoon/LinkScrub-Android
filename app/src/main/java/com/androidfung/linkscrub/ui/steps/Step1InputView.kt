@@ -16,11 +16,14 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.ContentPaste
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.QrCodeScanner
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material.icons.rounded.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -67,7 +71,10 @@ fun Step1InputView(
     detectedClipboardUrl: String?,
     isProcessing: Boolean,
     actions: Step1Actions,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    instantPreviewTrackingParams: List<String> = emptyList(),
+    totalLinksScrubbed: Int = 0,
+    totalTrackersStripped: Int = 0
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -188,6 +195,53 @@ fun Step1InputView(
             maxLines = 4
         )
 
+        // Instant live tracking parameter detection pill
+        AnimatedVisibility(visible = inputUrl.isNotBlank()) {
+            val hasTrackers = instantPreviewTrackingParams.isNotEmpty()
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = if (hasTrackers) {
+                    MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (hasTrackers) Icons.Rounded.WarningAmber else Icons.Rounded.CheckCircle,
+                        contentDescription = null,
+                        tint = if (hasTrackers) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (hasTrackers) {
+                            stringResource(
+                                R.string.input_instant_trackers_found,
+                                instantPreviewTrackingParams.size,
+                                instantPreviewTrackingParams.joinToString(", ")
+                            )
+                        } else {
+                            stringResource(R.string.input_instant_no_trackers)
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = if (hasTrackers) {
+                            MaterialTheme.colorScheme.onErrorContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+
         // Action Buttons: Quick Clean & Tune / Inspect
         val hasUrl = inputUrl.isNotBlank()
         Column(
@@ -262,6 +316,49 @@ fun Step1InputView(
                     softWrap = false,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
+        }
+
+        // On-Device Privacy Shield lifetime stats card
+        if (totalLinksScrubbed > 0) {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Rounded.Shield,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = stringResource(R.string.stats_shield_title),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = stringResource(R.string.stats_links_cleaned, totalLinksScrubbed) +
+                                    " • " + stringResource(R.string.stats_trackers_blocked, totalTrackersStripped),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
         }
 

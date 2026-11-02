@@ -36,9 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.ui.ParameterChipItem
@@ -181,6 +185,7 @@ fun Step2InspectView(
         val displayCandidate = cleanedUrlCandidate.ifBlank { effectiveSource }
         val removedCount = parameters.count { it.isMarkedForRemoval }
         val charsSaved = (effectiveSource.length - displayCandidate.length).coerceAtLeast(0)
+        var showUrlDiff by remember { mutableStateOf(true) }
 
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -201,30 +206,91 @@ fun Step2InspectView(
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    if (removedCount > 0) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        ) {
-                            Text(
-                                text = stringResource(R.string.inspect_savings_badge, removedCount, charsSaved),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                            )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        if (removedCount > 0) {
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.secondaryContainer
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.inspect_savings_badge, removedCount, charsSaved),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+                        if (parameters.isNotEmpty()) {
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                modifier = Modifier.clickable { showUrlDiff = !showUrlDiff }
+                            ) {
+                                Text(
+                                    text = if (showUrlDiff) stringResource(R.string.inspect_hide_diff) else stringResource(R.string.inspect_show_diff),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                )
+                            }
                         }
                     }
                 }
                 Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = displayCandidate,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis
-                )
+                if (showUrlDiff && removedCount > 0) {
+                    val errorColor = MaterialTheme.colorScheme.error
+                    val keptColor = MaterialTheme.colorScheme.primary
+                    val basePart = displayCandidate.substringBefore("?")
+                    val diffText = remember(basePart, parameters, errorColor, keptColor) {
+                        buildAnnotatedString {
+                            append(basePart)
+                            val queryChips = parameters.filter { it.key != com.androidfung.linkscrub.domain.UrlCleaner.AMAZON_PATH_PARAM_KEY }
+                            if (queryChips.isNotEmpty()) {
+                                append("?")
+                                queryChips.forEachIndexed { idx, chip ->
+                                    if (idx > 0) append("&")
+                                    val pairText = if (chip.value.isNotEmpty()) "${chip.key}=${chip.value}" else chip.key
+                                    if (chip.isMarkedForRemoval) {
+                                        withStyle(
+                                            SpanStyle(
+                                                color = errorColor,
+                                                textDecoration = TextDecoration.LineThrough
+                                            )
+                                        ) {
+                                            append(pairText)
+                                        }
+                                    } else {
+                                        withStyle(SpanStyle(color = keptColor, fontWeight = FontWeight.SemiBold)) {
+                                            append(pairText)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Text(
+                        text = diffText,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                } else {
+                    Text(
+                        text = displayCandidate,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
 

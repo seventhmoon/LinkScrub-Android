@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.androidfung.linkscrub.R
 import com.androidfung.linkscrub.data.model.OpenGraphMetadata
+import com.androidfung.linkscrub.domain.ParameterCategory
 
 /**
  * Represents each parameter found in a URL, its default removal state,
@@ -14,7 +15,8 @@ data class ParameterChipItem(
     val key: String,
     val value: String,
     val isTracking: Boolean,
-    val isMarkedForRemoval: Boolean
+    val isMarkedForRemoval: Boolean,
+    val category: ParameterCategory = if (isTracking) ParameterCategory.ANALYTICS_TELEMETRY else ParameterCategory.ESSENTIAL_SAFE
 )
 
 /**
@@ -35,6 +37,7 @@ data class LinkScrubUiState(
     val inputUrl: String = "",
     val detectedClipboardUrl: String? = null,
     val isQuickCleanEnabled: Boolean = false,
+    val instantPreviewTrackingParams: List<String> = emptyList(),
 
     // Step 2 state
     val detectedParameters: List<ParameterChipItem> = emptyList(),

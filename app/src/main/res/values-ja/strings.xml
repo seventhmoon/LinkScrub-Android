@@ -172,6 +172,10 @@
     <string name="cd_settings">設定とルール</string>
     <string name="settings_title">設定とカスタムルール</string>
     <string name="settings_subtitle">デフォルト動作とカスタムパラメータフィルターの設定</string>
+    <string name="settings_section_language">言語</string>
+    <string name="settings_language_title">アプリの言語</string>
+    <string name="settings_language_system_default">システムのデフォルト</string>
+    <string name="settings_language_dialog_title">アプリの言語を選択</string>
     <string name="settings_section_behavior">サニタイズ動作</string>
     <string name="settings_quick_clean_title">共有リンクのクイッククリーン</string>
     <string name="settings_quick_clean_subtitle">他アプリから共有されたリンクを自動的にサニタイズしてコピー</string>
@@ -187,6 +191,30 @@
     <string name="settings_allowlist_placeholder">例: tag, debug, lang</string>
     <string name="settings_action_add">追加</string>
     <string name="settings_empty_rules">カスタムパラメータはまだ登録されていません。</string>
+
+    <!-- Parameter Categories -->
+    <string name="category_utm_campaign">UTMキャンペーン</string>
+    <string name="category_ads_click_id">広告クリックID</string>
+    <string name="category_social_share">SNS共有追跡</string>
+    <string name="category_ecommerce_affiliate">アフィリエイト・EC</string>
+    <string name="category_email_marketing">メール・CRM</string>
+    <string name="category_analytics_telemetry">テレメトリ</string>
+    <string name="category_custom_blocked">カスタム削除</string>
+    <string name="category_custom_allowed">カスタム保持</string>
+    <string name="category_essential_safe">安全</string>
+
+    <!-- Step 1 Instant Preview & Privacy Shield Stats -->
+    <string name="input_instant_trackers_found">%1$d 個の追跡パラメータを検出: %2$s</string>
+    <string name="input_instant_no_trackers">表面上の追跡パラメータなし — リダイレクト展開とプレビューを実行可能</string>
+    <string name="stats_shield_title">端末内プライバシー保護統計</string>
+    <string name="stats_links_cleaned">%1$d 件のリンクを浄化</string>
+    <string name="stats_trackers_blocked">%1$d 個の追跡タグを除去</string>
+
+    <!-- Step 2 Diff & Step 3 Unshortened Badge & History Filter -->
+    <string name="inspect_show_diff">差分を表示</string>
+    <string name="inspect_hide_diff">クリーンURLのみ</string>
+    <string name="preview_unshortened_from">展開元: %1$s</string>
+    <string name="history_filter_all">すべて</string>
 
     <!-- AdMob Native Ad Strings -->
     <string name="ad_attribution_label">広告</string>

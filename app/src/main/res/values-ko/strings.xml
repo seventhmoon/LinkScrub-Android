@@ -172,6 +172,10 @@
     <string name="cd_settings">설정 및 규칙</string>
     <string name="settings_title">설정 및 사용자 지정 규칙</string>
     <string name="settings_subtitle">기본 동작 및 사용자 지정 매개변수 필터 구성</string>
+    <string name="settings_section_language">언어</string>
+    <string name="settings_language_title">앱 언어</string>
+    <string name="settings_language_system_default">시스템 기본값</string>
+    <string name="settings_language_dialog_title">앱 언어 선택</string>
     <string name="settings_section_behavior">정리 동작</string>
     <string name="settings_quick_clean_title">공유 링크 빠른 정리</string>
     <string name="settings_quick_clean_subtitle">다른 앱에서 공유된 링크를 자동으로 정리하고 복사</string>
@@ -187,6 +191,30 @@
     <string name="settings_allowlist_placeholder">예: tag, debug, lang</string>
     <string name="settings_action_add">추가</string>
     <string name="settings_empty_rules">추가된 사용자 지정 매개변수가 없습니다.</string>
+
+    <!-- Parameter Categories -->
+    <string name="category_utm_campaign">UTM 캠페인</string>
+    <string name="category_ads_click_id">광고 클릭 ID</string>
+    <string name="category_social_share">소셜 공유 추적</string>
+    <string name="category_ecommerce_affiliate">제휴 / 쇼핑몰</string>
+    <string name="category_email_marketing">이메일 / CRM</string>
+    <string name="category_analytics_telemetry">텔레메트리</string>
+    <string name="category_custom_blocked">사용자 차단</string>
+    <string name="category_custom_allowed">사용자 허용</string>
+    <string name="category_essential_safe">안전</string>
+
+    <!-- Step 1 Instant Preview & Privacy Shield Stats -->
+    <string name="input_instant_trackers_found">%1$d개의 추적 매개변수 감지됨: %2$s</string>
+    <string name="input_instant_no_trackers">표면 추적 매개변수 없음 — 리디렉션 확인 및 미리보기 가능</string>
+    <string name="stats_shield_title">온디바이스 개인정보 보호 통계</string>
+    <string name="stats_links_cleaned">%1$d개 링크 정리됨</string>
+    <string name="stats_trackers_blocked">%1$d개 추적기 차단됨</string>
+
+    <!-- Step 2 Diff & Step 3 Unshortened Badge & History Filter -->
+    <string name="inspect_show_diff">비교 보기</string>
+    <string name="inspect_hide_diff">결과만 보기</string>
+    <string name="preview_unshortened_from">단축 링크 원본: %1$s</string>
+    <string name="history_filter_all">전체</string>
 
     <!-- AdMob Native Ad Strings -->
     <string name="ad_attribution_label">광고</string>
