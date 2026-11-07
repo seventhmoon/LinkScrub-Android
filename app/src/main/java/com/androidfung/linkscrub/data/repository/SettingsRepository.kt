@@ -2,6 +2,7 @@ package com.androidfung.linkscrub.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -115,17 +116,17 @@ class SharedPreferencesSettingsRepository(
 
     override fun setQuickCleanDefault(enabled: Boolean) {
         _settings.update { it.copy(isQuickCleanDefault = enabled) }
-        prefs?.edit()?.putBoolean(KEY_QUICK_CLEAN_DEFAULT, enabled)?.apply()
+        prefs?.edit { putBoolean(KEY_QUICK_CLEAN_DEFAULT, enabled) }
     }
 
     override fun setUnshortenRedirects(enabled: Boolean) {
         _settings.update { it.copy(unshortenRedirects = enabled) }
-        prefs?.edit()?.putBoolean(KEY_UNSHORTEN_REDIRECTS, enabled)?.apply()
+        prefs?.edit { putBoolean(KEY_UNSHORTEN_REDIRECTS, enabled) }
     }
 
     override fun setFetchOpenGraphPreview(enabled: Boolean) {
         _settings.update { it.copy(fetchOpenGraphPreview = enabled) }
-        prefs?.edit()?.putBoolean(KEY_FETCH_OG_PREVIEW, enabled)?.apply()
+        prefs?.edit { putBoolean(KEY_FETCH_OG_PREVIEW, enabled) }
     }
 
     override fun addCustomBlockedParam(param: String) {
@@ -134,10 +135,11 @@ class SharedPreferencesSettingsRepository(
         _settings.update { current ->
             val updatedBlock = current.customBlocklist + normalized
             val updatedAllow = current.customAllowlist - normalized
-            prefs?.edit()
-                ?.putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock)
-                ?.putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow)
-                ?.apply()
+            prefs?.edit {
+                putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock)
+                putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow)
+            }
+
             current.copy(customBlocklist = updatedBlock, customAllowlist = updatedAllow)
         }
     }
@@ -146,7 +148,7 @@ class SharedPreferencesSettingsRepository(
         val normalized = param.trim().lowercase()
         _settings.update { current ->
             val updatedBlock = current.customBlocklist - normalized
-            prefs?.edit()?.putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock)?.apply()
+            prefs?.edit { putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock) }
             current.copy(customBlocklist = updatedBlock)
         }
     }
@@ -157,10 +159,11 @@ class SharedPreferencesSettingsRepository(
         _settings.update { current ->
             val updatedAllow = current.customAllowlist + normalized
             val updatedBlock = current.customBlocklist - normalized
-            prefs?.edit()
-                ?.putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow)
-                ?.putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock)
-                ?.apply()
+            prefs?.edit {
+                putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow)
+                putStringSet(KEY_CUSTOM_BLOCKLIST, updatedBlock)
+            }
+
             current.copy(customAllowlist = updatedAllow, customBlocklist = updatedBlock)
         }
     }
@@ -169,7 +172,7 @@ class SharedPreferencesSettingsRepository(
         val normalized = param.trim().lowercase()
         _settings.update { current ->
             val updatedAllow = current.customAllowlist - normalized
-            prefs?.edit()?.putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow)?.apply()
+            prefs?.edit { putStringSet(KEY_CUSTOM_ALLOWLIST, updatedAllow) }
             current.copy(customAllowlist = updatedAllow)
         }
     }
